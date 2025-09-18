@@ -1,0 +1,108 @@
+name: Build and test
+on:
+  push:
+    branches:
+      - "master"
+    paths:
+      - "src/main/java/**/*.java"
+      - "src/main/kotlin/**/*.kt"
+      - "src/main/resources/plugin.yml"
+      - "src/main/resources/Lobby.zip"
+      - "src/main/resources/META-INF/services/"
+      - "src/test/java/**/*.java"
+      - "!.gitignore"
+      - "build.gradle.kts"
+      - "gradle.properties"
+      - "properties.gradle.kts"
+      - "settings.gradle.kts"
+      - "!README.md"
+      - "!README"
+      - "!LICENSE"
+  pull_request:
+    branches:
+      - "master"
+    paths:
+      - "src/main/java/**/*.java"
+      - "src/main/kotlin/**/*.kt"
+      - "src/main/resources/plugin.yml"
+      - "src/main/resources/Lobby.zip"
+      - "src/main/resources/META-INF/services/"
+      - "src/test/java/**/*.java"
+      - "!.gitignore"
+      - "build.gradle.kts"
+      - "gradle.properties"
+      - "properties.gradle.kts"
+      - "settings.gradle.kts"
+      - "!README.md"
+      - "!README"
+      - "!LICENSE"
+  workflow_dispatch:
+
+
+defaults:
+  run:
+    shell: bash
+
+
+permissions:
+  contents: read
+  checks: write
+
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    timeout-minutes: 30
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: temurin
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build
+        run: ./gradlew build
+
+      - name: Write test report
+        uses: mikepenz/action-junit-report@v5
+        if: ${{ success() || failure() }}
+        with:
+          report_paths: './build/test-results/test/TEST-*.xml'
+          include_passed: true
+          detailed_summary: true
+          fail_on_failure: true
+          require_tests: true
+          check_name: Test Report on ${{ matrix.os }}
+          check_title_template: '{{SUITE_NAME}} | {{TEST_NAME}}'
+
+      - name: JaCoCo Code Coverage Report
+        uses: PavanMudigonda/jacoco-reporter@v5.0
+        with:
+          coverage_results_path: build/reports/jacoco/test/jacocoTestReport.xml
+          coverage_report_name: Coverage (${{ matrix.os }})
+          coverage_report_title: JaCoCo (${{ matrix.os }})
+          fail_below_threshold: false
+          publish_only_summary: true
+
+      - name: Upload artifacts
+        if: ${{ (github.ref_name == 'master' && github.event_name == 'push') || github.event_name == 'workflow_dispatch' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ConstructionSite-${{ github.run_id }}-${{ matrix.os }}
+          path: |
+            build/libs/*.jar
+            build/reports/
+          retention-days: 1
+          overwrite: true
