@@ -1,0 +1,3 @@
+name: ${name}
+main: colosseum.construction.ConstructionSiteImpl
+version: ${version}
