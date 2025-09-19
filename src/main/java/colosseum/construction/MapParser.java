@@ -56,8 +56,6 @@ public final class MapParser implements Runnable {
     private final int wholeCubeSize;
 
     private long processed = 0;
-    private Vector cornerA = null;
-    private Vector cornerB = null;
 
     public enum Status {
         SUCCESS,
@@ -88,7 +86,7 @@ public final class MapParser implements Runnable {
     public MapParser(@NotNull File parsableWorldFolder, List<String> args, Location startPoint, int size) {
         this.parsableWorldFolder = parsableWorldFolder;
         this.parsableWorldPathString = parsableWorldFolder.getAbsolutePath();
-        this.args = args;
+        this.args = List.copyOf(args);
         this.startPoint = new Vector(startPoint.getX(), startPoint.getY(), startPoint.getZ());
         this.size = size;
         this.wholeCubeSize = ((size * 2) * (size * 2) * 256);
@@ -180,6 +178,9 @@ public final class MapParser implements Runnable {
             status.set(Status.FAIL);
             return;
         }
+
+        Vector cornerA = null;
+        Vector cornerB = null;
 
         try (ChunkAccess<AnvilChunk> chunkAccess = (ChunkAccess<AnvilChunk>) offlineWorld.getChunkAccess()) {
             int offsetX;

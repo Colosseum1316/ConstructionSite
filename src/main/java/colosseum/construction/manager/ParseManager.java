@@ -55,7 +55,7 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
     }
 
     /**
-     * Call this method in MAIN THREAD!
+     * <b>Call this method from main thread!</b>
      */
     public void schedule(@NotNull World originalWorld, List<String> args, Location startPoint, int size) {
         originalWorld.save();

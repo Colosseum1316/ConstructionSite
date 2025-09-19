@@ -21,7 +21,7 @@ class TestServiceLoader {
     @Test
     void testServiceLoader() {
         ServiceLoader<ConstructionSiteCommand> loader = ServiceLoader.load(ConstructionSiteCommand.class, ConstructionSiteCommand.class.getClassLoader());
-        Assertions.assertEquals(24, loader.stream().toList().size());
+        Assertions.assertEquals(23, loader.stream().toList().size());
         for (Object provider : loader) {
             Class<? extends ConstructionSiteCommand> providerClass = provider.getClass().asSubclass(ConstructionSiteCommand.class);
             Assertions.assertDoesNotThrow(() -> {

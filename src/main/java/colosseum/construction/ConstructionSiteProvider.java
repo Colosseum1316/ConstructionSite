@@ -4,11 +4,9 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang.Validate;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.Nullable;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ConstructionSiteProvider {
-    @Nullable
     private static ConstructionSite instance;
 
     public static void setSite(ConstructionSite instance) {

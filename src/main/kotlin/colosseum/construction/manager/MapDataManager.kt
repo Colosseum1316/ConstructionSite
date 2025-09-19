@@ -16,6 +16,7 @@ import java.util.function.*
 @ManagerDependency(WorldManager::class)
 class MapDataManager: ConstructionSiteManager("MapData") {
     private val mapData: Cache<String, MapData> = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).build()
+    private val lock = Object()
 
     companion object {
         private fun getWorldManager(): WorldManager {
@@ -28,23 +29,27 @@ class MapDataManager: ConstructionSiteManager("MapData") {
     }
 
     override fun unregister() {
-        mapData.invalidateAll()
+        synchronized(lock) {
+            mapData.invalidateAll()
+        }
     }
 
     fun get(world: World): MapData {
         val rootDirFile = getMapRootDir.apply(world)
-        var data: MapData?
-        data = mapData.getIfPresent(rootDirFile.absolutePath)
-        if (data == null) {
-            val worldManager = getWorldManager()
-            data = if (BaseUtils.isLevelNamePreserved(worldManager.getWorldRelativePath(world))) {
-                DummyMapData(world, rootDirFile)
-            } else {
-                MapDataImpl(world, rootDirFile)
+        synchronized(lock) {
+            var data: MapData?
+            data = mapData.getIfPresent(rootDirFile.absolutePath)
+            if (data == null) {
+                val worldManager = getWorldManager()
+                data = if (BaseUtils.isLevelNamePreserved(worldManager.getWorldRelativePath(world))) {
+                    DummyMapData(world, rootDirFile)
+                } else {
+                    MapDataImpl(world, rootDirFile)
+                }
+                mapData.put(rootDirFile.absolutePath, data)
             }
-            mapData.put(rootDirFile.absolutePath, data)
+            return data
         }
-        return data
     }
 
     fun getFinalized(worldFolder: File): FinalizedMapData {
@@ -55,7 +60,9 @@ class MapDataManager: ConstructionSiteManager("MapData") {
     fun discard(world: World?) {
         if (world != null) {
             val rootDirFile = getMapRootDir.apply(world)
-            mapData.invalidate(rootDirFile.absolutePath)
+            synchronized(lock) {
+                mapData.invalidate(rootDirFile.absolutePath)
+            }
         }
     }
 }

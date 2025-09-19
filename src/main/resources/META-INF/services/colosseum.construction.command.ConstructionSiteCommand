@@ -14,7 +14,6 @@ colosseum.construction.command.MapParseCommand
 colosseum.construction.command.NewMapCommand
 colosseum.construction.command.OpAddSplashTextCommand
 colosseum.construction.command.OpClearSplashTextCommand
-colosseum.construction.command.OpPrivateMessageCommand
 colosseum.construction.command.vanilla.DifficultyCommand
 colosseum.construction.command.vanilla.TeleportCommand
 colosseum.construction.command.vanilla.TimeCommand

@@ -117,29 +117,33 @@ class NewMapCommand: AbstractOpCommand(
             }
         }
 
-        val world = worldManager.createOrLoadWorld(worldCreator) ?: throw RuntimeException("Could not create world ${worldCreator.name()}")
-        world.difficulty = Difficulty.EASY
-        world.setSpawnLocation(0, 106, 0)
-        world.setGameRuleValue("mobGriefing", "false")
-        world.setGameRuleValue("doMobSpawning", "false")
-        world.setGameRuleValue("doFireTick", "false")
-        world.setGameRuleValue("doDaylightCycle", "false")
-        world.time = 6000
-        world.pvp = false
+        Bukkit.getScheduler().runTask(ConstructionSiteProvider.getPlugin()) {
+            val world = worldManager.createOrLoadWorld(worldCreator) ?: throw RuntimeException("Could not create world ${worldCreator.name()}")
+            world.difficulty = Difficulty.EASY
+            world.setSpawnLocation(0, 106, 0)
+            world.setGameRuleValue("mobGriefing", "false")
+            world.setGameRuleValue("doMobSpawning", "false")
+            world.setGameRuleValue("doFireTick", "false")
+            world.setGameRuleValue("doDaylightCycle", "false")
+            world.time = 6000
+            world.pvp = false
 
-        val mapData = getMapDataManager().get(world) as MutableMapData
-        mapData.mapName = worldFolderName
-        mapData.mapCreator = caller.name
-        mapData.adminList.add(caller.uniqueId)
-        mapData.mapGameType = gameType
-        getTeleportManager().teleportPlayer(caller, world.spawnLocation)
-        caller.gameMode = GameMode.CREATIVE
-        caller.isFlying = true
-        Bukkit.getScheduler().runTaskAsynchronously(ConstructionSiteProvider.getPlugin()) {
-            mapData.write()
+            Bukkit.getScheduler().runTaskAsynchronously(ConstructionSiteProvider.getPlugin()) {
+                val mapData = getMapDataManager().get(world) as MutableMapData
+                mapData.mapName = worldFolderName
+                mapData.mapCreator = caller.name
+                mapData.adminList.add(caller.uniqueId)
+                mapData.mapGameType = gameType
+                mapData.write()
+
+                Bukkit.getScheduler().runTask(ConstructionSiteProvider.getPlugin()) {
+                    getTeleportManager().teleportPlayer(caller, world.spawnLocation)
+                    caller.gameMode = GameMode.CREATIVE
+                    caller.isFlying = true
+                    Command.broadcastCommandMessage(caller, "Create new ${if (generateVoidWorld) "void " else ""}world: ${worldCreator.name()}", true)
+                }
+            }
         }
-
-        Command.broadcastCommandMessage(caller, "Create new ${if (generateVoidWorld) "void " else ""}world: ${worldCreator.name()}", true)
         return true
     }
 }
