@@ -237,16 +237,6 @@ class InteractionEvents: ConstructionSiteEventListener() {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    fun disablePiston(event: BlockPistonExtendEvent) {
-        event.isCancelled = true
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    fun disablePiston(event: BlockPistonRetractEvent) {
-        event.isCancelled = true
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun disableWeather(event: WeatherChangeEvent) {
         event.isCancelled = event.toWeatherState()
     }
@@ -258,11 +248,6 @@ class InteractionEvents: ConstructionSiteEventListener() {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun disableThunder(event: LightningStrikeEvent) {
-        event.isCancelled = true
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    fun disablePortal(event: PortalCreateEvent) {
         event.isCancelled = true
     }
 

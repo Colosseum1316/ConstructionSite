@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.World;
@@ -21,11 +22,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.InputStreamReader;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +35,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 public class MapDataImpl extends AbstractMapData implements MutableMapData {
+    private static final String WARPS_DELIMITER = ";";
+
     private final Object lock;
 
     protected File datFile;
@@ -94,7 +96,8 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
     protected void read() {
         synchronized (lock) {
             String line;
-            try (FileInputStream fstream = new FileInputStream(datFile); DataInputStream inputStream = new DataInputStream(fstream); BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
+
+            try (BufferedReader br = Files.newBufferedReader(datFile.toPath(), StandardCharsets.UTF_8)) {
                 while ((line = br.readLine()) != null) {
                     List<String> tokens = Arrays.stream(line.split(":")).toList();
                     if (tokens.size() < 2) {
@@ -106,7 +109,7 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
                     switch (tokens.get(0)) {
                         case "currentlyLive" -> currentlyLive = Boolean.parseBoolean(tokens.get(1));
                         case "warps" -> {
-                            for (String w : tokens.get(1).split(";")) {
+                            for (String w : tokens.get(1).split(WARPS_DELIMITER)) {
                                 String[] entry = w.split("@");
                                 Validate.isTrue(entry.length >= 2);
                                 String[] xyz = entry[1].replaceAll("[()]", "").split(",");
@@ -119,7 +122,7 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
                         case "ADMIN_LIST", "BUILD_LIST" -> adminList.addAll(Arrays.stream(tokens.get(1).split(",")).map(UUID::fromString).toList());
                     }
                 }
-            } catch (Exception e) {
+            } catch (IOException e) {
                 ConstructionSiteProvider.getSite().getPluginLogger().log(Level.SEVERE, "Cannot read dat file!", e);
             }
         }
@@ -133,14 +136,14 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
     }
 
     public void write() {
-        String mapName = this.mapName;
-        String mapCreator = this.mapCreator;
-        GameType mapGameType = this.mapGameType;
-        boolean currentlyLive = this.currentlyLive;
-        ImmutableSet<UUID> adminList = adminList();
-        ImmutableMap<String, Vector> warps = warps();
         synchronized (lock) {
-            try (FileWriter writer = new FileWriter(datFile); BufferedWriter buffer = new BufferedWriter(writer)) {
+            String mapName = this.mapName;
+            String mapCreator = this.mapCreator;
+            GameType mapGameType = this.mapGameType;
+            boolean currentlyLive = this.currentlyLive;
+            ImmutableSet<UUID> adminList = adminList();
+            ImmutableMap<String, Vector> warps = warps();
+            try (BufferedWriter buffer = Files.newBufferedWriter(datFile.toPath(), StandardCharsets.UTF_8)) {
                 ConstructionSiteProvider.getSite().getPluginLogger().info("Writing " + datFile.getAbsolutePath());
                 buffer.write("MAP_NAME:" + mapName);
                 buffer.write("\nMAP_AUTHOR:" + mapCreator);
@@ -148,8 +151,9 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
                 buffer.write("\nADMIN_LIST:" + String.join(",", adminList.stream().map(UUID::toString).toList()));
                 buffer.write("\ncurrentlyLive:" + currentlyLive);
                 buffer.write("\nwarps:" + warpsToString(warps));
-            } catch (Exception e) {
+            } catch (IOException e) {
                 ConstructionSiteProvider.getSite().getPluginLogger().log(Level.SEVERE, "Cannot write dat file!", e);
+                FileUtils.deleteQuietly(datFile);
             }
         }
     }
@@ -159,6 +163,6 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
     }
 
     private String warpsToString(ImmutableMap<String, Vector> warps) {
-        return String.join(";", warps.entrySet().stream().map(entry -> entry.getKey() + "@" + UtilWorld.vecToStrClean(entry.getValue())).toList());
+        return String.join(WARPS_DELIMITER, warps.entrySet().stream().map(entry -> entry.getKey() + "@" + UtilWorld.vecToStrClean(entry.getValue())).toList());
     }
 }
