@@ -1,8 +1,8 @@
 package colosseum.construction.event
 
 import colosseum.construction.ConstructionSiteProvider
-import colosseum.construction.data.BlockData
 import colosseum.construction.manager.MapDataManager
+import colosseum.utility.BlockData
 import colosseum.utility.UtilBlockBase.getSurrounding
 import colosseum.utility.UtilEvent.ActionType
 import colosseum.utility.UtilEvent.isAction

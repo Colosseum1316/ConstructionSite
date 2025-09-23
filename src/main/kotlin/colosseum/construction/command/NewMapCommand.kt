@@ -4,10 +4,10 @@ import colosseum.construction.BaseUtils
 import colosseum.construction.BaseUtils.getGameTypes
 import colosseum.construction.ConstructionSiteProvider
 import colosseum.construction.PluginUtils
-import colosseum.construction.data.MutableMapData
 import colosseum.construction.manager.MapDataManager
 import colosseum.construction.manager.TeleportManager
 import colosseum.construction.manager.WorldManager
+import colosseum.utility.MutableMapData
 import colosseum.utility.arcade.GameType
 import org.bukkit.Bukkit
 import org.bukkit.Difficulty

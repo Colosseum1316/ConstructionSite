@@ -4,11 +4,11 @@ import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.WorldMock;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import colosseum.construction.ConstructionSiteProvider;
-import colosseum.construction.data.MapData;
 import colosseum.construction.test.dummies.DummySite;
 import colosseum.construction.test.dummies.DummySite1;
 import colosseum.construction.test.dummies.data.DummyMapDataRead;
 import colosseum.construction.test.dummies.data.DummyMapDataWrite;
+import colosseum.utility.MapData;
 import colosseum.utility.WorldMapConstants;
 import colosseum.utility.arcade.GameType;
 import org.bukkit.util.Vector;
@@ -80,7 +80,7 @@ class TestMapData {
                 GAME_TYPE:
                 ADMIN_LIST:%s,%s
                 """.trim(), uuid1, uuid2));
-        Assertions.assertTrue(data.isCurrentlyLive());
+        Assertions.assertTrue(data.isLive());
         Assertions.assertEquals(4, data.warps().size());
         Assertions.assertTrue(data.warps().containsKey("w1"));
         Assertions.assertEquals(data.warps().get("w1"), new Vector(0, 0, 0));
@@ -108,7 +108,7 @@ class TestMapData {
                 GAME_TYPE:DragonEscape
                 ADMIN_LIST:%s
                 """.trim(), uuid1));
-        Assertions.assertFalse(data.isCurrentlyLive());
+        Assertions.assertFalse(data.isLive());
         Assertions.assertTrue(data.warps().isEmpty());
         Assertions.assertEquals("TEST MAP", data.getMapName());
         Assertions.assertEquals("TEST AUTHOR", data.getMapCreator());
@@ -142,7 +142,7 @@ class TestMapData {
     @Test
     void testWrite() {
         testWrite0(true, Collections.emptyMap(), Collections.emptySet(), GameType.None, "TEST MAP NONETYPE", "TEST MAP NONETYPE AUTHOR", (data, currentlyLive, warps, adminList, mapGameType, mapName, mapCreator) -> {
-            Assertions.assertTrue(data.isCurrentlyLive());
+            Assertions.assertTrue(data.isLive());
             Assertions.assertTrue(data.warps().isEmpty());
             Assertions.assertTrue(data.adminList().isEmpty());
             Assertions.assertEquals(GameType.None, data.getMapGameType());
@@ -157,7 +157,7 @@ class TestMapData {
                 UUID.fromString(uuid1),
                 UUID.fromString(uuid2)
         ), GameType.DragonEscape, "TEST MAP 1", "TEST MAP 1 AUTHOR", (data, currentlyLive, warps, adminList, mapGameType, mapName, mapCreator) -> {
-            Assertions.assertFalse(data.isCurrentlyLive());
+            Assertions.assertFalse(data.isLive());
             Assertions.assertEquals(3, data.warps().size());
             Assertions.assertTrue(data.warps().containsKey("a1"));
             Assertions.assertEquals(data.warps().get("a1"), new Vector(0, 0, 0));

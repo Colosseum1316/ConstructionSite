@@ -3,6 +3,7 @@ package colosseum.construction.data;
 import colosseum.construction.BaseUtils;
 import colosseum.construction.ConstructionSiteProvider;
 import colosseum.construction.manager.WorldManager;
+import colosseum.utility.MutableMapData;
 import colosseum.utility.UtilWorld;
 import colosseum.utility.WorldMapConstants;
 import colosseum.utility.arcade.GameType;
@@ -43,7 +44,7 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
 
     @Getter
     @Setter
-    protected boolean currentlyLive;
+    protected boolean live;
     @Getter
     protected final Map<String, Vector> warps;
     @Getter
@@ -107,7 +108,7 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
                         continue;
                     }
                     switch (tokens.get(0)) {
-                        case "currentlyLive" -> currentlyLive = Boolean.parseBoolean(tokens.get(1));
+                        case "currentlyLive" -> live = Boolean.parseBoolean(tokens.get(1));
                         case "warps" -> {
                             for (String w : tokens.get(1).split(WARPS_DELIMITER)) {
                                 String[] entry = w.split("@");
@@ -140,7 +141,7 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
             String mapName = this.mapName;
             String mapCreator = this.mapCreator;
             GameType mapGameType = this.mapGameType;
-            boolean currentlyLive = this.currentlyLive;
+            boolean currentlyLive = this.live;
             ImmutableSet<UUID> adminList = adminList();
             ImmutableMap<String, Vector> warps = warps();
             try (BufferedWriter buffer = Files.newBufferedWriter(datFile.toPath(), StandardCharsets.UTF_8)) {

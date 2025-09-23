@@ -4,8 +4,8 @@ import colosseum.construction.BaseUtils
 import colosseum.construction.ConstructionSiteProvider
 import colosseum.construction.data.DummyMapData
 import colosseum.construction.data.FinalizedMapData
-import colosseum.construction.data.MapData
 import colosseum.construction.data.MapDataImpl
+import colosseum.utility.MapData
 import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
 import org.bukkit.World

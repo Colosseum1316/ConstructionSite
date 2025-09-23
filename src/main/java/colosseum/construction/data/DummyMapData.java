@@ -28,7 +28,7 @@ public final class DummyMapData extends AbstractMapData {
     }
 
     @Override
-    public boolean isCurrentlyLive() {
+    public boolean isLive() {
         return true;
     }
 

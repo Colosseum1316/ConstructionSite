@@ -38,7 +38,7 @@ public final class DummyMapDataWrite extends MapDataImpl {
         this.testMapGameType = mapGameType;
         this.testMapName = mapName;
         this.testMapCreator = mapCreator;
-        super.setCurrentlyLive(this.testCurrentlyLive);
+        super.setLive(this.testCurrentlyLive);
         super.getWarps().putAll(this.testWarps);
         super.getAdminList().addAll(this.testAdminList);
         super.setMapGameType(this.testMapGameType);

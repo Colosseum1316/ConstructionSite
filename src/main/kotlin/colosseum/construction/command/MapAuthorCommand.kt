@@ -1,7 +1,7 @@
 package colosseum.construction.command
 
 import colosseum.construction.ConstructionSiteProvider
-import colosseum.construction.data.MutableMapData
+import colosseum.utility.MutableMapData
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.entity.Player

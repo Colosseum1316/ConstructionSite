@@ -2,7 +2,7 @@ package colosseum.construction.command
 
 import colosseum.construction.BaseUtils
 import colosseum.construction.ConstructionSiteProvider
-import colosseum.construction.data.MutableMapData
+import colosseum.utility.MutableMapData
 import colosseum.utility.UtilPlayerBase
 import colosseum.utility.UtilWorld.locToStrClean
 import colosseum.utility.UtilWorld.vecToStrClean

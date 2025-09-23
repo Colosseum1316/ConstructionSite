@@ -1,6 +1,6 @@
 package colosseum.construction.command
 
-import colosseum.construction.data.MutableMapData
+import colosseum.utility.MutableMapData
 import org.bukkit.entity.Player
 import java.util.function.*
 

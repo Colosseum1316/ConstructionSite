@@ -11,7 +11,7 @@ class MapInfoCommand: AbstractMapAdminCommand(listOf("mapinfo"), "Get map info."
             val data = getMapDataManager().get(caller.world)
             UtilPlayerBase.sendMessage(caller, "Map Name: &e${data.mapName}")
             UtilPlayerBase.sendMessage(caller, "Author: &e${data.mapCreator}")
-            UtilPlayerBase.sendMessage(caller, "GameType: &e${data.mapGameType}&r (&e${data.mapGameType.gameName}&r)")
+            UtilPlayerBase.sendMessage(caller, "GameType: &e${data.mapGameType}&r (&e${data.mapGameType.lobbyName}&r)")
         }
         return true
     }

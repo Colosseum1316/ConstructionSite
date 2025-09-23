@@ -1,6 +1,6 @@
 package colosseum.construction.data;
 
-import lombok.NonNull;
+import colosseum.utility.MapData;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,7 +10,6 @@ import java.io.File;
 public abstract class AbstractMapData implements MapData {
     @Nullable
     protected final World world;
-    @NonNull
     protected final File worldFolder;
 
     public AbstractMapData(@Nullable World world, @NotNull File worldFolder) {

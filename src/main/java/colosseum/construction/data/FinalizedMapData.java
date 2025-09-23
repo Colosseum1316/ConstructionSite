@@ -1,5 +1,7 @@
 package colosseum.construction.data;
 
+import colosseum.utility.MapData;
+import colosseum.utility.MutableMapData;
 import colosseum.utility.arcade.GameType;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -11,7 +13,7 @@ import java.util.UUID;
 
 public final class FinalizedMapData implements MapData {
     @Getter
-    private final boolean currentlyLive;
+    private final boolean live;
     private final ImmutableMap<String, Vector> warps;
     private final ImmutableSet<UUID> adminList;
     @Getter
@@ -22,7 +24,7 @@ public final class FinalizedMapData implements MapData {
     private final String mapCreator;
 
     public FinalizedMapData(MutableMapData mapData) {
-        this.currentlyLive = mapData.isCurrentlyLive();
+        this.live = mapData.isLive();
         this.warps = mapData.warps();
         this.adminList = mapData.adminList();
         this.mapGameType = mapData.getMapGameType();
