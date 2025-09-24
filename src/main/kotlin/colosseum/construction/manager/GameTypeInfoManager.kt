@@ -35,14 +35,15 @@ class GameTypeInfoManager: ConstructionSiteManager("GameType Info") {
     }
 
     private fun saveInfo(obj: GameTypeInfo) {
-        val file: File = PluginUtils.loadYml(ConstructionSiteProvider.getSite().pluginDataFolder, "info.yml")
+        val site = ConstructionSiteProvider.getSite()
+        val file: File = PluginUtils.loadYml(site.pluginDataFolder, "info.yml")
         val config: FileConfiguration = YamlConfiguration.loadConfiguration(file)
         config[obj.gameType.name] = obj.info
         try {
-            ConstructionSiteProvider.getSite().pluginLogger.info("Saving ${file.absolutePath}")
+            site.pluginLogger.info("Saving ${file.absolutePath}")
             config.save(file)
         } catch (e: IOException) {
-            ConstructionSiteProvider.getSite().pluginLogger.log(Level.SEVERE, "Cannot save file", e)
+            site.pluginLogger.log(Level.SEVERE, "Cannot save file", e)
         }
     }
 

@@ -41,11 +41,12 @@ class MapDeleteCommand: AbstractMapAdminCommand(
             }
             val worldManager = getWorldManager()
             val f = worldManager.getWorldFolder(world)
+            val site = ConstructionSiteProvider.getSite()
             for (other in world.players) {
-                ConstructionSiteProvider.getSite().getManager(TeleportManager::class.java).teleportToServerSpawn(other)
+                site.getManager(TeleportManager::class.java).teleportToServerSpawn(other)
             }
             worldManager.unloadWorld(world, false)
-            ConstructionSiteProvider.getSite().getManager(MapDataManager::class.java).discard(world)
+            site.getManager(MapDataManager::class.java).discard(world)
             Command.broadcastCommandMessage(caller, "Deleting world ${worldManager.getWorldRelativePath(f)}", true)
             Bukkit.getScheduler().runTaskAsynchronously(ConstructionSiteProvider.getPlugin()) {
                 FileUtils.deleteQuietly(f)

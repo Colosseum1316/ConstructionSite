@@ -103,7 +103,8 @@ public final class PluginUtils {
     }
 
     public static void unzip() {
-        File destination = ConstructionSiteProvider.getSite().getWorldContainer().toPath().resolve(WorldMapConstants.WORLD_LOBBY).toFile();
+        ConstructionSite site = ConstructionSiteProvider.getSite();
+        File destination = site.getWorldContainer().toPath().resolve(WorldMapConstants.WORLD_LOBBY).toFile();
         if (destination.exists() && !destination.isDirectory()) {
             try {
                 FileUtils.delete(destination);
@@ -114,7 +115,7 @@ public final class PluginUtils {
         Validate.isTrue(BaseUtils.initDir(destination), "Cannot initialize directory");
         if (destination.listFiles().length == 0) {
             File zip = new File(destination, "Lobby.zip");
-            try (InputStream inputStream = ConstructionSiteProvider.getSite().getClass().getClassLoader().getResourceAsStream("Lobby.zip");
+            try (InputStream inputStream = site.getClass().getClassLoader().getResourceAsStream("Lobby.zip");
                  FileOutputStream out = new FileOutputStream(zip)) {
                 byte[] buffer = new byte[8192];
                 int bytesRead;

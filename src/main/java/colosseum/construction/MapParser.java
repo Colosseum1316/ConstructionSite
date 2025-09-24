@@ -2,7 +2,6 @@ package colosseum.construction;
 
 import colosseum.construction.data.FinalizedMapData;
 import colosseum.construction.manager.MapDataManager;
-import colosseum.utility.UtilMath;
 import colosseum.utility.UtilWorld;
 import colosseum.utility.WorldMapConstants;
 import colosseum.utility.arcade.GameType;
@@ -91,12 +90,13 @@ public final class MapParser implements Runnable {
         this.size = size;
         this.wholeCubeSize = ((size * 2) * (size * 2) * 256);
         Validate.isTrue(size > 0, "size must be greater than 0");
-        this.mapData = ConstructionSiteProvider.getSite().getManager(MapDataManager.class).getFinalized(parsableWorldFolder);
+        ConstructionSite site = ConstructionSiteProvider.getSite();
+        this.mapData = site.getManager(MapDataManager.class).getFinalized(parsableWorldFolder);
         for (String arg : args) {
             try {
                 dataId.add(Short.parseShort(arg));
             } catch (NumberFormatException e) {
-                ConstructionSiteProvider.getSite().getPluginLogger().log(Level.WARNING, e.getMessage(), e);
+                site.getPluginLogger().log(Level.WARNING, e.getMessage(), e);
             }
         }
     }
@@ -170,11 +170,12 @@ public final class MapParser implements Runnable {
     }
 
     public void run() {
+        final ConstructionSite site = ConstructionSiteProvider.getSite();
         final World offlineWorld;
         try {
             offlineWorld = new AnvilWorld(new GlobalMaterialMap(), parsableWorldFolder.toPath().resolve(AnvilWorld.LEVEL_DAT_NAME));
         } catch (Exception e) {
-            ConstructionSiteProvider.getSite().getPluginLogger().log(Level.SEVERE, "Error while parsing " + parsableWorldPathString, e);
+            site.getPluginLogger().log(Level.SEVERE, "Error while parsing " + parsableWorldPathString, e);
             status.set(Status.FAIL);
             return;
         }
@@ -194,7 +195,7 @@ public final class MapParser implements Runnable {
                     int offsetY;
                     for (offsetY = 0; offsetY <= 255; offsetY++) {
                         if (processed % 10000000 == 0) {
-                            ConstructionSiteProvider.getSite().getPluginLogger().info("Parsing " + parsableWorldPathString + ": Scanning: " + processed / 1000000 + "M of " + wholeCubeSize / 1000000 + "M");
+                            site.getPluginLogger().info("Parsing " + parsableWorldPathString + ": Scanning: " + processed / 1000000 + "M of " + wholeCubeSize / 1000000 + "M");
                         }
                         processed++;
 
@@ -206,7 +207,7 @@ public final class MapParser implements Runnable {
                         if (dataId.contains(wrappedObject.typeId)) {
                             String key = "" + wrappedObject.typeId;
                             customLocations.computeIfAbsent(key, k -> new ArrayList<>()).add(wrappedObject.getLocation());
-                            ConstructionSiteProvider.getSite().getPluginLogger().info("Parsing " + parsableWorldPathString + ": Found data id " + key + " at " + UtilWorld.vecToStrClean(wrappedObject.getLocation()));
+                            site.getPluginLogger().info("Parsing " + parsableWorldPathString + ": Found data id " + key + " at " + UtilWorld.vecToStrClean(wrappedObject.getLocation()));
                             continue;
                         }
 
@@ -214,7 +215,7 @@ public final class MapParser implements Runnable {
                             if (mapData.getMapGameType().equals(GameType.MicroBattle)) {
                                 String name = "20"; // Set auto glass
                                 customLocations.computeIfAbsent(name, k -> new ArrayList<>()).add(wrappedObject.getLocation());
-                                ConstructionSiteProvider.getSite().getPluginLogger().info("Parsing " + parsableWorldPathString + ": Set Auto glass at " + UtilWorld.vecToStrClean(wrappedObject.getLocation()));
+                                site.getPluginLogger().info("Parsing " + parsableWorldPathString + ": Set Auto glass at " + UtilWorld.vecToStrClean(wrappedObject.getLocation()));
                                 setAir(offlineWorld, chunk, wrappedObject);
                             }
                         }
@@ -233,10 +234,10 @@ public final class MapParser implements Runnable {
                                             name.append(" ").append(l);
                                         }
                                     }
-                                    ConstructionSiteProvider.getSite().getPluginLogger().info("Parsing " + parsableWorldPathString + ": Found custom location: \"" + name + "\" at " + UtilWorld.vecToStrClean(wrappedBlockSponge.getLocation()));
+                                    site.getPluginLogger().info("Parsing " + parsableWorldPathString + ": Found custom location: \"" + name + "\" at " + UtilWorld.vecToStrClean(wrappedBlockSponge.getLocation()));
                                 } catch (Exception e) {
-                                    ConstructionSiteProvider.getSite().getPluginLogger().warning(String.format("Parsing " + parsableWorldPathString + ": Found invalid sign data at %d,%d,%d", wrappedObject.x, wrappedObject.y, wrappedObject.z));
-                                    ConstructionSiteProvider.getSite().getPluginLogger().log(Level.WARNING, e.getMessage(), e);
+                                    site.getPluginLogger().warning(String.format("Parsing " + parsableWorldPathString + ": Found invalid sign data at %d,%d,%d", wrappedObject.x, wrappedObject.y, wrappedObject.z));
+                                    site.getPluginLogger().log(Level.WARNING, e.getMessage(), e);
                                 }
 
                                 customLocations.computeIfAbsent(name.toString(), k -> new ArrayList<>()).add(wrappedBlockSponge.getLocation());
@@ -260,12 +261,12 @@ public final class MapParser implements Runnable {
                                     case 0 -> {
                                         if (cornerA == null) {
                                             cornerA = wrappedBlockWool.getLocation().clone();
-                                            ConstructionSiteProvider.getSite().getPluginLogger().info("Parsing " + parsableWorldPathString + ": Set corner A: " + UtilWorld.vecToStrClean(cornerA));
+                                            site.getPluginLogger().info("Parsing " + parsableWorldPathString + ": Set corner A: " + UtilWorld.vecToStrClean(cornerA));
                                         } else if (cornerB == null) {
                                             cornerB = wrappedBlockWool.getLocation().clone();
-                                            ConstructionSiteProvider.getSite().getPluginLogger().info("Parsing " + parsableWorldPathString + ": Set corner B: " + UtilWorld.vecToStrClean(cornerB));
+                                            site.getPluginLogger().info("Parsing " + parsableWorldPathString + ": Set corner B: " + UtilWorld.vecToStrClean(cornerB));
                                         } else {
-                                            ConstructionSiteProvider.getSite().getPluginLogger().warning("Parsing " + parsableWorldPathString + ": Found more than 2 corner markers! Known corner A: " + UtilWorld.vecToStrClean(cornerA) + " Known corner B: " + UtilWorld.vecToStrClean(cornerB) + " Found: " + UtilWorld.vecToStrClean(wrappedBlockWool.getLocation()));
+                                            site.getPluginLogger().warning("Parsing " + parsableWorldPathString + ": Found more than 2 corner markers! Known corner A: " + UtilWorld.vecToStrClean(cornerA) + " Known corner B: " + UtilWorld.vecToStrClean(cornerB) + " Found: " + UtilWorld.vecToStrClean(wrappedBlockWool.getLocation()));
                                         }
                                         setAir(offlineWorld, chunk, wrappedObject);
                                         setAir(offlineWorld, chunk, wrappedBlockWool);
@@ -299,7 +300,7 @@ public final class MapParser implements Runnable {
                         }
                         Wool woolData = new Wool(wrappedBlockWool.typeId, wrappedBlockWool.data);
                         dataLocations.computeIfAbsent(woolData.getColor().name(), k -> new ArrayList<>()).add(wrappedBlockWool.getLocation());
-                        ConstructionSiteProvider.getSite().getPluginLogger().info("Parsing " + parsableWorldPathString + ": Found data location at " + UtilWorld.vecToStrClean(wrappedBlockWool.getLocation()));
+                        site.getPluginLogger().info("Parsing " + parsableWorldPathString + ": Found data location at " + UtilWorld.vecToStrClean(wrappedBlockWool.getLocation()));
                         setAir(offlineWorld, chunk, wrappedObject);
                         setAir(offlineWorld, chunk, wrappedBlockWool);
                     }
@@ -309,11 +310,11 @@ public final class MapParser implements Runnable {
 
             // Finalize
             if (cornerA == null || cornerB == null) {
-                ConstructionSiteProvider.getSite().getPluginLogger().warning("Parsing " + parsableWorldPathString + ": Corner locations are missing! Fallback to -256 to +256");
+                site.getPluginLogger().warning("Parsing " + parsableWorldPathString + ": Corner locations are missing! Fallback to -256 to +256");
                 cornerA = new Vector(-256.0, 0.0, -256.0);
                 cornerB = new Vector(256.0, 0.0, 256.0);
-                ConstructionSiteProvider.getSite().getPluginLogger().info("Parsing " + parsableWorldPathString + ": Set corner A: " + UtilWorld.vecToStrClean(cornerA));
-                ConstructionSiteProvider.getSite().getPluginLogger().info("Parsing " + parsableWorldPathString + ": Set corner B: " + UtilWorld.vecToStrClean(cornerB));
+                site.getPluginLogger().info("Parsing " + parsableWorldPathString + ": Set corner A: " + UtilWorld.vecToStrClean(cornerA));
+                site.getPluginLogger().info("Parsing " + parsableWorldPathString + ": Set corner B: " + UtilWorld.vecToStrClean(cornerB));
             }
 
             offlineWorld.getLevelTag().setString(AnvilFormat.LevelTag.LEVEL_NAME, mapData.getMapName() + " - " + mapData.getMapCreator() + " (" + mapData.getMapGameType().name() + ")");
@@ -323,20 +324,20 @@ public final class MapParser implements Runnable {
                     FileWriter writer = new FileWriter(parsableWorldFolder.toPath().resolve(WorldMapConstants.WORLDCONFIG_DAT).toFile());
                     BufferedWriter buffer = new BufferedWriter(writer)
             ) {
-                ConstructionSiteProvider.getSite().getPluginLogger().info("Parsing " + parsableWorldPathString + ": Writing " + WorldMapConstants.WORLDCONFIG_DAT);
+                site.getPluginLogger().info("Parsing " + parsableWorldPathString + ": Writing " + WorldMapConstants.WORLDCONFIG_DAT);
 
                 buffer.write("MAP_NAME:" + mapData.getMapName());
                 buffer.write("\nMAP_AUTHOR:" + mapData.getMapCreator());
-                buffer.write("\n\nMIN_X:" + UtilMath.getMin(cornerA.getBlockX(), cornerB.getBlockX()));
-                buffer.write("\nMAX_X:" + UtilMath.getMax(cornerA.getBlockX(), cornerB.getBlockX()));
-                buffer.write("\nMIN_Z:" + UtilMath.getMin(cornerA.getBlockZ(), cornerB.getBlockZ()));
-                buffer.write("\nMAX_Z:" + UtilMath.getMax(cornerA.getBlockZ(), cornerB.getBlockZ()));
+                buffer.write("\n\nMIN_X:" + Math.min(cornerA.getBlockX(), cornerB.getBlockX()));
+                buffer.write("\nMAX_X:" + Math.max(cornerA.getBlockX(), cornerB.getBlockX()));
+                buffer.write("\nMIN_Z:" + Math.min(cornerA.getBlockZ(), cornerB.getBlockZ()));
+                buffer.write("\nMAX_Z:" + Math.max(cornerA.getBlockZ(), cornerB.getBlockZ()));
                 if (cornerA.getBlockY() == cornerB.getBlockY()) {
                     buffer.write("\nMIN_Y:0");
                     buffer.write("\nMAX_Y:256");
                 } else {
-                    buffer.write("\nMIN_Y:" + UtilMath.getMin(cornerA.getBlockY(), cornerB.getBlockY()));
-                    buffer.write("\nMAX_Y:" + UtilMath.getMax(cornerA.getBlockY(), cornerB.getBlockY()));
+                    buffer.write("\nMIN_Y:" + Math.min(cornerA.getBlockY(), cornerB.getBlockY()));
+                    buffer.write("\nMAX_Y:" + Math.max(cornerA.getBlockY(), cornerB.getBlockY()));
                 }
 
                 // Teams
@@ -354,10 +355,10 @@ public final class MapParser implements Runnable {
                     buffer.write("\n\nCUSTOM_NAME:" + stringArrayListEntry.getKey());
                     buffer.write("\nCUSTOM_LOCS:" + locationsToString(stringArrayListEntry.getValue()));
                 }
-                ConstructionSiteProvider.getSite().getPluginLogger().info("Parsing " + parsableWorldPathString + ": Successfully created " + WorldMapConstants.WORLDCONFIG_DAT);
+                site.getPluginLogger().info("Parsing " + parsableWorldPathString + ": Successfully created " + WorldMapConstants.WORLDCONFIG_DAT);
             }
         } catch (Exception e) {
-            ConstructionSiteProvider.getSite().getPluginLogger().log(Level.SEVERE, "Error while parsing " + parsableWorldPathString, e);
+            site.getPluginLogger().log(Level.SEVERE, "Error while parsing " + parsableWorldPathString, e);
             status.set(Status.FAIL);
             return;
         }

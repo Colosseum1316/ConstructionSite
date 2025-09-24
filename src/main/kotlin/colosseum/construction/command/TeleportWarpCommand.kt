@@ -2,7 +2,7 @@ package colosseum.construction.command
 
 import colosseum.construction.BaseUtils
 import colosseum.construction.ConstructionSiteProvider
-import colosseum.utility.MutableMapData
+import colosseum.construction.data.MutableMapData
 import colosseum.utility.UtilPlayerBase
 import colosseum.utility.UtilWorld.locToStrClean
 import colosseum.utility.UtilWorld.vecToStrClean
@@ -47,6 +47,7 @@ class TeleportWarpCommand: AbstractTeleportCommand(
         val op = args[0].lowercase()
         val knownWarps = data.warps()
 
+        val site = ConstructionSiteProvider.getSite()
         if (args.size == 1) {
             if (op.equals("list", ignoreCase = true)) {
                 for ((warpKey, warpLocation) in knownWarps) {
@@ -75,7 +76,7 @@ class TeleportWarpCommand: AbstractTeleportCommand(
             }
             if (getTeleportManager().teleportPlayer(caller, location.toLocation(caller.world))) {
                 UtilPlayerBase.sendMessage(caller, "Teleported to warp point &e$key")
-                ConstructionSiteProvider.getSite().pluginLogger.info("World $path: ${caller.name} teleported to warp point $key (${vecToStrClean(location)})")
+                site.pluginLogger.info("World $path: ${caller.name} teleported to warp point $key (${vecToStrClean(location)})")
             } else {
                 sayTeleportFail(caller)
             }
@@ -91,6 +92,7 @@ class TeleportWarpCommand: AbstractTeleportCommand(
             UtilPlayerBase.sendMessage(caller, "&cInvalid input.")
             return false
         }
+        val plugin = ConstructionSiteProvider.getPlugin()
         when (op) {
             "set" -> {
                 (data as MutableMapData).warps.putIfAbsent(key, caller.location.toVector())?.let {
@@ -98,10 +100,10 @@ class TeleportWarpCommand: AbstractTeleportCommand(
                     return true
                 }
                 UtilPlayerBase.sendMessage(caller, "Created warp point &e$key")
-                Bukkit.getScheduler().runTaskAsynchronously(ConstructionSiteProvider.getPlugin()) {
+                Bukkit.getScheduler().runTaskAsynchronously(plugin) {
                     data.write()
                 }
-                ConstructionSiteProvider.getSite().pluginLogger.info("World $path: ${caller.name} created warp point $key at ${locToStrClean(caller.location)}")
+                site.pluginLogger.info("World $path: ${caller.name} created warp point $key at ${locToStrClean(caller.location)}")
                 return true
             }
 
@@ -112,10 +114,10 @@ class TeleportWarpCommand: AbstractTeleportCommand(
                 }
                 UtilPlayerBase.sendMessage(caller, "Deleting warp point &e$key")
                 val location = data.warps.remove(key)
-                Bukkit.getScheduler().runTaskAsynchronously(ConstructionSiteProvider.getPlugin()) {
+                Bukkit.getScheduler().runTaskAsynchronously(plugin) {
                     data.write()
                 }
-                ConstructionSiteProvider.getSite().pluginLogger.info("World $path: ${caller.name} deleted warp point $key (${vecToStrClean(location)})")
+                site.pluginLogger.info("World $path: ${caller.name} deleted warp point $key (${vecToStrClean(location)})")
                 return true
             }
 

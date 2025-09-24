@@ -1,9 +1,9 @@
 package colosseum.construction.data;
 
 import colosseum.construction.BaseUtils;
+import colosseum.construction.ConstructionSite;
 import colosseum.construction.ConstructionSiteProvider;
 import colosseum.construction.manager.WorldManager;
-import colosseum.utility.MutableMapData;
 import colosseum.utility.UtilWorld;
 import colosseum.utility.WorldMapConstants;
 import colosseum.utility.arcade.GameType;
@@ -95,6 +95,7 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
     }
 
     protected void read() {
+        ConstructionSite site = ConstructionSiteProvider.getSite();
         synchronized (lock) {
             String line;
 
@@ -124,15 +125,15 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
                     }
                 }
             } catch (IOException e) {
-                ConstructionSiteProvider.getSite().getPluginLogger().log(Level.SEVERE, "Cannot read dat file!", e);
+                site.getPluginLogger().log(Level.SEVERE, "Cannot read dat file!", e);
             }
         }
         if (mapGameType == null) {
-            ConstructionSiteProvider.getSite().getPluginLogger().warning("World " + worldFolder.getAbsolutePath() + " has malformed GameType info. Falling back to None.");
+            site.getPluginLogger().warning("World " + worldFolder.getAbsolutePath() + " has malformed GameType info. Falling back to None.");
             mapGameType = GameType.None;
         }
         if (mapGameType.equals(GameType.None)) {
-            ConstructionSiteProvider.getSite().getPluginLogger().warning("World " + worldFolder.getAbsolutePath() + " has a \"None\" GameType!");
+            site.getPluginLogger().warning("World " + worldFolder.getAbsolutePath() + " has a \"None\" GameType!");
         }
     }
 
@@ -144,8 +145,9 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
             boolean currentlyLive = this.live;
             ImmutableSet<UUID> adminList = adminList();
             ImmutableMap<String, Vector> warps = warps();
+            ConstructionSite site = ConstructionSiteProvider.getSite();
             try (BufferedWriter buffer = Files.newBufferedWriter(datFile.toPath(), StandardCharsets.UTF_8)) {
-                ConstructionSiteProvider.getSite().getPluginLogger().info("Writing " + datFile.getAbsolutePath());
+                site.getPluginLogger().info("Writing " + datFile.getAbsolutePath());
                 buffer.write("MAP_NAME:" + mapName);
                 buffer.write("\nMAP_AUTHOR:" + mapCreator);
                 buffer.write("\nGAME_TYPE:" + mapGameType);
@@ -153,7 +155,7 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
                 buffer.write("\ncurrentlyLive:" + currentlyLive);
                 buffer.write("\nwarps:" + warpsToString(warps));
             } catch (IOException e) {
-                ConstructionSiteProvider.getSite().getPluginLogger().log(Level.SEVERE, "Cannot write dat file!", e);
+                site.getPluginLogger().log(Level.SEVERE, "Cannot write dat file!", e);
                 FileUtils.deleteQuietly(datFile);
             }
         }

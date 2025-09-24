@@ -1,7 +1,6 @@
 package colosseum.construction.data;
 
 import colosseum.utility.MapData;
-import colosseum.utility.MutableMapData;
 import colosseum.utility.arcade.GameType;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;

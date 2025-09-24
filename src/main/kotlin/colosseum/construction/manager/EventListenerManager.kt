@@ -22,8 +22,9 @@ class EventListenerManager: ConstructionSiteManager("Events") {
     }
 
     private fun registerEvents() {
-        Bukkit.getPluginManager().registerEvents(interactionEvents, ConstructionSiteProvider.getPlugin())
-        Bukkit.getPluginManager().registerEvents(treeEvents, ConstructionSiteProvider.getPlugin())
+        val plugin = ConstructionSiteProvider.getPlugin()
+        Bukkit.getPluginManager().registerEvents(interactionEvents, plugin)
+        Bukkit.getPluginManager().registerEvents(treeEvents, plugin)
     }
 
     private fun unregisterEvents() {

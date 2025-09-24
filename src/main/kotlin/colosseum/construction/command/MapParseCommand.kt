@@ -6,7 +6,6 @@ import colosseum.construction.manager.TeleportManager
 import colosseum.utility.UtilPlayerBase
 import colosseum.utility.arcade.GameType
 import org.apache.commons.lang.StringUtils
-import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -91,9 +90,7 @@ class MapParseCommand: AbstractMapAdminCommand(
         }
         Command.broadcastCommandMessage(caller, "Parse ${data.mapName} (${data.mapGameType.name})", true)
         ConstructionSiteProvider.getSite().pluginLogger.info("${caller.name} requested parsing $path")
-        Bukkit.getScheduler().runTask(ConstructionSiteProvider.getPlugin()) {
-            getParseManager().schedule(world, args0.asList(), parseLoc, radius)
-        }
+        getParseManager().schedule(world, args0.asList(), parseLoc, radius)
         return true
     }
 }

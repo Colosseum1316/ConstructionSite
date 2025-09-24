@@ -4,10 +4,10 @@ import colosseum.construction.BaseUtils
 import colosseum.construction.BaseUtils.getGameTypes
 import colosseum.construction.ConstructionSiteProvider
 import colosseum.construction.PluginUtils
+import colosseum.construction.data.MutableMapData
 import colosseum.construction.manager.MapDataManager
 import colosseum.construction.manager.TeleportManager
 import colosseum.construction.manager.WorldManager
-import colosseum.utility.MutableMapData
 import colosseum.utility.arcade.GameType
 import org.bukkit.Bukkit
 import org.bukkit.Difficulty
@@ -117,7 +117,8 @@ class NewMapCommand: AbstractOpCommand(
             }
         }
 
-        Bukkit.getScheduler().runTask(ConstructionSiteProvider.getPlugin()) {
+        val plugin = ConstructionSiteProvider.getPlugin()
+        Bukkit.getScheduler().runTask(plugin) {
             val world = worldManager.createOrLoadWorld(worldCreator) ?: throw RuntimeException("Could not create world ${worldCreator.name()}")
             world.difficulty = Difficulty.EASY
             world.setSpawnLocation(0, 106, 0)
@@ -128,7 +129,7 @@ class NewMapCommand: AbstractOpCommand(
             world.time = 6000
             world.pvp = false
 
-            Bukkit.getScheduler().runTaskAsynchronously(ConstructionSiteProvider.getPlugin()) {
+            Bukkit.getScheduler().runTaskAsynchronously(plugin) {
                 val mapData = getMapDataManager().get(world) as MutableMapData
                 mapData.mapName = worldFolderName
                 mapData.mapCreator = caller.name
@@ -136,7 +137,7 @@ class NewMapCommand: AbstractOpCommand(
                 mapData.mapGameType = gameType
                 mapData.write()
 
-                Bukkit.getScheduler().runTask(ConstructionSiteProvider.getPlugin()) {
+                Bukkit.getScheduler().runTask(plugin) {
                     getTeleportManager().teleportPlayer(caller, world.spawnLocation)
                     caller.gameMode = GameMode.CREATIVE
                     caller.isFlying = true

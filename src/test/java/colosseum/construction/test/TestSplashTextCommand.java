@@ -2,6 +2,7 @@ package colosseum.construction.test;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
+import colosseum.construction.ConstructionSite;
 import colosseum.construction.ConstructionSiteProvider;
 import colosseum.construction.command.AbstractOpCommand;
 import colosseum.construction.command.OpAddSplashTextCommand;
@@ -69,14 +70,15 @@ class TestSplashTextCommand {
         player.assertSaid("Add splash text: Line 1 of splash text");
         player.assertSaid("Add splash text: Line 2 &cof splash text");
         player.assertNoMoreSaid();
-        List<String> splashText = ConstructionSiteProvider.getSite().getManager(SplashTextManager.class).getText();
+        ConstructionSite site = ConstructionSiteProvider.getSite();
+        List<String> splashText = site.getManager(SplashTextManager.class).getText();
         Assertions.assertLinesMatch(List.of(
                 "Line 1 of splash text",
                 "Line 2 &cof splash text"
         ), splashText);
-        ConstructionSiteProvider.getSite().getManager(SplashTextManager.class).unregister();
-        ConstructionSiteProvider.getSite().getManager(SplashTextManager.class).register();
-        splashText = ConstructionSiteProvider.getSite().getManager(SplashTextManager.class).getText();
+        site.getManager(SplashTextManager.class).unregister();
+        site.getManager(SplashTextManager.class).register();
+        splashText = site.getManager(SplashTextManager.class).getText();
         Assertions.assertLinesMatch(List.of(
                 "Line 1 of splash text",
                 "Line 2 &cof splash text"
@@ -93,11 +95,11 @@ class TestSplashTextCommand {
         Assertions.assertTrue(command.runConstruction(player, label, new String[]{}));
         player.assertSaid("Clear all splash text.");
         player.assertNoMoreSaid();
-        splashText = ConstructionSiteProvider.getSite().getManager(SplashTextManager.class).getText();
+        splashText = site.getManager(SplashTextManager.class).getText();
         Assertions.assertEquals(0, splashText.size());
-        ConstructionSiteProvider.getSite().getManager(SplashTextManager.class).unregister();
-        ConstructionSiteProvider.getSite().getManager(SplashTextManager.class).register();
-        splashText = ConstructionSiteProvider.getSite().getManager(SplashTextManager.class).getText();
+        site.getManager(SplashTextManager.class).unregister();
+        site.getManager(SplashTextManager.class).register();
+        splashText = site.getManager(SplashTextManager.class).getText();
         Assertions.assertEquals(0, splashText.size());
     }
 }

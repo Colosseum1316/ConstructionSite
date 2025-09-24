@@ -1,5 +1,6 @@
 package colosseum.construction.manager;
 
+import colosseum.construction.ConstructionSite;
 import colosseum.construction.ConstructionSiteProvider;
 import colosseum.construction.MapParser;
 import colosseum.construction.data.FinalizedMapData;
@@ -9,6 +10,7 @@ import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
@@ -54,13 +56,12 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
         selfBukkitTask = null;
     }
 
-    /**
-     * <b>Call this method from main thread!</b>
-     */
     public void schedule(@NotNull World originalWorld, List<String> args, Location startPoint, int size) {
-        originalWorld.save();
-        getWorldManager().unloadWorld(originalWorld, true);
-        fire(originalWorld, args, startPoint, size);
+        Bukkit.getScheduler().runTask(ConstructionSiteProvider.getPlugin(), () -> {
+            originalWorld.save();
+            getWorldManager().unloadWorld(originalWorld, true);
+            fire(originalWorld, args, startPoint, size);
+        });
     }
 
     private void fire(@NotNull World originalWorld, List<String> args, Location startPoint, int size) {
@@ -76,16 +77,18 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
 
             final File destination = worldManager.getOnParseRootPath().toPath().resolve(WorldMapConstants.PARSE_PREFIX + originalWorldFolder.getName()).toFile();
 
-            Bukkit.getScheduler().runTaskAsynchronously(ConstructionSiteProvider.getPlugin(), () -> {
+            JavaPlugin plugin = ConstructionSiteProvider.getPlugin();
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                 try {
                     if (destination.exists()) {
                         FileUtils.deleteDirectory(destination);
                     }
 
-                    ConstructionSiteProvider.getSite().getPluginLogger().info("Preparing world parse. Copying " + originalWorldFolder.getAbsolutePath() + " to " + destination.getAbsolutePath());
+                    ConstructionSite site = ConstructionSiteProvider.getSite();
+                    site.getPluginLogger().info("Preparing world parse. Copying " + originalWorldFolder.getAbsolutePath() + " to " + destination.getAbsolutePath());
                     FileUtils.copyDirectory(originalWorldFolder, destination);
 
-                    ConstructionSiteProvider.getSite().getPluginLogger().info("Deleting unneeded files in " + destination.getAbsolutePath());
+                    site.getPluginLogger().info("Deleting unneeded files in " + destination.getAbsolutePath());
                     for (File file : Objects.requireNonNull(destination.listFiles())) {
                         String filename = file.getName();
                         if (!filename.equalsIgnoreCase(WorldMapConstants.LEVEL_DAT)
@@ -96,10 +99,10 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
                         }
                     }
 
-                    Bukkit.getScheduler().runTask(ConstructionSiteProvider.getPlugin(), () -> {
+                    Bukkit.getScheduler().runTask(plugin, () -> {
                         worldManager.loadWorld(originalWorldRelativePath);
                         parser = new MapParser(destination, args, startPoint, size);
-                        parserBukkitTask = Bukkit.getScheduler().runTaskAsynchronously(ConstructionSiteProvider.getPlugin(), parser);
+                        parserBukkitTask = Bukkit.getScheduler().runTaskAsynchronously(plugin, parser);
                     });
                 } catch (Exception e) {
                     failAndCleanup(destination, e);
