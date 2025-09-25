@@ -6,10 +6,14 @@ import colosseum.construction.MapParser;
 import colosseum.construction.data.FinalizedMapData;
 import colosseum.utility.UtilZipper;
 import colosseum.utility.WorldMapConstants;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
@@ -117,6 +121,11 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
     public void run() {
         if (parser != null) {
             final AtomicReference<MapParser.Status> status = parser.getStatus();
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                TextComponent message = new TextComponent(String.format("A map parse task running. (%.2f%%)", getProgress() * 100.0));
+                message.setColor(ChatColor.RED);
+                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, message);
+            }
             if (!status.get().isDone()) {
                 return;
             }
@@ -144,6 +153,12 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
                     failAndCleanup(worldFolder, e);
                 }
             });
+        } else {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                TextComponent message = new TextComponent("No parse task running.");
+                message.setColor(ChatColor.GRAY);
+                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, message);
+            }
         }
     }
 
