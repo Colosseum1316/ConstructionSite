@@ -51,7 +51,7 @@ public final class MapParser implements Runnable {
     private final HashMap<String, ArrayList<Vector>> teamLocations = new HashMap<>();
     private final HashMap<String, ArrayList<Vector>> dataLocations = new HashMap<>();
     private final HashMap<String, ArrayList<Vector>> customLocations = new HashMap<>();
-    private final int size;
+    private final int radius;
     private final int wholeCubeSize;
 
     private long processed = 0;
@@ -82,14 +82,14 @@ public final class MapParser implements Runnable {
         this(parsableWorldFolder, args, startPoint, 600);
     }
 
-    public MapParser(@NotNull File parsableWorldFolder, List<String> args, Location startPoint, int size) {
+    public MapParser(@NotNull File parsableWorldFolder, List<String> args, Location startPoint, int radius) {
         this.parsableWorldFolder = parsableWorldFolder;
         this.parsableWorldPathString = parsableWorldFolder.getAbsolutePath();
         this.args = List.copyOf(args);
         this.startPoint = new Vector(startPoint.getX(), startPoint.getY(), startPoint.getZ());
-        this.size = size;
-        this.wholeCubeSize = ((size * 2) * (size * 2) * 256);
-        Validate.isTrue(size > 0, "size must be greater than 0");
+        this.radius = radius;
+        Validate.isTrue(radius > 0, "Radius must be greater than 0");
+        this.wholeCubeSize = (int) (Math.pow(radius * 2 + 1, 2) * 256);
         ConstructionSite site = ConstructionSiteProvider.getSite();
         this.mapData = site.getManager(MapDataManager.class).getFinalized(parsableWorldFolder);
         for (String arg : args) {
@@ -185,9 +185,9 @@ public final class MapParser implements Runnable {
 
         try (ChunkAccess<AnvilChunk> chunkAccess = (ChunkAccess<AnvilChunk>) offlineWorld.getChunkAccess()) {
             int offsetX;
-            for (offsetX = -size; offsetX <= size; offsetX++) {
+            for (offsetX = -radius; offsetX <= radius; offsetX++) {
                 int offsetZ;
-                for (offsetZ = -size; offsetZ <= size; offsetZ++) {
+                for (offsetZ = -radius; offsetZ <= radius; offsetZ++) {
                     final int blockX = startPoint.getBlockX() + offsetX;
                     final int blockZ = startPoint.getBlockZ() + offsetZ;
                     final Chunk chunk = getChunk(chunkAccess, blockX, blockZ);

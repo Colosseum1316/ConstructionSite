@@ -60,15 +60,15 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
         selfBukkitTask = null;
     }
 
-    public void schedule(@NotNull World originalWorld, List<String> args, Location startPoint, int size) {
+    public void schedule(@NotNull World originalWorld, List<String> args, Location startPoint, int radius) {
         Bukkit.getScheduler().runTask(ConstructionSiteProvider.getPlugin(), () -> {
             originalWorld.save();
             getWorldManager().unloadWorld(originalWorld, true);
-            fire(originalWorld, args, startPoint, size);
+            fire(originalWorld, args, startPoint, radius);
         });
     }
 
-    private void fire(@NotNull World originalWorld, List<String> args, Location startPoint, int size) {
+    private void fire(@NotNull final World originalWorld, final List<String> args, final Location startPoint, final int radius) {
         if (isRunning()) {
             return;
         }
@@ -105,7 +105,7 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
 
                     Bukkit.getScheduler().runTask(plugin, () -> {
                         worldManager.loadWorld(originalWorldRelativePath);
-                        parser = new MapParser(destination, args, startPoint, size);
+                        parser = new MapParser(destination, args, startPoint, radius);
                         parserBukkitTask = Bukkit.getScheduler().runTaskAsynchronously(plugin, parser);
                     });
                 } catch (Exception e) {
