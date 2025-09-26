@@ -6,10 +6,14 @@ import colosseum.construction.MapParser;
 import colosseum.construction.data.FinalizedMapData;
 import colosseum.utility.UtilZipper;
 import colosseum.utility.WorldMapConstants;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
@@ -56,15 +60,15 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
         selfBukkitTask = null;
     }
 
-    public void schedule(@NotNull World originalWorld, List<String> args, Location startPoint, int size) {
+    public void schedule(@NotNull World originalWorld, List<String> args, Location startPoint, int radius) {
         Bukkit.getScheduler().runTask(ConstructionSiteProvider.getPlugin(), () -> {
             originalWorld.save();
             getWorldManager().unloadWorld(originalWorld, true);
-            fire(originalWorld, args, startPoint, size);
+            fire(originalWorld, args, startPoint, radius);
         });
     }
 
-    private void fire(@NotNull World originalWorld, List<String> args, Location startPoint, int size) {
+    private void fire(@NotNull final World originalWorld, final List<String> args, final Location startPoint, final int radius) {
         if (isRunning()) {
             return;
         }
@@ -101,7 +105,7 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
 
                     Bukkit.getScheduler().runTask(plugin, () -> {
                         worldManager.loadWorld(originalWorldRelativePath);
-                        parser = new MapParser(destination, args, startPoint, size);
+                        parser = new MapParser(destination, args, startPoint, radius);
                         parserBukkitTask = Bukkit.getScheduler().runTaskAsynchronously(plugin, parser);
                     });
                 } catch (Exception e) {
@@ -117,6 +121,11 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
     public void run() {
         if (parser != null) {
             final AtomicReference<MapParser.Status> status = parser.getStatus();
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                TextComponent message = new TextComponent(String.format("A map parse task running. (%.2f%%)", getProgress() * 100.0));
+                message.setColor(ChatColor.RED);
+                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, message);
+            }
             if (!status.get().isDone()) {
                 return;
             }
@@ -144,6 +153,12 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
                     failAndCleanup(worldFolder, e);
                 }
             });
+        } else {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                TextComponent message = new TextComponent("No parse task running.");
+                message.setColor(ChatColor.GRAY);
+                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, message);
+            }
         }
     }
 
