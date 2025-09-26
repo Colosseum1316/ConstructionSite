@@ -1,6 +1,7 @@
 package colosseum.construction.data;
 
 import colosseum.construction.BaseUtils;
+import colosseum.construction.Constants;
 import colosseum.construction.ConstructionSite;
 import colosseum.construction.ConstructionSiteProvider;
 import colosseum.construction.manager.WorldManager;
@@ -36,8 +37,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 public class MapDataImpl extends AbstractMapData implements MutableMapData {
-    private static final String WARPS_DELIMITER = ";";
-
     private final Object lock;
 
     protected File datFile;
@@ -111,7 +110,7 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
                     switch (tokens.get(0)) {
                         case "currentlyLive" -> live = Boolean.parseBoolean(tokens.get(1));
                         case "warps" -> {
-                            for (String w : tokens.get(1).split(WARPS_DELIMITER)) {
+                            for (String w : tokens.get(1).split(Constants.LOCATIONS_DELIMITER)) {
                                 String[] entry = w.split("@");
                                 Validate.isTrue(entry.length >= 2);
                                 String[] xyz = entry[1].replaceAll("[()]", "").split(",");
@@ -166,6 +165,6 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
     }
 
     private String warpsToString(ImmutableMap<String, Vector> warps) {
-        return String.join(WARPS_DELIMITER, warps.entrySet().stream().map(entry -> entry.getKey() + "@" + UtilWorld.vecToStrClean(entry.getValue())).toList());
+        return String.join(Constants.LOCATIONS_DELIMITER, warps.entrySet().stream().map(entry -> entry.getKey() + "@" + UtilWorld.vecToStrClean(entry.getValue())).toList());
     }
 }

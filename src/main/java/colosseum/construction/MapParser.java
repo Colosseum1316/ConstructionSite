@@ -366,7 +366,7 @@ public final class MapParser implements Runnable {
     }
 
     private String locationsToString(List<Vector> locs) {
-        return String.join(";", locs.stream().map(loc -> String.format("%d,%d,%d", (int) loc.getX(), (int) loc.getY(), (int) loc.getZ())).toArray(String[]::new));
+        return String.join(Constants.LOCATIONS_DELIMITER, locs.stream().map(loc -> String.format("%d,%d,%d", (int) loc.getX(), (int) loc.getY(), (int) loc.getZ())).toArray(String[]::new));
     }
 
     private void setTeamLocations(String key, WrappedBaseBlock block, WrappedBaseBlock wool, World offlineWorld, Chunk chunk) {
