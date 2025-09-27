@@ -4,7 +4,6 @@ import colosseum.construction.data.FinalizedMapData;
 import colosseum.construction.manager.MapDataManager;
 import colosseum.utility.UtilWorld;
 import colosseum.utility.WorldMapConstants;
-import colosseum.utility.arcade.GameType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import nl.rutgerkok.hammer.Chunk;
@@ -44,7 +43,6 @@ public final class MapParser implements Runnable {
     public final File parsableWorldFolder;
     private final String parsableWorldPathString;
     public final FinalizedMapData mapData;
-    private final List<String> args;
     private final Vector startPoint;
 
     private final HashSet<Short> dataId = new HashSet<>();
@@ -85,7 +83,6 @@ public final class MapParser implements Runnable {
     public MapParser(@NotNull File parsableWorldFolder, List<String> args, Location startPoint, int radius) {
         this.parsableWorldFolder = parsableWorldFolder;
         this.parsableWorldPathString = parsableWorldFolder.getAbsolutePath();
-        this.args = List.copyOf(args);
         this.startPoint = new Vector(startPoint.getX(), startPoint.getY(), startPoint.getZ());
         this.radius = radius;
         Validate.isTrue(radius > 0, "Radius must be greater than 0");
