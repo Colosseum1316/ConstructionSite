@@ -211,15 +211,6 @@ public final class MapParser implements Runnable {
                             continue;
                         }
 
-                        if (wrappedObject.isMaterial(Material.GLASS)) {
-                            if (mapData.getMapGameType().equals(GameType.MicroBattle)) {
-                                String name = "20"; // Set auto glass
-                                customLocations.computeIfAbsent(name, k -> new ArrayList<>()).add(wrappedObject.getLocation());
-                                site.getPluginLogger().info("Parsing " + parsableWorldPathString + ": Set Auto glass at " + UtilWorld.vecToStrClean(wrappedObject.getLocation()));
-                                setAir(offlineWorld, chunk, wrappedObject);
-                            }
-                        }
-
                         // Signs
                         if (wrappedObject.isMaterial(Material.SIGN_POST) || wrappedObject.isMaterial(Material.WALL_SIGN)) {
                             WrappedBaseBlock wrappedBlockSponge = getBlockBare(offlineWorld, chunk, blockX, blockY - 1, blockZ);
@@ -290,19 +281,16 @@ public final class MapParser implements Runnable {
                             }
                         }
 
-                        if (!wrappedObject.isMaterial(Material.IRON_PLATE)) {
-                            continue;
+                        if (wrappedObject.isMaterial(Material.IRON_PLATE)) {
+                            WrappedBaseBlock wrappedBlockWool = getBlockBare(offlineWorld, chunk, blockX, blockY - 1, blockZ);
+                            if (wrappedBlockWool.isMaterial(Material.WOOL)) {
+                                Wool woolData = new Wool(wrappedBlockWool.typeId, wrappedBlockWool.data);
+                                dataLocations.computeIfAbsent(woolData.getColor().name(), k -> new ArrayList<>()).add(wrappedBlockWool.getLocation());
+                                site.getPluginLogger().info("Parsing " + parsableWorldPathString + ": Found data location at " + UtilWorld.vecToStrClean(wrappedBlockWool.getLocation()));
+                                setAir(offlineWorld, chunk, wrappedObject);
+                                setAir(offlineWorld, chunk, wrappedBlockWool);
+                            }
                         }
-
-                        WrappedBaseBlock wrappedBlockWool = getBlockBare(offlineWorld, chunk, blockX, blockY - 1, blockZ);
-                        if (!wrappedBlockWool.isMaterial(Material.WOOL)) {
-                            continue;
-                        }
-                        Wool woolData = new Wool(wrappedBlockWool.typeId, wrappedBlockWool.data);
-                        dataLocations.computeIfAbsent(woolData.getColor().name(), k -> new ArrayList<>()).add(wrappedBlockWool.getLocation());
-                        site.getPluginLogger().info("Parsing " + parsableWorldPathString + ": Found data location at " + UtilWorld.vecToStrClean(wrappedBlockWool.getLocation()));
-                        setAir(offlineWorld, chunk, wrappedObject);
-                        setAir(offlineWorld, chunk, wrappedBlockWool);
                     }
                     chunkAccess.saveChunk((AnvilChunk) chunk);
                 }
