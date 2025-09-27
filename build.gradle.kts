@@ -134,6 +134,7 @@ tasks.shadowJar {
         exclude(dependency("org.jetbrains:annotations:.*"))
         exclude(dependency("org.projectlombok:lombok:.*"))
     }
+    relocate("org.apache.commons.io", "colosseum.construction.shadow.org.apache.commons.io")
 }
 
 tasks.build {
