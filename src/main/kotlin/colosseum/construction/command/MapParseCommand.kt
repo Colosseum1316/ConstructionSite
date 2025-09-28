@@ -59,6 +59,10 @@ class MapParseCommand: AbstractMapAdminCommand(
                     UtilPlayerBase.sendMessage(caller, "&cRadius must be no less than 1")
                     return true
                 }
+                if (radius > 2000) {
+                    UtilPlayerBase.sendMessage(caller, "&cAre you sure you wanna build a map this large-scale?")
+                    return true
+                }
             } catch (ex: NumberFormatException) {
                 return false
             }

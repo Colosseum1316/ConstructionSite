@@ -50,7 +50,7 @@ public final class MapParser implements Runnable {
     private final HashMap<String, ArrayList<Vector>> dataLocations = new HashMap<>();
     private final HashMap<String, ArrayList<Vector>> customLocations = new HashMap<>();
     private final int radius;
-    private final int wholeCubeSize;
+    private final long wholeCubeSize;
 
     private long processed = 0;
 
@@ -86,7 +86,7 @@ public final class MapParser implements Runnable {
         this.startPoint = new Vector(startPoint.getX(), startPoint.getY(), startPoint.getZ());
         this.radius = radius;
         Validate.isTrue(radius > 0, "Radius must be greater than 0");
-        this.wholeCubeSize = (int) (Math.pow(radius * 2 + 1, 2) * 256);
+        this.wholeCubeSize = (long) (Math.pow(radius * 2 + 1, 2) * 256);
         ConstructionSite site = ConstructionSiteProvider.getSite();
         this.mapData = site.getManager(MapDataManager.class).getFinalized(parsableWorldFolder);
         for (String arg : args) {
@@ -181,16 +181,14 @@ public final class MapParser implements Runnable {
         Vector cornerB = null;
 
         try (ChunkAccess<AnvilChunk> chunkAccess = (ChunkAccess<AnvilChunk>) offlineWorld.getChunkAccess()) {
-            int offsetX;
-            for (offsetX = -radius; offsetX <= radius; offsetX++) {
-                int offsetZ;
-                for (offsetZ = -radius; offsetZ <= radius; offsetZ++) {
+            for (int offsetX = -radius; offsetX <= radius; offsetX++) {
+                for (int offsetZ = -radius; offsetZ <= radius; offsetZ++) {
                     final int blockX = startPoint.getBlockX() + offsetX;
                     final int blockZ = startPoint.getBlockZ() + offsetZ;
                     final Chunk chunk = getChunk(chunkAccess, blockX, blockZ);
 
-                    int offsetY;
-                    for (offsetY = 0; offsetY <= 255; offsetY++) {
+                    for (int offsetY = 0; offsetY <= 255; offsetY++) {
+                        Validate.isTrue(processed <= wholeCubeSize, String.format("Overflowing: radius %d, offsetX %d, offsetY %d, offsetZ %d, processed %d, wholeCubeSize %d", radius, offsetX, offsetY, offsetZ, processed, wholeCubeSize));
                         if (processed % 10000000 == 0) {
                             site.getPluginLogger().info("Parsing " + parsableWorldPathString + ": Scanning: " + processed / 1000000 + "M of " + wholeCubeSize / 1000000 + "M");
                         }
