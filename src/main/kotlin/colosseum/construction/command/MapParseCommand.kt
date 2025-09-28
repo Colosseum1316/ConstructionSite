@@ -55,8 +55,8 @@ class MapParseCommand: AbstractMapAdminCommand(
         if (args0.isNotEmpty()) {
             try {
                 radius = args0[0].toInt()
-                if (radius < 1) {
-                    UtilPlayerBase.sendMessage(caller, "&cRadius must be no less than 1")
+                if (radius < 10) {
+                    UtilPlayerBase.sendMessage(caller, "&cRadius must be no less than 10")
                     return true
                 }
                 if (radius > 2000) {
