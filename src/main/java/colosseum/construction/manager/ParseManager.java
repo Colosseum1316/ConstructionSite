@@ -194,7 +194,7 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
             if (unregistering) {
                 FileUtils.deleteQuietly(folder);
             } else {
-                Bukkit.getScheduler().runTaskAsynchronously(ConstructionSiteProvider.getPlugin(), () -> FileUtils.deleteQuietly(folder));
+                Bukkit.getScheduler().runTaskLaterAsynchronously(ConstructionSiteProvider.getPlugin(), () -> FileUtils.deleteQuietly(folder), 20L);
             }
         }
         parser = null;
@@ -204,7 +204,7 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
     private void failAndCleanup(File destination, Throwable e) {
         this.cancel();
         if (destination != null) {
-            Bukkit.getScheduler().runTaskAsynchronously(ConstructionSiteProvider.getPlugin(), () -> FileUtils.deleteQuietly(destination));
+            Bukkit.getScheduler().runTaskLaterAsynchronously(ConstructionSiteProvider.getPlugin(), () -> FileUtils.deleteQuietly(destination), 20L);
         }
         if (e != null) {
             ConstructionSiteProvider.getSite().getPluginLogger().log(Level.SEVERE, "Error whilst parsing map", e);
