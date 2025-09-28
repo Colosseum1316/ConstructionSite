@@ -186,6 +186,7 @@ public final class MapParser implements Runnable {
                     final int blockX = startPoint.getBlockX() + offsetX;
                     final int blockZ = startPoint.getBlockZ() + offsetZ;
                     final Chunk chunk = getChunk(chunkAccess, blockX, blockZ);
+                    boolean updated = false;
 
                     for (int offsetY = 0; offsetY <= 255; offsetY++) {
                         Validate.isTrue(processed <= wholeCubeSize, String.format("Overflowing: radius %d, offsetX %d, offsetY %d, offsetZ %d, processed %d, wholeCubeSize %d", radius, offsetX, offsetY, offsetZ, processed, wholeCubeSize));
@@ -229,6 +230,8 @@ public final class MapParser implements Runnable {
                                 customLocations.computeIfAbsent(name.toString(), k -> new ArrayList<>()).add(wrappedBlockSponge.getLocation());
                                 setAir(offlineWorld, chunk, wrappedBlockSponge);
                                 setAir(offlineWorld, chunk, wrappedObject);
+                                updated = true;
+                                continue;
                             }
                         }
                         if (wrappedObject.isMaterial(Material.LEAVES) || wrappedObject.isMaterial(Material.LEAVES_2)) {
@@ -236,6 +239,8 @@ public final class MapParser implements Runnable {
                                 // https://minecraft.fandom.com/wiki/Java_Edition_data_values/Pre-flattening#Leaves
                                 // For tree leaves, you add 4 to get the no decay version.
                                 setBlock(offlineWorld, chunk, wrappedObject.x, wrappedObject.y, wrappedObject.z, wrappedObject.typeId, (byte) (wrappedObject.data + 4));
+                                updated = true;
+                                continue;
                             }
                         }
 
@@ -272,7 +277,10 @@ public final class MapParser implements Runnable {
                                     case 13 -> setTeamLocations("Green", wrappedObject, wrappedBlockWool, offlineWorld, chunk);
                                     case 14 -> setTeamLocations("Red", wrappedObject, wrappedBlockWool, offlineWorld, chunk);
                                     case 15 -> setTeamLocations("Black", wrappedObject, wrappedBlockWool, offlineWorld, chunk);
+                                    default -> throw new IllegalStateException("Unexpected wool data: " + wrappedBlockWool.data);
                                 }
+                                updated = true;
+                                continue;
                             }
                         }
 
@@ -284,10 +292,13 @@ public final class MapParser implements Runnable {
                                 site.getPluginLogger().info("Parsing " + parsableWorldPathString + ": Found data location at " + UtilWorld.vecToStrClean(wrappedBlockWool.getLocation()));
                                 setAir(offlineWorld, chunk, wrappedObject);
                                 setAir(offlineWorld, chunk, wrappedBlockWool);
+                                updated = true;
                             }
                         }
                     }
-                    chunkAccess.saveChunk((AnvilChunk) chunk);
+                    if (updated) {
+                        chunkAccess.saveChunk((AnvilChunk) chunk);
+                    }
                 }
             }
 
