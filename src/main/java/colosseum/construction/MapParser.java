@@ -57,10 +57,15 @@ public final class MapParser implements Runnable {
     public enum Status {
         SUCCESS,
         FAIL,
+        CANCELLED,
         RUNNING;
 
-        public boolean isDone() {
-            return this != RUNNING;
+        public boolean isRunning() {
+            return this == RUNNING;
+        }
+
+        public boolean isCancelled() {
+            return this == CANCELLED;
         }
 
         public boolean isSuccess() {
@@ -68,7 +73,7 @@ public final class MapParser implements Runnable {
         }
 
         public boolean isFail() {
-            return this == FAIL;
+            return this == FAIL || this == CANCELLED;
         }
     }
 
@@ -190,6 +195,7 @@ public final class MapParser implements Runnable {
 
                     for (int offsetY = 0; offsetY <= 255; offsetY++) {
                         Validate.isTrue(processed <= wholeCubeSize, String.format("Overflowing: radius %d, offsetX %d, offsetY %d, offsetZ %d, processed %d, wholeCubeSize %d", radius, offsetX, offsetY, offsetZ, processed, wholeCubeSize));
+                        Validate.isTrue(!status.get().isCancelled(), "Task is cancelled.");
                         if (processed % 10000000 == 0) {
                             site.getPluginLogger().info("Parsing " + parsableWorldPathString + ": Scanning: " + processed / 1000000 + "M of " + wholeCubeSize / 1000000 + "M");
                         }
@@ -353,7 +359,12 @@ public final class MapParser implements Runnable {
             }
         } catch (Exception e) {
             site.getPluginLogger().log(Level.SEVERE, "Error while parsing " + parsableWorldPathString, e);
-            status.set(Status.FAIL);
+            status.getAndUpdate((v) -> {
+                if (!v.isCancelled()) {
+                    return Status.FAIL;
+                }
+                return v;
+            });
             return;
         }
         status.set(Status.SUCCESS);

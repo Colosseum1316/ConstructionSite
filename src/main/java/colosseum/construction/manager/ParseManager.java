@@ -126,7 +126,7 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
                 message.setColor(ChatColor.RED);
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR, message);
             }
-            if (!status.get().isDone()) {
+            if (status.get().isRunning()) {
                 return;
             }
             final FinalizedMapData mapData = parser.mapData;
@@ -184,6 +184,12 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
             parserBukkitTask = null;
         }
         if (parser != null) {
+            parser.getStatus().getAndUpdate((v) -> {
+                if (v.isRunning()) {
+                    return MapParser.Status.CANCELLED;
+                }
+                return v;
+            });
             File folder = parser.parsableWorldFolder;
             if (unregistering) {
                 FileUtils.deleteQuietly(folder);

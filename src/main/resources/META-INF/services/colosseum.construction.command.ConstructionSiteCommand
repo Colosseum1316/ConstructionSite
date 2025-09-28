@@ -13,6 +13,7 @@ colosseum.construction.command.MapNameCommand
 colosseum.construction.command.MapParseCommand
 colosseum.construction.command.NewMapCommand
 colosseum.construction.command.OpAddSplashTextCommand
+colosseum.construction.command.OpCancelParseCommand
 colosseum.construction.command.OpClearSplashTextCommand
 colosseum.construction.command.vanilla.DifficultyCommand
 colosseum.construction.command.vanilla.TeleportCommand
