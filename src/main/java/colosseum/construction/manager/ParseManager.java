@@ -55,7 +55,7 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
 
     @Override
     public void unregister() {
-        this.cancel();
+        this.cancel(true);
         selfBukkitTask.cancel();
         selfBukkitTask = null;
     }
@@ -175,13 +175,21 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
     }
 
     public void cancel() {
+        this.cancel(false);
+    }
+
+    private void cancel(boolean unregistering) {
         if (parserBukkitTask != null) {
             parserBukkitTask.cancel();
             parserBukkitTask = null;
         }
         if (parser != null) {
             File folder = parser.parsableWorldFolder;
-            Bukkit.getScheduler().runTaskAsynchronously(ConstructionSiteProvider.getPlugin(), () -> FileUtils.deleteQuietly(folder));
+            if (unregistering) {
+                FileUtils.deleteQuietly(folder);
+            } else {
+                Bukkit.getScheduler().runTaskAsynchronously(ConstructionSiteProvider.getPlugin(), () -> FileUtils.deleteQuietly(folder));
+            }
         }
         parser = null;
         running.set(false);
