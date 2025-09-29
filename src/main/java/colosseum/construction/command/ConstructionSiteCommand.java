@@ -50,11 +50,7 @@ public abstract class ConstructionSiteCommand implements CommandExecutor {
     }
 
     public boolean canRun(Player caller) {
-        try {
-            return ConstructionSiteProvider.getPlugin().isEnabled();
-        } catch (Exception e) {
-            return false;
-        }
+        return ConstructionSiteProvider.isLive();
     }
 
     @Override

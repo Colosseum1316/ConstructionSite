@@ -1,6 +1,7 @@
 package colosseum.construction;
 
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang.Validate;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -8,9 +9,15 @@ import org.bukkit.plugin.java.JavaPlugin;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ConstructionSiteProvider {
     private static ConstructionSite instance;
+    @Getter
+    private static boolean live;
 
     public static void setSite(ConstructionSite instance) {
         ConstructionSiteProvider.instance = instance;
+    }
+
+    public static void markLive(boolean live) {
+        ConstructionSiteProvider.live = live;
     }
 
     public static ConstructionSite getSite() {

@@ -47,10 +47,12 @@ public class DummySite1 implements DummySite {
     public void setup() {
         ConstructionSiteProvider.setSite(this);
         PluginUtils.registerManagers(managersReference, managers);
+        ConstructionSiteProvider.markLive(true);
     }
 
     @Override
     public void teardown() {
+        ConstructionSiteProvider.markLive(false);
         PluginUtils.unregisterManagers(managersReference, managers);
         managers.clear();
         managersReference.clear();

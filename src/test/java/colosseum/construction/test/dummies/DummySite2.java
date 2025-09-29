@@ -25,10 +25,12 @@ public class DummySite2 implements DummySite {
     @Override
     public void setup() {
         ConstructionSiteProvider.setSite(this);
+        ConstructionSiteProvider.markLive(true);
     }
 
     @Override
     public void teardown() {
+        ConstructionSiteProvider.markLive(false);
         ConstructionSiteProvider.setSite(null);
     }
 

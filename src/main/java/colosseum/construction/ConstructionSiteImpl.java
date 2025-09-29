@@ -38,10 +38,12 @@ public final class ConstructionSiteImpl extends JavaPlugin implements Constructi
     @Override
     public void onEnable() {
         PluginUtils.registerManagers(managersReference, managers);
+        ConstructionSiteProvider.markLive(true);
     }
 
     @Override
     public void onDisable() {
+        ConstructionSiteProvider.markLive(false);
         PluginUtils.unregisterManagers(managersReference, managers);
         managers.clear();
         managersReference.clear();
