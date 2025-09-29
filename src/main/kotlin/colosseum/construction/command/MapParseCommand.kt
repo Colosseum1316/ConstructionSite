@@ -20,7 +20,7 @@ class MapParseCommand: AbstractMapAdminCommand(
     }
 
     override fun canRun(console: CommandSender): Boolean {
-        return true
+        return ConstructionSiteProvider.isLive()
     }
 
     override fun canRun(caller: Player): Boolean {

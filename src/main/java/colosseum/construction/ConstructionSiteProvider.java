@@ -9,11 +9,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ConstructionSiteProvider {
     private static ConstructionSite instance;
-    @Getter
     private static boolean live;
 
     public static void setSite(ConstructionSite instance) {
         ConstructionSiteProvider.instance = instance;
+    }
+
+    public static boolean isLive() {
+        return live;
     }
 
     public static void markLive(boolean live) {

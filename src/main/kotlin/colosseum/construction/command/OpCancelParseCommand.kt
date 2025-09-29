@@ -12,7 +12,7 @@ class OpCancelParseCommand: AbstractOpCommand(
     "/cancelparse"
 ) {
     override fun canRun(console: CommandSender): Boolean {
-        return true
+        return ConstructionSiteProvider.isLive()
     }
 
     override fun runConstruction(caller: Player, label: String, args: Array<String>): Boolean {
