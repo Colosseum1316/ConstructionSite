@@ -1,5 +1,6 @@
 package colosseum.construction.command;
 
+import colosseum.construction.ConstructionSiteProvider;
 import lombok.Getter;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -49,7 +50,11 @@ public abstract class ConstructionSiteCommand implements CommandExecutor {
     }
 
     public boolean canRun(Player caller) {
-        return true;
+        try {
+            return ConstructionSiteProvider.getPlugin().isEnabled();
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override
