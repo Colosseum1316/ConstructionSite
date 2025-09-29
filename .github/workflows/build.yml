@@ -55,6 +55,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
+        java-version: [17, 21]
     timeout-minutes: 30
     runs-on: ${{ matrix.os }}
     steps:
@@ -66,14 +67,14 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          java-version: 17
-          distribution: temurin
+          java-version: ${{ matrix.java-version }}
+          distribution: corretto
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
       - name: Build
-        run: ./gradlew build
+        run: ./gradlew build --refresh-dependencies
 
       - name: Write test report
         uses: mikepenz/action-junit-report@v5
@@ -84,15 +85,15 @@ jobs:
           detailed_summary: true
           fail_on_failure: true
           require_tests: true
-          check_name: Test Report on ${{ matrix.os }}
+          check_name: Test Report (${{ matrix.os }}) (Java ${{ matrix.java-version }})
           check_title_template: '{{SUITE_NAME}} | {{TEST_NAME}}'
 
       - name: JaCoCo Code Coverage Report
         uses: PavanMudigonda/jacoco-reporter@v5.0
         with:
           coverage_results_path: build/reports/jacoco/test/jacocoTestReport.xml
-          coverage_report_name: Coverage (${{ matrix.os }})
-          coverage_report_title: JaCoCo (${{ matrix.os }})
+          coverage_report_name: Coverage (${{ matrix.os }}) (Java ${{ matrix.java-version }})
+          coverage_report_title: JaCoCo (${{ matrix.os }}) (Java ${{ matrix.java-version }})
           fail_below_threshold: false
           publish_only_summary: true
 
@@ -100,7 +101,7 @@ jobs:
         if: ${{ (github.ref_name == 'master' && github.event_name == 'push') || github.event_name == 'workflow_dispatch' }}
         uses: actions/upload-artifact@v4
         with:
-          name: ConstructionSite-${{ github.run_id }}-${{ matrix.os }}
+          name: ConstructionSite-${{ github.run_id }}-${{ matrix.os }}-java-${{ matrix.java-version }}
           path: |
             build/libs/*.jar
             build/reports/
