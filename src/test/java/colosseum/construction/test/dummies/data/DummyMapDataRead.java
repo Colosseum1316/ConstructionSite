@@ -18,7 +18,7 @@ public final class DummyMapDataRead extends MapDataImpl {
     }
 
     @Override
-    public void write() {
-        // no op
+    public boolean write() {
+        return true;
     }
 }

@@ -21,5 +21,5 @@ public interface MutableMapData extends MapData {
 
     Set<UUID> getAdminList();
 
-    void write();
+    boolean write();
 }

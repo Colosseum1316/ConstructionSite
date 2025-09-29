@@ -10,6 +10,7 @@ import colosseum.utility.WorldMapConstants;
 import colosseum.utility.arcade.GameType;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 public class MapDataImpl extends AbstractMapData implements MutableMapData {
@@ -75,7 +75,7 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
 
     public MapDataImpl(@Nullable World world, @NotNull File worldFolder) {
         super(world, worldFolder);
-        this.warps = new ConcurrentHashMap<>();
+        this.warps = Maps.newConcurrentMap();
         this.adminList = Sets.newConcurrentHashSet();
         this.lock = new Object();
         init();
@@ -136,7 +136,7 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
         }
     }
 
-    public void write() {
+    public boolean write() {
         synchronized (lock) {
             String mapName = this.mapName;
             String mapCreator = this.mapCreator;
@@ -153,9 +153,11 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
                 buffer.write("\nADMIN_LIST:" + String.join(",", adminList.stream().map(UUID::toString).toList()));
                 buffer.write("\ncurrentlyLive:" + currentlyLive);
                 buffer.write("\nwarps:" + warpsToString(warps));
+                return true;
             } catch (IOException e) {
                 site.getPluginLogger().log(Level.SEVERE, "Cannot write dat file!", e);
                 FileUtils.deleteQuietly(datFile);
+                return false;
             }
         }
     }
