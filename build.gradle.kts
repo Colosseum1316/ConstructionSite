@@ -40,20 +40,13 @@ repositories {
     maven("https://repo.papermc.io/repository/maven-public/")
     exclusiveContent {
         forRepository {
-            maven("https://jitpack.io")
-        }
-        filter {
-            includeGroup("com.github.MockBukkit")
-        }
-    }
-    exclusiveContent {
-        forRepository {
             maven("https://coffeewarehouse.harborbucket.top/snapshots")
         }
         filter {
             includeGroup("colosseum.minecraft")
             includeGroup("colosseum.minecraft.nl.rutgerkok")
             includeGroup("net.md-5")
+            includeGroup("com.github.MockBukkit")
         }
     }
 }
