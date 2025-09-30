@@ -30,7 +30,7 @@ class MapAuthorCommand: AbstractMapCreditCommand(
         val data = mapDataSupplier.get()
         val newMapCreator = contentSupplier.get()
         Bukkit.getScheduler().runTaskAsynchronously(ConstructionSiteProvider.getPlugin()) {
-            data.updateAndWrite(FinalizedMapData(data.mapName, newMapCreator, data.mapGameType, data.isLive))
+            data.updateAndWrite(FinalizedMapData(null, newMapCreator, null, data.isLive))
             Command.broadcastCommandMessage(caller, "Map ${mapDataSupplier.get().mapName} set author: ${mapDataSupplier.get().mapCreator}")
             ConstructionSiteProvider.getSite().pluginLogger.info("World $path set author: ${mapDataSupplier.get().mapCreator}")
         }

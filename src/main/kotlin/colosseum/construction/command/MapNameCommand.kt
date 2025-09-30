@@ -30,7 +30,7 @@ class MapNameCommand: AbstractMapCreditCommand(
         val data = mapDataSupplier.get()
         val newMapName = contentSupplier.get()
         Bukkit.getScheduler().runTaskAsynchronously(ConstructionSiteProvider.getPlugin()) {
-            data.updateAndWrite(FinalizedMapData(newMapName, data.mapCreator, data.mapGameType, data.isLive))
+            data.updateAndWrite(FinalizedMapData(newMapName, null, null, data.isLive))
             Command.broadcastCommandMessage(caller, "World $path set map name: ${mapDataSupplier.get().mapName}", true)
         }
         return true

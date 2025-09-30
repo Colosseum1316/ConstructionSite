@@ -14,6 +14,7 @@ import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
+import org.bukkit.util.Vector
 
 class TeleportWarpCommand: AbstractTeleportCommand(
     listOf("warp"),
@@ -52,6 +53,10 @@ class TeleportWarpCommand: AbstractTeleportCommand(
         val site = ConstructionSiteProvider.getSite()
         if (args.size == 1) {
             if (op.equals("list", ignoreCase = true)) {
+                if (knownWarps.isEmpty()) {
+                    UtilPlayerBase.sendMessage(caller, "&cNo warp point yet! Add some!")
+                    return true
+                }
                 for ((warpKey, warpLocation) in knownWarps) {
                     val message = TextComponent("$warpKey: ${vecToStrClean(warpLocation)}")
                     message.color = ChatColor.YELLOW
@@ -98,12 +103,13 @@ class TeleportWarpCommand: AbstractTeleportCommand(
         val warps = data.warps().toMutableMap()
         when (op) {
             "set" -> {
-                warps.putIfAbsent(key, caller.location.toVector())?.let {
+                val loc = caller.location
+                warps.putIfAbsent(key, Vector(loc.blockX, loc.blockY, loc.blockZ))?.let {
                     UtilPlayerBase.sendMessage(caller, "&c\"$key\" already exists!")
                     return true
                 }
                 Bukkit.getScheduler().runTaskAsynchronously(plugin) {
-                    (data as MutableMapData).updateAndWrite(FinalizedMapData(data.mapName, data.mapCreator, data.mapGameType, ImmutableMap.copyOf(warps), data.isLive))
+                    (data as MutableMapData).updateAndWrite(FinalizedMapData(null, null, null, ImmutableMap.copyOf(warps), data.isLive))
                     UtilPlayerBase.sendMessage(caller, "Created warp point &e$key")
                     site.pluginLogger.info("World $path: ${caller.name} created warp point $key at ${locToStrClean(caller.location)}")
                 }
@@ -118,7 +124,7 @@ class TeleportWarpCommand: AbstractTeleportCommand(
                 val location = warps.remove(key)
                 Bukkit.getScheduler().runTaskAsynchronously(plugin) {
                     UtilPlayerBase.sendMessage(caller, "Deleting warp point &e$key")
-                    (data as MutableMapData).updateAndWrite(FinalizedMapData(data.mapName, data.mapCreator, data.mapGameType, ImmutableMap.copyOf(warps), data.isLive))
+                    (data as MutableMapData).updateAndWrite(FinalizedMapData(null, null, null, ImmutableMap.copyOf(warps), data.isLive))
                     site.pluginLogger.info("World $path: ${caller.name} deleted warp point $key (${vecToStrClean(location)})")
                 }
                 return true

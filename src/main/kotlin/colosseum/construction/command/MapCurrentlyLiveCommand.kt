@@ -20,7 +20,7 @@ class MapCurrentlyLiveCommand: AbstractMapAdminCommand(
         val data = getMapDataManager().get(caller.world) as MutableMapData
         if (label.equals("mapsetlive", ignoreCase = true)) {
             Bukkit.getScheduler().runTaskAsynchronously(ConstructionSiteProvider.getPlugin()) {
-                data.updateAndWrite(FinalizedMapData(data.mapName, data.mapCreator, data.mapGameType, !data.isLive))
+                data.updateAndWrite(FinalizedMapData(null, null, null, !data.isLive))
                 Command.broadcastCommandMessage(caller, "${data.mapName} is ${if (data.isLive) "now live" else "no longer live"}", true)
             }
         } else {

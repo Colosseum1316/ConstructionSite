@@ -32,7 +32,7 @@ class MapAdminCommand: AbstractMapAdminCommand(
                 adminList.remove(target.uniqueId)
             }
             Bukkit.getScheduler().runTaskAsynchronously(ConstructionSiteProvider.getPlugin()) {
-                data.updateAndWrite(FinalizedMapData(data.mapName, data.mapCreator, data.mapGameType, ImmutableSet.copyOf(adminList), data.isLive))
+                data.updateAndWrite(FinalizedMapData(null, null, null, ImmutableSet.copyOf(adminList), data.isLive))
                 if (add) {
                     Command.broadcastCommandMessage(caller, "${target.name} is now admin in ${data.mapName}", true)
                     ConstructionSiteProvider.getSite().pluginLogger.info("World $path: ${target.name} is now admin in ${data.mapName}")

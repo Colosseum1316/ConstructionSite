@@ -47,7 +47,7 @@ class MapGameTypeCommand: AbstractMapAdminCommand(
             return true
         }
         Bukkit.getScheduler().runTaskAsynchronously(ConstructionSiteProvider.getPlugin()) {
-            data.updateAndWrite(FinalizedMapData(data.mapName, data.mapCreator, newGameType, data.isLive))
+            data.updateAndWrite(FinalizedMapData(null, null, newGameType, data.isLive))
             Command.broadcastCommandMessage(caller, "Map ${data.mapName}: Set GameType to ${data.mapGameType.name}", true)
             ConstructionSiteProvider.getSite().pluginLogger.info("World $path: Set GameType to ${data.mapGameType.name}")
         }
