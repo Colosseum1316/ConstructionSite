@@ -31,8 +31,8 @@ class TestPluginUtils {
     @Test
     void testUnzip() {
         Assertions.assertDoesNotThrow(PluginUtils::unzip);
-        File regionDir = tempWorldContainer.toPath().resolve(WorldMapConstants.WORLD_LOBBY).resolve(WorldMapConstants.REGION).toFile();
-        File levelDat = tempWorldContainer.toPath().resolve(WorldMapConstants.WORLD_LOBBY).resolve(WorldMapConstants.LEVEL_DAT).toFile();
+        File regionDir = tempWorldContainer.toPath().resolve(WorldMapConstants.WORLD).resolve(WorldMapConstants.REGION).toFile();
+        File levelDat = tempWorldContainer.toPath().resolve(WorldMapConstants.WORLD).resolve(WorldMapConstants.LEVEL_DAT).toFile();
         Assertions.assertTrue(regionDir.exists());
         Assertions.assertTrue(regionDir.isDirectory());
         String[] mcas = new String[]{"r.0.0.mca", "r.0.-1.mca", "r.-1.0.mca", "r.-1.-1.mca"};

@@ -25,9 +25,9 @@ class TeleportManager: ConstructionSiteManager("Teleport") {
 
     override fun register() {
         val worldManager = getWorldManager()
-        var spawnWorld = worldManager.loadWorld(WORLD_LOBBY)
+        var spawnWorld = worldManager.loadWorld(WORLD)
         if (spawnWorld == null) {
-            spawnWorld = worldManager.loadWorld(WORLD) ?: throw Error("Where's spawn?")
+            spawnWorld = worldManager.loadWorld(WORLD_LOBBY) ?: throw Error("Where's spawn?")
         }
         spawnWorld.difficulty = Difficulty.PEACEFUL
         spawnWorld.setGameRuleValue("mobGriefing", "false")

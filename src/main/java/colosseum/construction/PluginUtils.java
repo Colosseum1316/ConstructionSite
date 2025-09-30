@@ -104,7 +104,7 @@ public final class PluginUtils {
 
     public static void unzip() {
         ConstructionSite site = ConstructionSiteProvider.getSite();
-        File destination = site.getWorldContainer().toPath().resolve(WorldMapConstants.WORLD_LOBBY).toFile();
+        File destination = site.getWorldContainer().toPath().resolve(WorldMapConstants.WORLD).toFile();
         if (destination.exists() && !destination.isDirectory()) {
             try {
                 FileUtils.delete(destination);
