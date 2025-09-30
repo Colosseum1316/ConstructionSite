@@ -4,11 +4,13 @@ import colosseum.construction.BaseUtils
 import colosseum.construction.BaseUtils.getGameTypes
 import colosseum.construction.ConstructionSiteProvider
 import colosseum.construction.PluginUtils
+import colosseum.construction.data.FinalizedMapData
 import colosseum.construction.data.MutableMapData
 import colosseum.construction.manager.MapDataManager
 import colosseum.construction.manager.TeleportManager
 import colosseum.construction.manager.WorldManager
 import colosseum.utility.arcade.GameType
+import com.google.common.collect.ImmutableSet
 import org.bukkit.Bukkit
 import org.bukkit.Difficulty
 import org.bukkit.GameMode
@@ -131,12 +133,7 @@ class NewMapCommand: AbstractOpCommand(
 
             Bukkit.getScheduler().runTaskAsynchronously(plugin) {
                 val mapData = getMapDataManager().get(world) as MutableMapData
-                mapData.mapName = worldFolderName
-                mapData.mapCreator = caller.name
-                mapData.adminList.add(caller.uniqueId)
-                mapData.mapGameType = gameType
-                mapData.write()
-
+                mapData.updateAndWrite(FinalizedMapData(worldFolderName, caller.name, gameType, ImmutableSet.of(caller.uniqueId), mapData.isLive))
                 Bukkit.getScheduler().runTask(plugin) {
                     getTeleportManager().teleportPlayer(caller, world.spawnLocation)
                     caller.gameMode = GameMode.CREATIVE

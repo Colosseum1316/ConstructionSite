@@ -122,26 +122,26 @@ class TestMapData {
 
     @FunctionalInterface
     private interface DummyMapWriteAssertionCallback {
-        void assertion(MapData data, boolean currentlyLive, Map<String, Vector> warps, Set<UUID> adminList, GameType mapGameType, String mapName, String mapCreator);
+        void assertion(MapData data, String mapName, String mapCreator, GameType mapGameType, Map<String, Vector> warps, Set<UUID> adminList, boolean currentlyLive);
     }
 
     private void testWrite0(
-            boolean currentlyLive,
-            Map<String, Vector> warps,
-            Set<UUID> adminList,
-            GameType mapGameType,
             String mapName,
             String mapCreator,
+            GameType mapGameType,
+            Map<String, Vector> warps,
+            Set<UUID> adminList,
+            boolean currentlyLive,
             DummyMapWriteAssertionCallback assertion
     ) {
-        new DummyMapDataWrite(TestMapData.world, TestMapData.tempWorldDir, currentlyLive, warps, adminList, mapGameType, mapName, mapCreator).write();
+        new DummyMapDataWrite(TestMapData.world, TestMapData.tempWorldDir, mapName, mapCreator, mapGameType, warps, adminList, currentlyLive);
         MapData data = Utils.readMapData(TestMapData.world, TestMapData.tempWorldDir);
-        assertion.assertion(data, currentlyLive, warps, adminList, mapGameType, mapName, mapCreator);
+        assertion.assertion(data, mapName, mapCreator, mapGameType, warps, adminList, currentlyLive);
     }
 
     @Test
     void testWrite() {
-        testWrite0(true, Collections.emptyMap(), Collections.emptySet(), GameType.None, "TEST MAP NONETYPE", "TEST MAP NONETYPE AUTHOR", (data, currentlyLive, warps, adminList, mapGameType, mapName, mapCreator) -> {
+        testWrite0("TEST MAP NONETYPE", "TEST MAP NONETYPE AUTHOR", GameType.None, Collections.emptyMap(), Collections.emptySet(), true, (data, mapName, mapCreator, mapGameType, warps, adminList, currentlyLive) -> {
             Assertions.assertTrue(data.isLive());
             Assertions.assertTrue(data.warps().isEmpty());
             Assertions.assertTrue(data.adminList().isEmpty());
@@ -149,14 +149,14 @@ class TestMapData {
             Assertions.assertEquals("TEST MAP NONETYPE", data.getMapName());
             Assertions.assertEquals("TEST MAP NONETYPE AUTHOR", data.getMapCreator());
         });
-        testWrite0(false, Map.of(
+        testWrite0("TEST MAP 1", "TEST MAP 1 AUTHOR", GameType.DragonEscape, Map.of(
                 "a1", new Vector(0, 0, 0),
                 "a2", new Vector( 0, 1, 0),
                 "a3", new Vector( -1, 0, 1)
         ), Set.of(
                 UUID.fromString(uuid1),
                 UUID.fromString(uuid2)
-        ), GameType.DragonEscape, "TEST MAP 1", "TEST MAP 1 AUTHOR", (data, currentlyLive, warps, adminList, mapGameType, mapName, mapCreator) -> {
+        ), false, (data, mapName, mapCreator, mapGameType, warps, adminList, currentlyLive) -> {
             Assertions.assertFalse(data.isLive());
             Assertions.assertEquals(3, data.warps().size());
             Assertions.assertTrue(data.warps().containsKey("a1"));

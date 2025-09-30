@@ -4,6 +4,7 @@ import colosseum.construction.BaseUtils
 import colosseum.construction.BaseUtils.getGameTypes
 import colosseum.construction.ConstructionSiteProvider
 import colosseum.construction.PluginUtils
+import colosseum.construction.data.FinalizedMapData
 import colosseum.construction.data.MutableMapData
 import colosseum.utility.arcade.GameType
 import org.bukkit.Bukkit
@@ -45,12 +46,11 @@ class MapGameTypeCommand: AbstractMapAdminCommand(
             PluginUtils.printValidGameTypes(caller)
             return true
         }
-        data.mapGameType = newGameType
         Bukkit.getScheduler().runTaskAsynchronously(ConstructionSiteProvider.getPlugin()) {
-            data.write()
+            data.updateAndWrite(FinalizedMapData(data.mapName, data.mapCreator, newGameType, data.isLive))
+            Command.broadcastCommandMessage(caller, "Map ${data.mapName}: Set GameType to ${data.mapGameType.name}", true)
+            ConstructionSiteProvider.getSite().pluginLogger.info("World $path: Set GameType to ${data.mapGameType.name}")
         }
-        Command.broadcastCommandMessage(caller, "Map ${data.mapName}: Set GameType to ${data.mapGameType.name}", true)
-        ConstructionSiteProvider.getSite().pluginLogger.info("World $path: Set GameType to ${data.mapGameType.name}")
         return true
     }
 }

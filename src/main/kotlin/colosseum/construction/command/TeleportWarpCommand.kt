@@ -2,10 +2,12 @@ package colosseum.construction.command
 
 import colosseum.construction.BaseUtils
 import colosseum.construction.ConstructionSiteProvider
+import colosseum.construction.data.FinalizedMapData
 import colosseum.construction.data.MutableMapData
 import colosseum.utility.UtilPlayerBase
 import colosseum.utility.UtilWorld.locToStrClean
 import colosseum.utility.UtilWorld.vecToStrClean
+import com.google.common.collect.ImmutableMap
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.HoverEvent
@@ -93,31 +95,32 @@ class TeleportWarpCommand: AbstractTeleportCommand(
             return false
         }
         val plugin = ConstructionSiteProvider.getPlugin()
+        val warps = data.warps().toMutableMap()
         when (op) {
             "set" -> {
-                (data as MutableMapData).warps.putIfAbsent(key, caller.location.toVector())?.let {
+                warps.putIfAbsent(key, caller.location.toVector())?.let {
                     UtilPlayerBase.sendMessage(caller, "&c\"$key\" already exists!")
                     return true
                 }
-                UtilPlayerBase.sendMessage(caller, "Created warp point &e$key")
                 Bukkit.getScheduler().runTaskAsynchronously(plugin) {
-                    data.write()
+                    (data as MutableMapData).updateAndWrite(FinalizedMapData(data.mapName, data.mapCreator, data.mapGameType, ImmutableMap.copyOf(warps), data.isLive))
+                    UtilPlayerBase.sendMessage(caller, "Created warp point &e$key")
+                    site.pluginLogger.info("World $path: ${caller.name} created warp point $key at ${locToStrClean(caller.location)}")
                 }
-                site.pluginLogger.info("World $path: ${caller.name} created warp point $key at ${locToStrClean(caller.location)}")
                 return true
             }
 
             "delete" -> {
-                if (!(data as MutableMapData).warps.containsKey(key)) {
+                if (!warps.containsKey(key)) {
                     UtilPlayerBase.sendMessage(caller, "&c\"$key\" does not exist!")
                     return true
                 }
-                UtilPlayerBase.sendMessage(caller, "Deleting warp point &e$key")
-                val location = data.warps.remove(key)
+                val location = warps.remove(key)
                 Bukkit.getScheduler().runTaskAsynchronously(plugin) {
-                    data.write()
+                    UtilPlayerBase.sendMessage(caller, "Deleting warp point &e$key")
+                    (data as MutableMapData).updateAndWrite(FinalizedMapData(data.mapName, data.mapCreator, data.mapGameType, ImmutableMap.copyOf(warps), data.isLive))
+                    site.pluginLogger.info("World $path: ${caller.name} deleted warp point $key (${vecToStrClean(location)})")
                 }
-                site.pluginLogger.info("World $path: ${caller.name} deleted warp point $key (${vecToStrClean(location)})")
                 return true
             }
 

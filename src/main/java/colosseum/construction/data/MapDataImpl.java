@@ -13,7 +13,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import lombok.Getter;
-import lombok.Setter;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
@@ -37,41 +36,20 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 public class MapDataImpl extends AbstractMapData implements MutableMapData {
-    private final Object lock;
-
     protected File datFile;
 
     @Getter
-    @Setter
-    protected boolean live;
-    @Getter
-    protected final Map<String, Vector> warps;
-    @Getter
-    protected final Set<UUID> adminList;
-
-    @Override
-    public ImmutableMap<String, Vector> warps() {
-        ImmutableMap.Builder<String, Vector> builder = ImmutableMap.builder();
-        warps.forEach((s, l) -> builder.put(s, l.clone()));
-        return builder.build();
-    }
-
-    @Override
-    public ImmutableSet<UUID> adminList() {
-        ImmutableSet.Builder<UUID> builder = ImmutableSet.builder();
-        adminList.forEach(v -> builder.add(UUID.fromString(v.toString())));
-        return builder.build();
-    }
-
-    @Getter
-    @Setter
-    protected GameType mapGameType;
-    @Getter
-    @Setter
     protected String mapName;
     @Getter
-    @Setter
     protected String mapCreator;
+    @Getter
+    protected GameType mapGameType;
+    protected final Map<String, Vector> warps;
+    protected final Set<UUID> adminList;
+    @Getter
+    protected boolean live;
+
+    private final Object lock;
 
     public MapDataImpl(@Nullable World world, @NotNull File worldFolder) {
         super(world, worldFolder);
@@ -89,12 +67,13 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
         if (this.datFile.exists()) {
             read();
         } else {
-            write();
+            ConstructionSiteProvider.getSite().getPluginLogger().warning(String.format("There's no \"%s\" in \"%s\"! Creating a dummy one. Please set map data accordingly.", WorldMapConstants.MAP_DAT, worldFolder.getAbsolutePath()));
+            updateAndWrite(new FinalizedMapData("MapName", "MapCreator", GameType.None, ImmutableMap.of(), ImmutableSet.of(), true));
         }
     }
 
     protected void read() {
-        ConstructionSite site = ConstructionSiteProvider.getSite();
+        final ConstructionSite site = ConstructionSiteProvider.getSite();
         synchronized (lock) {
             String line;
 
@@ -136,15 +115,29 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
         }
     }
 
-    public boolean write() {
+    @Override
+    public boolean updateAndWrite(FinalizedMapData newMapData) {
         synchronized (lock) {
+            this.mapName = newMapData.getMapName();
+            this.mapCreator = newMapData.getMapCreator();
+            this.mapGameType = newMapData.getMapGameType();
+            if (!newMapData.warps().isEmpty()) {
+                this.warps.clear();
+                this.warps.putAll(newMapData.warps());
+            }
+            if (!newMapData.adminList().isEmpty()) {
+                this.adminList.clear();
+                this.adminList.addAll(newMapData.adminList());
+            }
+            this.live = newMapData.isLive();
+
             String mapName = this.mapName;
             String mapCreator = this.mapCreator;
             GameType mapGameType = this.mapGameType;
             boolean currentlyLive = this.live;
             ImmutableSet<UUID> adminList = adminList();
             ImmutableMap<String, Vector> warps = warps();
-            ConstructionSite site = ConstructionSiteProvider.getSite();
+            final ConstructionSite site = ConstructionSiteProvider.getSite();
             try (BufferedWriter buffer = Files.newBufferedWriter(datFile.toPath(), StandardCharsets.UTF_8)) {
                 site.getPluginLogger().info("Writing " + datFile.getAbsolutePath());
                 buffer.write("MAP_NAME:" + mapName);
@@ -160,6 +153,25 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
                 return false;
             }
         }
+    }
+
+    @Override
+    public boolean save() {
+        return updateAndWrite(new FinalizedMapData(this));
+    }
+
+    @Override
+    public ImmutableMap<String, Vector> warps() {
+        ImmutableMap.Builder<String, Vector> builder = ImmutableMap.builder();
+        warps.forEach((s, l) -> builder.put(s, l.clone()));
+        return builder.build();
+    }
+
+    @Override
+    public ImmutableSet<UUID> adminList() {
+        ImmutableSet.Builder<UUID> builder = ImmutableSet.builder();
+        adminList.forEach(v -> builder.add(UUID.fromString(v.toString())));
+        return builder.build();
     }
 
     public boolean allows(Player player) {

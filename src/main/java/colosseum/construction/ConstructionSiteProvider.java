@@ -1,7 +1,6 @@
 package colosseum.construction;
 
 import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang.Validate;
 import org.bukkit.plugin.java.JavaPlugin;

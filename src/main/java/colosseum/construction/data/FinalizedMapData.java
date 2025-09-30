@@ -28,6 +28,18 @@ public final class FinalizedMapData implements MapData {
         this(mapData.getMapName(), mapData.getMapCreator(), mapData.getMapGameType(), mapData.warps(), mapData.adminList(), mapData.isLive());
     }
 
+    public FinalizedMapData(String mapName, String mapCreator, GameType mapGameType, ImmutableMap<String, Vector> warps, boolean live) {
+        this(mapName, mapCreator, mapGameType, warps, ImmutableSet.of(), live);
+    }
+
+    public FinalizedMapData(String mapName, String mapCreator, GameType mapGameType, ImmutableSet<UUID> adminList, boolean live) {
+        this(mapName, mapCreator, mapGameType, ImmutableMap.of(), adminList, live);
+    }
+
+    public FinalizedMapData(String mapName, String mapCreator, GameType mapGameType, boolean live) {
+        this(mapName, mapCreator, mapGameType, ImmutableMap.of(), ImmutableSet.of(), live);
+    }
+
     @Override
     public ImmutableMap<String, Vector> warps() {
         return warps;

@@ -1,6 +1,7 @@
 package colosseum.construction.command
 
 import colosseum.construction.ConstructionSiteProvider
+import colosseum.construction.data.FinalizedMapData
 import colosseum.construction.data.MutableMapData
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
@@ -22,25 +23,17 @@ class MapAuthorCommand: AbstractMapCreditCommand(
         args: Array<String>,
         contentSupplier: Supplier<String>,
         mapDataSupplier: Supplier<MutableMapData>
-    ) {
-        mapDataSupplier.get().mapCreator = contentSupplier.get()
-    }
-
-    override fun postAction(
-        caller: Player,
-        alias: String,
-        args: Array<String>,
-        contentSupplier: Supplier<String>,
-        mapDataSupplier: Supplier<MutableMapData>
     ): Boolean {
         val world = caller.world
         val worldManager = getWorldManager()
         val path = worldManager.getWorldRelativePath(world)
+        val data = mapDataSupplier.get()
+        val newMapCreator = contentSupplier.get()
         Bukkit.getScheduler().runTaskAsynchronously(ConstructionSiteProvider.getPlugin()) {
-            mapDataSupplier.get().write()
+            data.updateAndWrite(FinalizedMapData(data.mapName, newMapCreator, data.mapGameType, data.isLive))
+            Command.broadcastCommandMessage(caller, "Map ${mapDataSupplier.get().mapName} set author: ${mapDataSupplier.get().mapCreator}")
+            ConstructionSiteProvider.getSite().pluginLogger.info("World $path set author: ${mapDataSupplier.get().mapCreator}")
         }
-        Command.broadcastCommandMessage(caller, "Map ${mapDataSupplier.get().mapName} set author: ${mapDataSupplier.get().mapCreator}")
-        ConstructionSiteProvider.getSite().pluginLogger.info("World $path set author: ${mapDataSupplier.get().mapCreator}")
         return true
     }
 }

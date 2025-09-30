@@ -41,7 +41,7 @@ class MapDataManager: ConstructionSiteManager("MapData") {
     override fun unregister() {
         mapData.entries.removeAll { entry ->
             if (entry.value is MutableMapData) {
-                (entry.value as MutableMapData).write()
+                (entry.value as MutableMapData).save()
             }
             return@removeAll true
         }

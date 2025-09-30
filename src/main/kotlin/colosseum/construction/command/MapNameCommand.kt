@@ -1,6 +1,7 @@
 package colosseum.construction.command
 
 import colosseum.construction.ConstructionSiteProvider
+import colosseum.construction.data.FinalizedMapData
 import colosseum.construction.data.MutableMapData
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
@@ -22,24 +23,16 @@ class MapNameCommand: AbstractMapCreditCommand(
         args: Array<String>,
         contentSupplier: Supplier<String>,
         mapDataSupplier: Supplier<MutableMapData>
-    ) {
-        mapDataSupplier.get().mapName = contentSupplier.get()
-    }
-
-    override fun postAction(
-        caller: Player,
-        alias: String,
-        args: Array<String>,
-        contentSupplier: Supplier<String>,
-        mapDataSupplier: Supplier<MutableMapData>
     ): Boolean {
         val world = caller.world
         val worldManager = getWorldManager()
         val path = worldManager.getWorldRelativePath(world)
+        val data = mapDataSupplier.get()
+        val newMapName = contentSupplier.get()
         Bukkit.getScheduler().runTaskAsynchronously(ConstructionSiteProvider.getPlugin()) {
-            mapDataSupplier.get().write()
+            data.updateAndWrite(FinalizedMapData(newMapName, data.mapCreator, data.mapGameType, data.isLive))
+            Command.broadcastCommandMessage(caller, "World $path set map name: ${mapDataSupplier.get().mapName}", true)
         }
-        Command.broadcastCommandMessage(caller, "World $path set map name: ${mapDataSupplier.get().mapName}", true)
         return true
     }
 }

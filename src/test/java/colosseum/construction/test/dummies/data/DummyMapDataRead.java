@@ -1,5 +1,6 @@
 package colosseum.construction.test.dummies.data;
 
+import colosseum.construction.data.FinalizedMapData;
 import colosseum.construction.data.MapDataImpl;
 import colosseum.utility.WorldMapConstants;
 import org.bukkit.World;
@@ -18,7 +19,7 @@ public final class DummyMapDataRead extends MapDataImpl {
     }
 
     @Override
-    public boolean write() {
+    public boolean updateAndWrite(FinalizedMapData newMapData) {
         return true;
     }
 }
