@@ -3,6 +3,7 @@ package colosseum.construction.manager
 import colosseum.construction.BaseUtils
 import colosseum.construction.ConstructionSiteProvider
 import colosseum.utility.WorldMapConstants
+import kotlin.jvm.Throws
 import org.apache.commons.lang.Validate
 import org.bukkit.Bukkit
 import org.bukkit.World
@@ -123,6 +124,7 @@ class WorldManager: ConstructionSiteManager("Worlds") {
         return Bukkit.createWorld(worldCreator)
     }
 
+    @Throws(Exception::class)
     fun unloadWorld(world: World?, save: Boolean) {
         if (world == null) {
             return
