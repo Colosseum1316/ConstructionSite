@@ -63,7 +63,11 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
     public void schedule(@NotNull World originalWorld, List<String> args, Location startPoint, int radius) {
         Bukkit.getScheduler().runTask(ConstructionSiteProvider.getPlugin(), () -> {
             originalWorld.save();
-            getWorldManager().unloadWorld(originalWorld, true);
+            try {
+                getWorldManager().unloadWorld(originalWorld, true);
+            } catch (Exception e) {
+                ConstructionSiteProvider.getSite().getPluginLogger().log(Level.SEVERE, "Cannot unload world for parsing!", e);
+            }
             fire(originalWorld, args, startPoint, radius);
         });
     }

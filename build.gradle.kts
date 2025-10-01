@@ -27,7 +27,9 @@ kotlin {
 tasks.withType<JavaCompile>().configureEach {
     options.release.set(Integer.valueOf("${project.extra["compilation_java_version"]}"))
     options.encoding = "UTF-8"
-    options.compilerArgs.addAll(listOf("-Werror", "-Xlint:-unchecked"))
+    // https://inside.java/2024/06/18/quality-heads-up/
+    // https://github.com/projectlombok/lombok/issues/3949
+    options.compilerArgs.addAll(listOf("-proc:full", "-Werror", "-Xlint:-unchecked"))
 }
 
 base {
