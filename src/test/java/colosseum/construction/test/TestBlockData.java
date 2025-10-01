@@ -15,6 +15,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 
+@SuppressWarnings("deprecation")
 class TestBlockData {
     private static DummySite plugin;
     private static WorldMock world;

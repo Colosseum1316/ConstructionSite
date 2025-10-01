@@ -5,7 +5,6 @@ import colosseum.construction.data.FinalizedMapData
 import colosseum.construction.data.MutableMapData
 import colosseum.utility.UtilPlayerBase.searchOnline
 import com.google.common.collect.ImmutableSet
-import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
 
@@ -31,7 +30,7 @@ class MapAdminCommand: AbstractMapAdminCommand(
             } else {
                 adminList.remove(target.uniqueId)
             }
-            Bukkit.getScheduler().runTaskAsynchronously(ConstructionSiteProvider.getPlugin()) {
+            ConstructionSiteProvider.getSchedules().scheduleAsync({
                 data.updateAndWrite(FinalizedMapData(null, null, null, ImmutableSet.copyOf(adminList), data.isLive))
                 if (add) {
                     Command.broadcastCommandMessage(caller, "${target.name} is now admin in ${data.mapName}", true)
@@ -40,7 +39,7 @@ class MapAdminCommand: AbstractMapAdminCommand(
                     Command.broadcastCommandMessage(caller, "${target.name} is no longer admin in ${data.mapName}", true)
                     ConstructionSiteProvider.getSite().pluginLogger.info("World $path: ${target.name} is no longer admin in ${data.mapName}")
                 }
-            }
+            }, Void::class.java)
         }
         return true
     }

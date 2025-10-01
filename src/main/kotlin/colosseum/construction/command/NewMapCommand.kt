@@ -11,7 +11,6 @@ import colosseum.construction.manager.TeleportManager
 import colosseum.construction.manager.WorldManager
 import colosseum.utility.arcade.GameType
 import com.google.common.collect.ImmutableSet
-import org.bukkit.Bukkit
 import org.bukkit.Difficulty
 import org.bukkit.GameMode
 import org.bukkit.World
@@ -119,8 +118,7 @@ class NewMapCommand: AbstractOpCommand(
             }
         }
 
-        val plugin = ConstructionSiteProvider.getPlugin()
-        Bukkit.getScheduler().runTask(plugin) {
+        ConstructionSiteProvider.getSchedules().schedule({
             val world = worldManager.createOrLoadWorld(worldCreator) ?: throw RuntimeException("Could not create world ${worldCreator.name()}")
             world.difficulty = Difficulty.EASY
             world.setSpawnLocation(0, 106, 0)
@@ -131,17 +129,17 @@ class NewMapCommand: AbstractOpCommand(
             world.time = 6000
             world.pvp = false
 
-            Bukkit.getScheduler().runTaskAsynchronously(plugin) {
+            ConstructionSiteProvider.getSchedules().scheduleAsync({
                 val mapData = getMapDataManager().get(world) as MutableMapData
                 mapData.updateAndWrite(FinalizedMapData(worldFolderName, caller.name, gameType, ImmutableSet.of(caller.uniqueId), mapData.isLive))
-                Bukkit.getScheduler().runTask(plugin) {
+                ConstructionSiteProvider.getSchedules().schedule({
                     getTeleportManager().teleportPlayer(caller, world.spawnLocation)
                     caller.gameMode = GameMode.CREATIVE
                     caller.isFlying = true
                     Command.broadcastCommandMessage(caller, "Create new ${if (generateVoidWorld) "void " else ""}world: ${worldCreator.name()}", true)
-                }
-            }
-        }
+                }, Void::class.java)
+            }, Void::class.java)
+        }, Void::class.java)
         return true
     }
 }

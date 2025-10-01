@@ -7,7 +7,6 @@ import colosseum.construction.PluginUtils
 import colosseum.construction.data.FinalizedMapData
 import colosseum.construction.data.MutableMapData
 import colosseum.utility.arcade.GameType
-import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
@@ -46,11 +45,11 @@ class MapGameTypeCommand: AbstractMapAdminCommand(
             PluginUtils.printValidGameTypes(caller)
             return true
         }
-        Bukkit.getScheduler().runTaskAsynchronously(ConstructionSiteProvider.getPlugin()) {
+        ConstructionSiteProvider.getSchedules().scheduleAsync({
             data.updateAndWrite(FinalizedMapData(null, null, newGameType, data.isLive))
             Command.broadcastCommandMessage(caller, "Map ${data.mapName}: Set GameType to ${data.mapGameType.name}", true)
             ConstructionSiteProvider.getSite().pluginLogger.info("World $path: Set GameType to ${data.mapGameType.name}")
-        }
+        }, Void::class.java)
         return true
     }
 }

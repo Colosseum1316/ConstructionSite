@@ -3,7 +3,6 @@ package colosseum.construction.manager
 import colosseum.construction.BaseUtils
 import colosseum.construction.ConstructionSiteProvider
 import colosseum.utility.WorldMapConstants
-import kotlin.jvm.Throws
 import org.apache.commons.lang.Validate
 import org.bukkit.Bukkit
 import org.bukkit.World

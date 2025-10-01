@@ -12,7 +12,6 @@ import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
-import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.util.Vector
 
@@ -99,7 +98,6 @@ class TeleportWarpCommand: AbstractTeleportCommand(
             UtilPlayerBase.sendMessage(caller, "&cInvalid input.")
             return false
         }
-        val plugin = ConstructionSiteProvider.getPlugin()
         val warps = data.warps().toMutableMap()
         when (op) {
             "set" -> {
@@ -108,11 +106,11 @@ class TeleportWarpCommand: AbstractTeleportCommand(
                     UtilPlayerBase.sendMessage(caller, "&c\"$key\" already exists!")
                     return true
                 }
-                Bukkit.getScheduler().runTaskAsynchronously(plugin) {
+                ConstructionSiteProvider.getSchedules().scheduleAsync({
                     (data as MutableMapData).updateAndWrite(FinalizedMapData(null, null, null, ImmutableMap.copyOf(warps), data.isLive))
                     UtilPlayerBase.sendMessage(caller, "Created warp point &e$key")
                     site.pluginLogger.info("World $path: ${caller.name} created warp point $key at ${locToStrClean(caller.location)}")
-                }
+                }, Void::class.java)
                 return true
             }
 
@@ -122,11 +120,11 @@ class TeleportWarpCommand: AbstractTeleportCommand(
                     return true
                 }
                 val location = warps.remove(key)
-                Bukkit.getScheduler().runTaskAsynchronously(plugin) {
+                ConstructionSiteProvider.getSchedules().scheduleAsync({
                     UtilPlayerBase.sendMessage(caller, "Deleting warp point &e$key")
                     (data as MutableMapData).updateAndWrite(FinalizedMapData(null, null, null, ImmutableMap.copyOf(warps), data.isLive))
                     site.pluginLogger.info("World $path: ${caller.name} deleted warp point $key (${vecToStrClean(location)})")
-                }
+                }, Void::class.java)
                 return true
             }
 

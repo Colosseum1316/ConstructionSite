@@ -8,7 +8,6 @@ import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
 import org.apache.commons.io.FileUtils
-import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
@@ -48,9 +47,9 @@ class MapDeleteCommand: AbstractMapAdminCommand(
             worldManager.unloadWorld(world, false)
             site.getManager(MapDataManager::class.java).discard(world)
             Command.broadcastCommandMessage(caller, "Deleting world ${worldManager.getWorldRelativePath(f)}", true)
-            Bukkit.getScheduler().runTaskAsynchronously(ConstructionSiteProvider.getPlugin()) {
+            ConstructionSiteProvider.getSchedules().scheduleAsync({
                 FileUtils.deleteQuietly(f)
-            }
+            }, Void::class.java)
             return true
         } catch (e: IllegalArgumentException) {
             UtilPlayerBase.sendMessage(caller, "&cInvalid input!")

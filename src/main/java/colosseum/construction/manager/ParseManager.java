@@ -50,7 +50,7 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
                 FileUtils.deleteQuietly(file);
             }
         }
-        selfBukkitTask = Bukkit.getScheduler().runTaskTimer(ConstructionSiteProvider.getPlugin(), this, 0, 20L);
+        selfBukkitTask = ConstructionSiteProvider.getSchedules().schedule(this, BukkitTask.class, 0L, 20L);
     }
 
     @Override
@@ -61,7 +61,7 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
     }
 
     public void schedule(@NotNull World originalWorld, List<String> args, Location startPoint, int radius) {
-        Bukkit.getScheduler().runTask(ConstructionSiteProvider.getPlugin(), () -> {
+        ConstructionSiteProvider.getSchedules().schedule(() -> {
             originalWorld.save();
             try {
                 getWorldManager().unloadWorld(originalWorld, true);
@@ -69,7 +69,7 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
                 ConstructionSiteProvider.getSite().getPluginLogger().log(Level.SEVERE, "Cannot unload world for parsing!", e);
             }
             fire(originalWorld, args, startPoint, radius);
-        });
+        }, Void.class);
     }
 
     private void fire(@NotNull final World originalWorld, final List<String> args, final Location startPoint, final int radius) {
@@ -86,7 +86,7 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
             final File destination = worldManager.getOnParseRootPath().toPath().resolve(WorldMapConstants.PARSE_PREFIX + originalWorldFolder.getName()).toFile();
 
             JavaPlugin plugin = ConstructionSiteProvider.getPlugin();
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            ConstructionSiteProvider.getSchedules().scheduleAsync(() -> {
                 try {
                     if (destination.exists()) {
                         FileUtils.deleteDirectory(destination);
@@ -107,15 +107,15 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
                         }
                     }
 
-                    Bukkit.getScheduler().runTask(plugin, () -> {
+                    ConstructionSiteProvider.getSchedules().schedule(() -> {
                         worldManager.loadWorld(originalWorldRelativePath);
                         parser = new MapParser(destination, args, startPoint, radius);
-                        parserBukkitTask = Bukkit.getScheduler().runTaskAsynchronously(plugin, parser);
-                    });
+                        parserBukkitTask = ConstructionSiteProvider.getSchedules().scheduleAsync(parser, BukkitTask.class);
+                    }, Void.class);
                 } catch (Exception e) {
                     failAndCleanup(destination, e);
                 }
-            });
+            }, Void.class);
         } catch (Exception e) {
             failAndCleanup(null, e);
         }
@@ -135,7 +135,7 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
             }
             final FinalizedMapData mapData = parser.mapData;
             final File worldFolder = parser.parsableWorldFolder;
-            Bukkit.getScheduler().runTaskAsynchronously(ConstructionSiteProvider.getPlugin(), () -> {
+            ConstructionSiteProvider.getSchedules().scheduleAsync(() -> {
                 try {
                     if (status.get().isFail()) {
                         failAndCleanup(worldFolder, null);
@@ -156,7 +156,7 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
                 } catch (Exception e) {
                     failAndCleanup(worldFolder, e);
                 }
-            });
+            }, Void.class);
         } else {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 TextComponent message = new TextComponent("No parse task running.");
@@ -198,7 +198,9 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
             if (unregistering) {
                 FileUtils.deleteQuietly(folder);
             } else {
-                Bukkit.getScheduler().runTaskLaterAsynchronously(ConstructionSiteProvider.getPlugin(), () -> FileUtils.deleteQuietly(folder), 20L);
+                ConstructionSiteProvider.getSchedules().scheduleAsync(() -> {
+                    FileUtils.deleteQuietly(folder);
+                }, Void.class);
             }
         }
         parser = null;
@@ -208,7 +210,9 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
     private void failAndCleanup(File destination, Throwable e) {
         this.cancel();
         if (destination != null) {
-            Bukkit.getScheduler().runTaskLaterAsynchronously(ConstructionSiteProvider.getPlugin(), () -> FileUtils.deleteQuietly(destination), 20L);
+            ConstructionSiteProvider.getSchedules().scheduleAsync(() -> {
+                FileUtils.deleteQuietly(destination);
+            }, Void.class);
         }
         if (e != null) {
             ConstructionSiteProvider.getSite().getPluginLogger().log(Level.SEVERE, "Error whilst parsing map", e);
