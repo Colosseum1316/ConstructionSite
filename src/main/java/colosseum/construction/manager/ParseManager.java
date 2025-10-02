@@ -69,7 +69,7 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
                 ConstructionSiteProvider.getSite().getPluginLogger().log(Level.SEVERE, "Cannot unload world for parsing!", e);
             }
             fire(originalWorld, args, startPoint, radius);
-        }, Void.class);
+        });
     }
 
     private void fire(@NotNull final World originalWorld, final List<String> args, final Location startPoint, final int radius) {
@@ -111,11 +111,11 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
                         worldManager.loadWorld(originalWorldRelativePath);
                         parser = new MapParser(destination, args, startPoint, radius);
                         parserBukkitTask = ConstructionSiteProvider.getSchedules().scheduleAsync(parser, BukkitTask.class);
-                    }, Void.class);
+                    });
                 } catch (Exception e) {
                     failAndCleanup(destination, e);
                 }
-            }, Void.class);
+            });
         } catch (Exception e) {
             failAndCleanup(null, e);
         }
@@ -156,7 +156,7 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
                 } catch (Exception e) {
                     failAndCleanup(worldFolder, e);
                 }
-            }, Void.class);
+            });
         } else {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 TextComponent message = new TextComponent("No parse task running.");
@@ -200,7 +200,7 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
             } else {
                 ConstructionSiteProvider.getSchedules().scheduleAsync(() -> {
                     FileUtils.deleteQuietly(folder);
-                }, Void.class);
+                });
             }
         }
         parser = null;
@@ -212,7 +212,7 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
         if (destination != null) {
             ConstructionSiteProvider.getSchedules().scheduleAsync(() -> {
                 FileUtils.deleteQuietly(destination);
-            }, Void.class);
+            });
         }
         if (e != null) {
             ConstructionSiteProvider.getSite().getPluginLogger().log(Level.SEVERE, "Error whilst parsing map", e);
