@@ -8,7 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ConstructionSiteProvider {
     private static ConstructionSite site;
-    private static ConstructionSiteSchedules schedules;
+    private static ConstructionSiteSchedules scheduler;
     private static boolean live;
 
     public static void setSite(ConstructionSite instance) {
@@ -19,12 +19,12 @@ public final class ConstructionSiteProvider {
         return site;
     }
 
-    public static void setSchedules(ConstructionSiteSchedules instance) {
-        ConstructionSiteProvider.schedules = instance;
+    public static void setScheduler(ConstructionSiteSchedules instance) {
+        ConstructionSiteProvider.scheduler = instance;
     }
 
-    public static ConstructionSiteSchedules getSchedules() {
-        return schedules;
+    public static ConstructionSiteSchedules getScheduler() {
+        return scheduler;
     }
 
     public static void setLive(boolean live) {

@@ -30,7 +30,7 @@ class MapAdminCommand: AbstractMapAdminCommand(
             } else {
                 adminList.remove(target.uniqueId)
             }
-            ConstructionSiteProvider.getSchedules().scheduleAsync({
+            ConstructionSiteProvider.getScheduler().scheduleAsync({
                 data.updateAndWrite(FinalizedMapData(null, null, null, ImmutableSet.copyOf(adminList), data.isLive))
                 if (add) {
                     Command.broadcastCommandMessage(caller, "${target.name} is now admin in ${data.mapName}", true)

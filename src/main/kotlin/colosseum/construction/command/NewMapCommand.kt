@@ -118,7 +118,7 @@ class NewMapCommand: AbstractOpCommand(
             }
         }
 
-        ConstructionSiteProvider.getSchedules().schedule({
+        ConstructionSiteProvider.getScheduler().schedule({
             val world = worldManager.createOrLoadWorld(worldCreator) ?: throw RuntimeException("Could not create world ${worldCreator.name()}")
             world.difficulty = Difficulty.EASY
             world.setSpawnLocation(0, 106, 0)
@@ -129,10 +129,10 @@ class NewMapCommand: AbstractOpCommand(
             world.time = 6000
             world.pvp = false
 
-            ConstructionSiteProvider.getSchedules().scheduleAsync({
+            ConstructionSiteProvider.getScheduler().scheduleAsync({
                 val mapData = getMapDataManager().get(world) as MutableMapData
                 mapData.updateAndWrite(FinalizedMapData(worldFolderName, caller.name, gameType, ImmutableSet.of(caller.uniqueId), mapData.isLive))
-                ConstructionSiteProvider.getSchedules().schedule({
+                ConstructionSiteProvider.getScheduler().schedule({
                     getTeleportManager().teleportPlayer(caller, world.spawnLocation)
                     caller.gameMode = GameMode.CREATIVE
                     caller.isFlying = true

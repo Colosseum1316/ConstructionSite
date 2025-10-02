@@ -50,7 +50,7 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
                 FileUtils.deleteQuietly(file);
             }
         }
-        selfBukkitTask = ConstructionSiteProvider.getSchedules().schedule(this, BukkitTask.class, 0L, 20L);
+        selfBukkitTask = ConstructionSiteProvider.getScheduler().schedule(this, BukkitTask.class, 0L, 20L);
     }
 
     @Override
@@ -61,7 +61,7 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
     }
 
     public void schedule(@NotNull World originalWorld, List<String> args, Location startPoint, int radius) {
-        ConstructionSiteProvider.getSchedules().schedule(() -> {
+        ConstructionSiteProvider.getScheduler().schedule(() -> {
             originalWorld.save();
             try {
                 getWorldManager().unloadWorld(originalWorld, true);
@@ -86,7 +86,7 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
             final File destination = worldManager.getOnParseRootPath().toPath().resolve(WorldMapConstants.PARSE_PREFIX + originalWorldFolder.getName()).toFile();
 
             JavaPlugin plugin = ConstructionSiteProvider.getPlugin();
-            ConstructionSiteProvider.getSchedules().scheduleAsync(() -> {
+            ConstructionSiteProvider.getScheduler().scheduleAsync(() -> {
                 try {
                     if (destination.exists()) {
                         FileUtils.deleteDirectory(destination);
@@ -107,10 +107,10 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
                         }
                     }
 
-                    ConstructionSiteProvider.getSchedules().schedule(() -> {
+                    ConstructionSiteProvider.getScheduler().schedule(() -> {
                         worldManager.loadWorld(originalWorldRelativePath);
                         parser = new MapParser(destination, args, startPoint, radius);
-                        parserBukkitTask = ConstructionSiteProvider.getSchedules().scheduleAsync(parser, BukkitTask.class);
+                        parserBukkitTask = ConstructionSiteProvider.getScheduler().scheduleAsync(parser, BukkitTask.class);
                     });
                 } catch (Exception e) {
                     failAndCleanup(destination, e);
@@ -135,7 +135,7 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
             }
             final FinalizedMapData mapData = parser.mapData;
             final File worldFolder = parser.parsableWorldFolder;
-            ConstructionSiteProvider.getSchedules().scheduleAsync(() -> {
+            ConstructionSiteProvider.getScheduler().scheduleAsync(() -> {
                 try {
                     if (status.get().isFail()) {
                         failAndCleanup(worldFolder, null);
@@ -198,7 +198,7 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
             if (unregistering) {
                 FileUtils.deleteQuietly(folder);
             } else {
-                ConstructionSiteProvider.getSchedules().scheduleAsync(() -> {
+                ConstructionSiteProvider.getScheduler().scheduleAsync(() -> {
                     FileUtils.deleteQuietly(folder);
                 });
             }
@@ -210,7 +210,7 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
     private void failAndCleanup(File destination, Throwable e) {
         this.cancel();
         if (destination != null) {
-            ConstructionSiteProvider.getSchedules().scheduleAsync(() -> {
+            ConstructionSiteProvider.getScheduler().scheduleAsync(() -> {
                 FileUtils.deleteQuietly(destination);
             });
         }

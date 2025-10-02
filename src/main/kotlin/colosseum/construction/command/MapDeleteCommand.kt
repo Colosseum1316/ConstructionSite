@@ -47,7 +47,7 @@ class MapDeleteCommand: AbstractMapAdminCommand(
             worldManager.unloadWorld(world, false)
             site.getManager(MapDataManager::class.java).discard(world)
             Command.broadcastCommandMessage(caller, "Deleting world ${worldManager.getWorldRelativePath(f)}", true)
-            ConstructionSiteProvider.getSchedules().scheduleAsync({
+            ConstructionSiteProvider.getScheduler().scheduleAsync({
                 FileUtils.deleteQuietly(f)
             }, Void::class.java)
             return true

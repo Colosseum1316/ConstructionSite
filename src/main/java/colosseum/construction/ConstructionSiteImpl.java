@@ -37,7 +37,7 @@ public final class ConstructionSiteImpl extends JavaPlugin implements Constructi
 
     @Override
     public void onEnable() {
-        ConstructionSiteProvider.setSchedules(new ConstructionSiteSchedulesImpl());
+        ConstructionSiteProvider.setScheduler(new ConstructionSiteSchedulesImpl());
         PluginUtils.registerManagers(managersReference, managers);
         ConstructionSiteProvider.setLive(true);
     }
@@ -46,7 +46,7 @@ public final class ConstructionSiteImpl extends JavaPlugin implements Constructi
     public void onDisable() {
         ConstructionSiteProvider.setLive(false);
         PluginUtils.unregisterManagers(managersReference, managers);
-        ConstructionSiteProvider.setSchedules(null);
+        ConstructionSiteProvider.setScheduler(null);
         managers.clear();
         managersReference.clear();
         ConstructionSiteProvider.setSite(null);

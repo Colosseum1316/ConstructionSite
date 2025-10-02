@@ -106,7 +106,7 @@ class TeleportWarpCommand: AbstractTeleportCommand(
                     UtilPlayerBase.sendMessage(caller, "&c\"$key\" already exists!")
                     return true
                 }
-                ConstructionSiteProvider.getSchedules().scheduleAsync({
+                ConstructionSiteProvider.getScheduler().scheduleAsync({
                     (data as MutableMapData).updateAndWrite(FinalizedMapData(null, null, null, ImmutableMap.copyOf(warps), data.isLive))
                     UtilPlayerBase.sendMessage(caller, "Created warp point &e$key")
                     site.pluginLogger.info("World $path: ${caller.name} created warp point $key at ${locToStrClean(caller.location)}")
@@ -120,7 +120,7 @@ class TeleportWarpCommand: AbstractTeleportCommand(
                     return true
                 }
                 val location = warps.remove(key)
-                ConstructionSiteProvider.getSchedules().scheduleAsync({
+                ConstructionSiteProvider.getScheduler().scheduleAsync({
                     UtilPlayerBase.sendMessage(caller, "Deleting warp point &e$key")
                     (data as MutableMapData).updateAndWrite(FinalizedMapData(null, null, null, ImmutableMap.copyOf(warps), data.isLive))
                     site.pluginLogger.info("World $path: ${caller.name} deleted warp point $key (${vecToStrClean(location)})")
