@@ -14,7 +14,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,8 +25,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
 @ManagerDependency(WorldManager.class)
-public final class ParseManager extends ConstructionSiteManager implements Runnable {
-    private MapParser parser;
+public final class ParseManager extends ConstructionSiteManager {
+    private volatile MapParser parser;
     private BukkitTask parserBukkitTask;
     private final AtomicBoolean running = new AtomicBoolean(false);
 
@@ -50,79 +49,74 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
                 FileUtils.deleteQuietly(file);
             }
         }
-        selfBukkitTask = ConstructionSiteProvider.getScheduler().schedule(this, BukkitTask.class, 0L, 20L);
+        selfBukkitTask = ConstructionSiteProvider.getScheduler().schedule(this::query, BukkitTask.class, 0L, 20L);
     }
 
     @Override
     public void unregister() {
-        this.cancel(true);
+        this.cancel0(true);
         selfBukkitTask.cancel();
         selfBukkitTask = null;
     }
 
-    public void schedule(@NotNull World originalWorld, List<String> args, Location startPoint, int radius) {
+    public void schedule(@NotNull final World originalWorld, final List<String> args, final Location startPoint, final int radius) {
         ConstructionSiteProvider.getScheduler().schedule(() -> {
+            if (isRunning()) {
+                ConstructionSiteProvider.getSite().getPluginLogger().warning("A map parse task is running. Double check your invocation...");
+                return;
+            }
             originalWorld.save();
             try {
                 getWorldManager().unloadWorld(originalWorld, true);
             } catch (Exception e) {
                 ConstructionSiteProvider.getSite().getPluginLogger().log(Level.SEVERE, "Cannot unload world for parsing!", e);
+                return;
             }
-            fire(originalWorld, args, startPoint, radius);
+            try {
+                running.set(true);
+                WorldManager worldManager = getWorldManager();
+
+                final File originalWorldFolder = worldManager.getWorldFolder(originalWorld);
+                final String originalWorldRelativePath = worldManager.getWorldRelativePath(originalWorldFolder);
+                final File destination = worldManager.getOnParseRootPath().toPath().resolve(WorldMapConstants.PARSE_PREFIX + originalWorldFolder.getName()).toFile();
+
+                ConstructionSiteProvider.getScheduler().scheduleAsync(() -> {
+                    try {
+                        if (destination.exists()) {
+                            FileUtils.deleteDirectory(destination);
+                        }
+
+                        ConstructionSite site = ConstructionSiteProvider.getSite();
+                        site.getPluginLogger().info("Preparing world parse. Copying " + originalWorldFolder.getAbsolutePath() + " to " + destination.getAbsolutePath());
+                        FileUtils.copyDirectory(originalWorldFolder, destination);
+
+                        site.getPluginLogger().info("Deleting unneeded files in " + destination.getAbsolutePath());
+                        for (File file : Objects.requireNonNull(destination.listFiles())) {
+                            String filename = file.getName();
+                            if (!filename.equalsIgnoreCase(WorldMapConstants.LEVEL_DAT)
+                                    && !filename.equalsIgnoreCase(WorldMapConstants.REGION)
+                                    && !filename.equalsIgnoreCase(WorldMapConstants.WORLDCONFIG_DAT)
+                                    && !filename.equalsIgnoreCase(WorldMapConstants.MAP_DAT)) {
+                                FileUtils.deleteQuietly(file);
+                            }
+                        }
+
+                        ConstructionSiteProvider.getScheduler().schedule(() -> {
+                            worldManager.loadWorld(originalWorldRelativePath);
+                            parser = new MapParser(destination, args, startPoint, radius);
+                            parserBukkitTask = ConstructionSiteProvider.getScheduler().scheduleAsync(parser, BukkitTask.class);
+                        });
+                    } catch (Exception e) {
+                        failAndCleanup(destination, e);
+                    }
+                });
+            } catch (Exception e) {
+                failAndCleanup(null, e);
+            }
         });
     }
 
-    private void fire(@NotNull final World originalWorld, final List<String> args, final Location startPoint, final int radius) {
-        if (isRunning()) {
-            return;
-        }
-        try {
-            running.set(true);
-
-            WorldManager worldManager = getWorldManager();
-            final File originalWorldFolder = worldManager.getWorldFolder(originalWorld);
-            final String originalWorldRelativePath = worldManager.getWorldRelativePath(originalWorldFolder);
-
-            final File destination = worldManager.getOnParseRootPath().toPath().resolve(WorldMapConstants.PARSE_PREFIX + originalWorldFolder.getName()).toFile();
-
-            JavaPlugin plugin = ConstructionSiteProvider.getPlugin();
-            ConstructionSiteProvider.getScheduler().scheduleAsync(() -> {
-                try {
-                    if (destination.exists()) {
-                        FileUtils.deleteDirectory(destination);
-                    }
-
-                    ConstructionSite site = ConstructionSiteProvider.getSite();
-                    site.getPluginLogger().info("Preparing world parse. Copying " + originalWorldFolder.getAbsolutePath() + " to " + destination.getAbsolutePath());
-                    FileUtils.copyDirectory(originalWorldFolder, destination);
-
-                    site.getPluginLogger().info("Deleting unneeded files in " + destination.getAbsolutePath());
-                    for (File file : Objects.requireNonNull(destination.listFiles())) {
-                        String filename = file.getName();
-                        if (!filename.equalsIgnoreCase(WorldMapConstants.LEVEL_DAT)
-                                && !filename.equalsIgnoreCase(WorldMapConstants.REGION)
-                                && !filename.equalsIgnoreCase(WorldMapConstants.WORLDCONFIG_DAT)
-                                && !filename.equalsIgnoreCase(WorldMapConstants.MAP_DAT)) {
-                            FileUtils.deleteQuietly(file);
-                        }
-                    }
-
-                    ConstructionSiteProvider.getScheduler().schedule(() -> {
-                        worldManager.loadWorld(originalWorldRelativePath);
-                        parser = new MapParser(destination, args, startPoint, radius);
-                        parserBukkitTask = ConstructionSiteProvider.getScheduler().scheduleAsync(parser, BukkitTask.class);
-                    });
-                } catch (Exception e) {
-                    failAndCleanup(destination, e);
-                }
-            });
-        } catch (Exception e) {
-            failAndCleanup(null, e);
-        }
-    }
-
-    @Override
-    public void run() {
+    private void query() {
         if (parser != null) {
             final AtomicReference<MapParser.Status> status = parser.getStatus();
             for (Player player : Bukkit.getOnlinePlayers()) {
@@ -166,23 +160,23 @@ public final class ParseManager extends ConstructionSiteManager implements Runna
         }
     }
 
+    public void cancel() {
+        this.cancel0(false);
+    }
+
     public boolean isRunning() {
         return running.get();
     }
 
-    // 0.0 - 1.0
+    /** 0.0 - 1.0 */
     public double getProgress() {
         if (isRunning()) {
-            return parser.getProgress();
+            return parser != null ? parser.getProgress() : 0.0;
         }
         return 0.0;
     }
 
-    public void cancel() {
-        this.cancel(false);
-    }
-
-    private void cancel(boolean unregistering) {
+    private void cancel0(boolean unregistering) {
         if (parserBukkitTask != null) {
             parserBukkitTask.cancel();
             parserBukkitTask = null;
