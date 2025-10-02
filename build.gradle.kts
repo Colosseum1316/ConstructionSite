@@ -114,9 +114,6 @@ tasks.jacocoTestReport {
         files(classDirectories.files.map {
             fileTree(it) {
                 include("colosseum/construction/**")
-                exclude("colosseum/construction/ConstructionSiteImpl.class")
-                exclude("colosseum/construction/data/DummyMapData.class")
-                exclude("colosseum/construction/data/FinalizedMapData.class")
             }
         })
     )
