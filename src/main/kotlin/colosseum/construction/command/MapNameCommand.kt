@@ -28,10 +28,10 @@ class MapNameCommand: AbstractMapCreditCommand(
         val path = worldManager.getWorldRelativePath(world)
         val data = mapDataSupplier.get()
         val newMapName = contentSupplier.get()
-        ConstructionSiteProvider.getScheduler().scheduleAsync({
+        ConstructionSiteProvider.getScheduler().scheduleAsync {
             data.updateAndWrite(FinalizedMapData(newMapName, null, null, data.isLive))
             Command.broadcastCommandMessage(caller, "World $path set map name: ${mapDataSupplier.get().mapName}", true)
-        }, Void::class.java)
+        }
         return true
     }
 }

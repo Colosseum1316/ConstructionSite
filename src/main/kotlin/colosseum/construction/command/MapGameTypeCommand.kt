@@ -45,11 +45,11 @@ class MapGameTypeCommand: AbstractMapAdminCommand(
             PluginUtils.printValidGameTypes(caller)
             return true
         }
-        ConstructionSiteProvider.getScheduler().scheduleAsync({
+        ConstructionSiteProvider.getScheduler().scheduleAsync {
             data.updateAndWrite(FinalizedMapData(null, null, newGameType, data.isLive))
             Command.broadcastCommandMessage(caller, "Map ${data.mapName}: Set GameType to ${data.mapGameType.name}", true)
             ConstructionSiteProvider.getSite().pluginLogger.info("World $path: Set GameType to ${data.mapGameType.name}")
-        }, Void::class.java)
+        }
         return true
     }
 }

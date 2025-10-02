@@ -30,7 +30,7 @@ class MapAdminCommand: AbstractMapAdminCommand(
             } else {
                 adminList.remove(target.uniqueId)
             }
-            ConstructionSiteProvider.getScheduler().scheduleAsync({
+            ConstructionSiteProvider.getScheduler().scheduleAsync {
                 data.updateAndWrite(FinalizedMapData(null, null, null, ImmutableSet.copyOf(adminList), data.isLive))
                 if (add) {
                     Command.broadcastCommandMessage(caller, "${target.name} is now admin in ${data.mapName}", true)
@@ -39,7 +39,7 @@ class MapAdminCommand: AbstractMapAdminCommand(
                     Command.broadcastCommandMessage(caller, "${target.name} is no longer admin in ${data.mapName}", true)
                     ConstructionSiteProvider.getSite().pluginLogger.info("World $path: ${target.name} is no longer admin in ${data.mapName}")
                 }
-            }, Void::class.java)
+            }
         }
         return true
     }
