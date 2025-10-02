@@ -120,11 +120,11 @@ class TeleportWarpCommand: AbstractTeleportCommand(
                     return true
                 }
                 val location = warps.remove(key)
-                ConstructionSiteProvider.getScheduler().scheduleAsync({
+                ConstructionSiteProvider.getScheduler().scheduleAsync {
                     UtilPlayerBase.sendMessage(caller, "Deleting warp point &e$key")
                     (data as MutableMapData).updateAndWrite(FinalizedMapData(null, null, null, ImmutableMap.copyOf(warps), data.isLive))
                     site.pluginLogger.info("World $path: ${caller.name} deleted warp point $key (${vecToStrClean(location)})")
-                })
+                }
                 return true
             }
 
