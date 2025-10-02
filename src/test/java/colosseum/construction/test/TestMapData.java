@@ -134,7 +134,7 @@ class TestMapData {
             boolean currentlyLive,
             DummyMapWriteAssertionCallback assertion
     ) {
-        new DummyMapDataWrite(TestMapData.world, TestMapData.tempWorldDir, mapName, mapCreator, mapGameType, warps, adminList, currentlyLive);
+        new DummyMapDataWrite(TestMapData.world, TestMapData.tempWorldDir, mapName, mapCreator, mapGameType, warps, adminList, currentlyLive).write();
         MapData data = Utils.readMapData(TestMapData.world, TestMapData.tempWorldDir);
         assertion.assertion(data, mapName, mapCreator, mapGameType, warps, adminList, currentlyLive);
     }

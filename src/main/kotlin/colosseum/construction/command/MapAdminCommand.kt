@@ -31,7 +31,7 @@ class MapAdminCommand: AbstractMapAdminCommand(
                 adminList.remove(target.uniqueId)
             }
             ConstructionSiteProvider.getScheduler().scheduleAsync {
-                data.updateAndWrite(FinalizedMapData(null, null, null, ImmutableSet.copyOf(adminList), data.isLive))
+                data.update(FinalizedMapData(null, null, null, ImmutableSet.copyOf(adminList), data.isLive))
                 if (add) {
                     Command.broadcastCommandMessage(caller, "${target.name} is now admin in ${data.mapName}", true)
                     ConstructionSiteProvider.getSite().pluginLogger.info("World $path: ${target.name} is now admin in ${data.mapName}")

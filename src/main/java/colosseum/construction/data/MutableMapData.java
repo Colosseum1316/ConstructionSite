@@ -3,11 +3,7 @@ package colosseum.construction.data;
 import colosseum.utility.MapData;
 
 public interface MutableMapData extends MapData {
-    default boolean updateAndWrite(FinalizedMapData newMapData) {
-        return true;
-    }
+    void update(FinalizedMapData newMapData);
 
-    default boolean save() {
-        return true;
-    }
+    boolean write();
 }

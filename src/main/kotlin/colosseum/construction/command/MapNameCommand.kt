@@ -29,7 +29,7 @@ class MapNameCommand: AbstractMapCreditCommand(
         val data = mapDataSupplier.get()
         val newMapName = contentSupplier.get()
         ConstructionSiteProvider.getScheduler().scheduleAsync {
-            data.updateAndWrite(FinalizedMapData(newMapName, null, null, data.isLive))
+            data.update(FinalizedMapData(newMapName, null, null, data.isLive))
             Command.broadcastCommandMessage(caller, "World $path set map name: ${mapDataSupplier.get().mapName}", true)
         }
         return true

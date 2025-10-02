@@ -19,7 +19,7 @@ class MapCurrentlyLiveCommand: AbstractMapAdminCommand(
         val data = getMapDataManager().get(caller.world) as MutableMapData
         if (label.equals("mapsetlive", ignoreCase = true)) {
             ConstructionSiteProvider.getScheduler().scheduleAsync {
-                data.updateAndWrite(FinalizedMapData(null, null, null, !data.isLive))
+                data.update(FinalizedMapData(null, null, null, !data.isLive))
                 Command.broadcastCommandMessage(caller, "${data.mapName} is ${if (data.isLive) "now live" else "no longer live"}", true)
             }
         } else {

@@ -68,7 +68,8 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
             read();
         } else {
             ConstructionSiteProvider.getSite().getPluginLogger().warning(String.format("There's no \"%s\" in \"%s\"! Creating a dummy one. Please set map data accordingly.", WorldMapConstants.MAP_DAT, worldFolder.getAbsolutePath()));
-            updateAndWrite(new FinalizedMapData("MapName", "MapCreator", GameType.None, ImmutableMap.of(), ImmutableSet.of(), true));
+            update(new FinalizedMapData("MapName", "MapCreator", GameType.None, ImmutableMap.of(), ImmutableSet.of(), true));
+            write();
         }
     }
 
@@ -116,7 +117,7 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
     }
 
     @Override
-    public boolean updateAndWrite(FinalizedMapData newMapData) {
+    public void update(FinalizedMapData newMapData) {
         synchronized (lock) {
             if (newMapData.getMapName() != null) {
                 this.mapName = newMapData.getMapName();
@@ -136,7 +137,12 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
                 this.adminList.addAll(newMapData.adminList());
             }
             this.live = newMapData.isLive();
+        }
+    }
 
+    @Override
+    public boolean write() {
+        synchronized (lock) {
             String mapName = this.mapName;
             String mapCreator = this.mapCreator;
             GameType mapGameType = this.mapGameType;
@@ -162,11 +168,6 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
     }
 
     @Override
-    public boolean save() {
-        return updateAndWrite(new FinalizedMapData(this));
-    }
-
-    @Override
     public ImmutableMap<String, Vector> warps() {
         ImmutableMap.Builder<String, Vector> builder = ImmutableMap.builder();
         warps.forEach((s, l) -> builder.put(s, l.clone()));
@@ -184,7 +185,7 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
         return player.isOp() || adminList.contains(player.getUniqueId());
     }
 
-    private String warpsToString(ImmutableMap<String, Vector> warps) {
+    private static String warpsToString(ImmutableMap<String, Vector> warps) {
         return String.join(Constants.LOCATIONS_DELIMITER, warps.entrySet().stream().map(entry -> entry.getKey() + "@" + UtilWorld.vecToStrClean(entry.getValue())).toList());
     }
 }

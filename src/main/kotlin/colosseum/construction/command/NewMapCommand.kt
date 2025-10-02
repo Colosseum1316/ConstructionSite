@@ -131,7 +131,7 @@ class NewMapCommand: AbstractOpCommand(
 
             ConstructionSiteProvider.getScheduler().scheduleAsync {
                 val mapData = getMapDataManager().get(world) as MutableMapData
-                mapData.updateAndWrite(FinalizedMapData(worldFolderName, caller.name, gameType, ImmutableSet.of(caller.uniqueId), mapData.isLive))
+                mapData.update(FinalizedMapData(worldFolderName, caller.name, gameType, ImmutableSet.of(caller.uniqueId), mapData.isLive))
                 ConstructionSiteProvider.getScheduler().schedule {
                     getTeleportManager().teleportPlayer(caller, world.spawnLocation)
                     caller.gameMode = GameMode.CREATIVE

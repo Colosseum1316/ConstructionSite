@@ -50,7 +50,7 @@ public final class DummyMapDataWrite extends MapDataImpl {
 
         this.testCurrentlyLive = currentlyLive;
 
-        super.updateAndWrite(new FinalizedMapData(this.testMapName, this.testMapCreator, this.testMapGameType, this.testWarps, this.testAdminList, this.testCurrentlyLive));
+        super.update(new FinalizedMapData(this.testMapName, this.testMapCreator, this.testMapGameType, this.testWarps, this.testAdminList, this.testCurrentlyLive));
     }
 
     @Override

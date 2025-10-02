@@ -29,7 +29,7 @@ class MapAuthorCommand: AbstractMapCreditCommand(
         val data = mapDataSupplier.get()
         val newMapCreator = contentSupplier.get()
         ConstructionSiteProvider.getScheduler().scheduleAsync {
-            data.updateAndWrite(FinalizedMapData(null, newMapCreator, null, data.isLive))
+            data.update(FinalizedMapData(null, newMapCreator, null, data.isLive))
             Command.broadcastCommandMessage(caller, "Map ${mapDataSupplier.get().mapName} set author: ${mapDataSupplier.get().mapCreator}")
             ConstructionSiteProvider.getSite().pluginLogger.info("World $path set author: ${mapDataSupplier.get().mapCreator}")
         }
