@@ -38,6 +38,8 @@ class TestMapData {
     private static PlayerMock player1;
     private static final String uuid2 = "07e79d0b-f86d-4bed-ae37-d87df8d94693";
     private static PlayerMock player2;
+    private static final String uuid3 = "3e65ea50-cd1a-45fb-81d7-7e27c14662d4";
+    private static PlayerMock player3;
 
     @BeforeAll
     static void setup() {
@@ -49,6 +51,9 @@ class TestMapData {
         player2 = new PlayerMock("test2", UUID.fromString(uuid2));
         player2.setOp(false);
         MockBukkit.getMock().addPlayer(player2);
+        player3 = new PlayerMock("test3", UUID.fromString(uuid3));
+        player3.setOp(true);
+        MockBukkit.getMock().addPlayer(player3);
         plugin.setup();
     }
 
@@ -98,6 +103,7 @@ class TestMapData {
         Assertions.assertTrue(data.adminList().stream().anyMatch(v -> v.toString().equals(uuid2)));
         Assertions.assertTrue(data.allows(player1));
         Assertions.assertTrue(data.allows(player2));
+        Assertions.assertTrue(data.allows(player3));
 
         data = testRead0(String.format("""
                 :invalid
@@ -118,6 +124,7 @@ class TestMapData {
         Assertions.assertFalse(data.adminList().stream().anyMatch(v -> v.toString().equals(uuid2)));
         Assertions.assertTrue(data.allows(player1));
         Assertions.assertFalse(data.allows(player2));
+        Assertions.assertTrue(data.allows(player3));
     }
 
     @FunctionalInterface
@@ -173,6 +180,7 @@ class TestMapData {
             Assertions.assertEquals("TEST MAP 1 AUTHOR", data.getMapCreator());
             Assertions.assertTrue(data.allows(player1));
             Assertions.assertTrue(data.allows(player2));
+            Assertions.assertTrue(data.allows(player3));
         });
     }
 }

@@ -4,8 +4,9 @@ import be.seeseemelk.mockbukkit.MockBukkit;
 import colosseum.construction.ConstructionSiteProvider;
 import colosseum.construction.PluginUtils;
 import colosseum.construction.manager.ConstructionSiteManager;
-import colosseum.construction.manager.GameTypeInfoManager;
-import colosseum.construction.manager.SplashTextManager;
+import colosseum.construction.manager.MapDataManager;
+import colosseum.construction.manager.TeleportManager;
+import colosseum.construction.manager.WorldManager;
 import colosseum.construction.test.Utils;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -17,25 +18,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-public final class DummySite1 implements DummySite {
-
+public final class DummySite3 implements DummySite {
     private final Logger logger;
 
     private final Map<Class<? extends ConstructionSiteManager>, ConstructionSiteManager> managers = new HashMap<>();
     private final ArrayList<Class<? extends ConstructionSiteManager>> managersReference = new ArrayList<>();
 
+    private final File worldContainer;
     private final File pluginDataFolder;
 
-    public DummySite1(File pluginDataFolder) {
-        this.logger = Utils.getSiteLogger(this);
-
+    public DummySite3(File worldContainer, File pluginDataFolder) {
+        this.worldContainer = worldContainer;
         this.pluginDataFolder = pluginDataFolder;
+
+        this.logger = Utils.getSiteLogger(this);
 
         managers.clear();
         managersReference.clear();
-        managersReference.addAll(PluginUtils.discoverManagers(List.of(GameTypeInfoManager.class, SplashTextManager.class)));
+        managersReference.addAll(PluginUtils.discoverManagers(List.of(WorldManager.class, MapDataManager.class, TeleportManager.class)));
 
-        MockBukkit.mock();
+        ConstructionSiteServerMock.mock();
     }
 
     @Override
@@ -71,7 +73,7 @@ public final class DummySite1 implements DummySite {
 
     @Override
     public File getWorldContainer() {
-        return null;
+        return worldContainer;
     }
 
     @Override

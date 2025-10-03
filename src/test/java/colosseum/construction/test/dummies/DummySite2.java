@@ -9,7 +9,7 @@ import java.io.File;
 import java.util.logging.Logger;
 
 @SuppressWarnings("ClassCanBeRecord")
-public class DummySite2 implements DummySite {
+public final class DummySite2 implements DummySite {
 
     private final File worldContainer;
 

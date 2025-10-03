@@ -21,7 +21,7 @@ import org.junit.jupiter.api.io.TempDir;
 import java.io.File;
 import java.util.List;
 
-class TestSplashTextCommand {
+class TestSplashTextCommands {
     private static DummySite plugin;
     private static PlayerMock player;
 
@@ -50,6 +50,7 @@ class TestSplashTextCommand {
         for (AbstractOpCommand command : commands) {
             player.setOp(false);
             Assertions.assertFalse(command.canRun(player));
+            Assertions.assertTrue(command.canRun(MockBukkit.getMock().getConsoleSender()));
             player.setOp(true);
             Assertions.assertTrue(command.canRun(player));
             Assertions.assertTrue(command.canRun(MockBukkit.getMock().getConsoleSender()));

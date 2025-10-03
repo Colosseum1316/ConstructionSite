@@ -2,7 +2,7 @@ package colosseum.construction.test;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
 import colosseum.construction.command.FlySpeedCommand;
-import colosseum.construction.test.dummies.ConstructionPlayerMock;
+import colosseum.construction.test.dummies.ConstructionSitePlayerMock;
 import colosseum.construction.test.dummies.DummySite;
 import colosseum.construction.test.dummies.DummySite1;
 import org.junit.jupiter.api.AfterAll;
@@ -15,7 +15,7 @@ import java.io.File;
 
 class TestFlySpeedCommand {
     private static DummySite plugin;
-    private static ConstructionPlayerMock player;
+    private static ConstructionSitePlayerMock player;
 
     @TempDir
     static File tempPluginDataDir;
@@ -23,7 +23,7 @@ class TestFlySpeedCommand {
     @BeforeAll
     static void setup() {
         plugin = new DummySite1(tempPluginDataDir);
-        player = new ConstructionPlayerMock("test");
+        player = new ConstructionSitePlayerMock("test");
         MockBukkit.getMock().addPlayer(player);
         plugin.setup();
     }
@@ -41,6 +41,7 @@ class TestFlySpeedCommand {
         Assertions.assertFalse(command.canRun(player));
         player.setFlying(true);
         Assertions.assertTrue(command.canRun(player));
+        Assertions.assertFalse(command.canRun(MockBukkit.getMock().getConsoleSender()));
     }
 
     @Test

@@ -4,16 +4,16 @@ import be.seeseemelk.mockbukkit.entity.PlayerMock;
 
 import java.util.UUID;
 
-public class ConstructionPlayerMock extends PlayerMock {
+public final class ConstructionSitePlayerMock extends PlayerMock {
 
     private boolean flying = false;
     private float flySpeed = 1.0f;
 
-    public ConstructionPlayerMock(String name) {
+    public ConstructionSitePlayerMock(String name) {
         super(name);
     }
 
-    public ConstructionPlayerMock(String name, UUID uuid) {
+    public ConstructionSitePlayerMock(String name, UUID uuid) {
         super(name, uuid);
     }
 
