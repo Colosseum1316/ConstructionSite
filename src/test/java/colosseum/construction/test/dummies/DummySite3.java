@@ -46,14 +46,18 @@ public final class DummySite3 implements DummySite {
     }
 
     @Override
-    public void setup() {
+    public void load() {
         ConstructionSiteProvider.setSite(this);
+    }
+
+    @Override
+    public void enable() {
         PluginUtils.registerManagers(managersReference, managers);
         ConstructionSiteProvider.setLive(true);
     }
 
     @Override
-    public void teardown() {
+    public void disable() {
         ConstructionSiteProvider.setLive(false);
         PluginUtils.unregisterManagers(managersReference, managers);
         managers.clear();

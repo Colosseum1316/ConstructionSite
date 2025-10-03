@@ -27,12 +27,12 @@ class TestBlockData {
     static void setup() {
         plugin = new DummySite1(tempPluginDataDir);
         world = MockBukkit.getMock().addSimpleWorld("test");
-        plugin.setup();
+        plugin.enable();
     }
 
     @AfterAll
     static void tearDown() {
-        plugin.teardown();
+        plugin.disable();
         MockBukkit.unload();
     }
 

@@ -33,6 +33,8 @@ public class TestTeleportCommands {
     private static ConstructionSitePlayerMock player1;
     private static final String uuid2 = "07e79d0b-f86d-4bed-ae37-d87df8d94693";
     private static ConstructionSitePlayerMock player2;
+    private static final String uuid3 = "3e65ea50-cd1a-45fb-81d7-7e27c14662d4";
+    private static ConstructionSitePlayerMock player3;
     private static ConstructionSiteWorldMock world;
     private static ConstructionSiteWorldMock worldLobby;
     private static ConstructionSiteWorldMock worldMap;
@@ -55,10 +57,13 @@ public class TestTeleportCommands {
         player2 = new ConstructionSitePlayerMock("test2", UUID.fromString(uuid2));
         player2.setOp(true);
         ((ConstructionSiteServerMock) MockBukkit.getMock()).addPlayer(player2);
+        player3 = new ConstructionSitePlayerMock("test3", UUID.fromString(uuid3));
+        player3.setOp(false);
+        ((ConstructionSiteServerMock) MockBukkit.getMock()).addPlayer(player3);
         ((ConstructionSiteServerMock) MockBukkit.getMock()).addWorld(world);
         ((ConstructionSiteServerMock) MockBukkit.getMock()).addWorld(worldLobby);
         ((ConstructionSiteServerMock) MockBukkit.getMock()).addWorld(worldMap);
-        plugin.setup();
+        plugin.load();
         Assertions.assertTrue(worldMap.getWorldFolder().mkdirs());
         mapData = Utils.readMapData(worldMap, worldMap.getWorldFolder(), String.format("""
                 currentlyLive:true
@@ -68,11 +73,12 @@ public class TestTeleportCommands {
                 GAME_TYPE:None
                 ADMIN_LIST:%s
                 """.trim(), uuid1));
+        plugin.enable();
     }
 
     @AfterAll
     static void tearDown() {
-        plugin.teardown();
+        plugin.disable();
         MockBukkit.unload();
     }
 
@@ -88,38 +94,61 @@ public class TestTeleportCommands {
             Assertions.assertFalse(command.canRun(MockBukkit.getMock().getConsoleSender()));
             Assertions.assertTrue(command.canRun(player1));
             Assertions.assertTrue(command.canRun(player2));
+            Assertions.assertTrue(command.canRun(player3));
         }
+
         AbstractTeleportCommand warpCommand = new TeleportWarpCommand();
         TeleportManager manager = ConstructionSiteProvider.getSite().getManager(TeleportManager.class);
+
         manager.teleportToServerSpawn(player1);
         manager.teleportToServerSpawn(player2);
+        manager.teleportToServerSpawn(player3);
         Assertions.assertFalse(warpCommand.canRun(MockBukkit.getMock().getConsoleSender()));
         Assertions.assertFalse(warpCommand.canRun(player1));
         Assertions.assertFalse(warpCommand.canRun(player2));
+        Assertions.assertFalse(warpCommand.canRun(player3));
         player1.assertSaid("§cCannot use warps in lobby!");
-        player2.assertSaid("§cCannot use warps in lobby!");
         player1.assertNoMoreSaid();
-        player2.assertNoMoreSaid();
         player1.assertGameMode(GameMode.ADVENTURE);
+        player2.assertSaid("§cCannot use warps in lobby!");
+        player2.assertNoMoreSaid();
         player2.assertGameMode(GameMode.ADVENTURE);
+        player3.assertSaid("§cCannot use warps in lobby!");
+        player3.assertNoMoreSaid();
+        player3.assertGameMode(GameMode.ADVENTURE);
         Assertions.assertFalse(player1.isFlying());
         Assertions.assertFalse(player2.isFlying());
+        Assertions.assertFalse(player3.isFlying());
+
         manager.teleportPlayer(player1, new Location(worldLobby, 0, 0, 0));
         manager.teleportPlayer(player2, new Location(worldLobby, 0, 0, 0));
+        manager.teleportPlayer(player3, new Location(worldLobby, 0, 0, 0));
         Assertions.assertFalse(warpCommand.canRun(MockBukkit.getMock().getConsoleSender()));
         Assertions.assertFalse(warpCommand.canRun(player1));
         Assertions.assertFalse(warpCommand.canRun(player2));
+        Assertions.assertFalse(warpCommand.canRun(player3));
         player1.assertSaid("§cCannot use warps in lobby!");
-        player2.assertSaid("§cCannot use warps in lobby!");
         player1.assertNoMoreSaid();
+        player2.assertSaid("§cCannot use warps in lobby!");
         player2.assertNoMoreSaid();
+        player3.assertSaid("§cCannot use warps in lobby!");
+        player3.assertNoMoreSaid();
         Assertions.assertFalse(player1.isFlying());
         Assertions.assertFalse(player2.isFlying());
-        manager.teleportPlayer(player1, new Location(worldMap, 0, 0, 0));
-        manager.teleportPlayer(player2, new Location(worldMap, 0, 0, 0));
+        Assertions.assertFalse(player3.isFlying());
+
+        Assertions.assertTrue(manager.teleportPlayer(player1, new Location(worldMap, 0, 0, 0)));
+        Assertions.assertTrue(manager.teleportPlayer(player2, new Location(worldMap, 0, 0, 0)));
+        Assertions.assertFalse(manager.teleportPlayer(player3, new Location(worldMap, 0, 0, 0)));
         Assertions.assertFalse(warpCommand.canRun(MockBukkit.getMock().getConsoleSender()));
         Assertions.assertTrue(warpCommand.canRun(player1));
         Assertions.assertTrue(warpCommand.canRun(player2));
+        Assertions.assertFalse(warpCommand.canRun(player3));
+        player3.assertSaid("§cCannot use warps in lobby!");
+        player3.assertNoMoreSaid();
+        Assertions.assertTrue(manager.canTeleportTo(player1, new Location(worldMap, 0, 0, 0)));
+        Assertions.assertTrue(manager.canTeleportTo(player2, new Location(worldMap, 0, 0, 0)));
+        Assertions.assertFalse(manager.canTeleportTo(player3, new Location(worldMap, 0, 0, 0)));
         player1.assertNoMoreSaid();
         player2.assertNoMoreSaid();
     }

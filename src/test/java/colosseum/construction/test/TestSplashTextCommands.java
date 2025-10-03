@@ -32,12 +32,12 @@ class TestSplashTextCommands {
     static void setup() {
         plugin = new DummySite1(tempPluginDataDir);
         player = MockBukkit.getMock().addPlayer();
-        plugin.setup();
+        plugin.enable();
     }
 
     @AfterAll
     static void tearDown() {
-        plugin.teardown();
+        plugin.disable();
         MockBukkit.unload();
     }
 

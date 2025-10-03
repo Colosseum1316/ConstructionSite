@@ -20,12 +20,12 @@ class TestPluginUtils {
     @BeforeAll
     static void setup() {
         plugin = new DummySite2(tempWorldContainer);
-        plugin.setup();
+        plugin.enable();
     }
 
     @AfterAll
     static void tearDown() {
-        plugin.teardown();
+        plugin.disable();
     }
 
     @Test

@@ -54,12 +54,12 @@ class TestMapData {
         player3 = new PlayerMock("test3", UUID.fromString(uuid3));
         player3.setOp(true);
         MockBukkit.getMock().addPlayer(player3);
-        plugin.setup();
+        plugin.enable();
     }
 
     @AfterAll
     static void tearDown() {
-        plugin.teardown();
+        plugin.disable();
         MockBukkit.unload();
     }
 

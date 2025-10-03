@@ -23,13 +23,13 @@ public final class DummySite2 implements DummySite {
     }
 
     @Override
-    public void setup() {
+    public void enable() {
         ConstructionSiteProvider.setSite(this);
         ConstructionSiteProvider.setLive(true);
     }
 
     @Override
-    public void teardown() {
+    public void disable() {
         ConstructionSiteProvider.setLive(false);
         ConstructionSiteProvider.setSite(null);
     }
