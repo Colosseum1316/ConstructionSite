@@ -29,14 +29,14 @@ class TestSplashTextCommands {
     static File tempPluginDataDir;
 
     @BeforeAll
-    static void setup() {
+    void setup() {
         plugin = new DummySite1(tempPluginDataDir);
         player = MockBukkit.getMock().addPlayer();
         plugin.enable();
     }
 
     @AfterAll
-    static void tearDown() {
+    void tearDown() {
         plugin.disable();
         MockBukkit.unload();
     }

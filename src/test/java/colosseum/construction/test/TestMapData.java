@@ -42,7 +42,7 @@ class TestMapData {
     private static PlayerMock player3;
 
     @BeforeAll
-    static void setup() {
+    void setup() {
         plugin = new DummySite1(tempPluginDataDir);
         world = MockBukkit.getMock().addSimpleWorld("world");
         player1 = new PlayerMock("test1", UUID.fromString(uuid1));
@@ -58,7 +58,7 @@ class TestMapData {
     }
 
     @AfterAll
-    static void tearDown() {
+    void tearDown() {
         plugin.disable();
         MockBukkit.unload();
     }

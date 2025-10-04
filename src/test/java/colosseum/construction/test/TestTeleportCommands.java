@@ -28,7 +28,7 @@ import org.junit.jupiter.api.io.TempDir;
 import java.io.File;
 import java.util.UUID;
 
-public class TestTeleportCommands {
+class TestTeleportCommands {
     private static DummySite plugin;
     private static final String uuid1 = "5da001d1-f9a4-4c95-9736-9a98327848bf";
     private static ConstructionSitePlayerMock player1;
@@ -47,7 +47,7 @@ public class TestTeleportCommands {
     static File tempPluginDataDir;
 
     @BeforeAll
-    static void setup() {
+    void setup() {
         plugin = new DummySite3(tempWorldContainer, tempPluginDataDir);
 
         world = new ConstructionSiteWorldMock(WorldMapConstants.WORLD);
@@ -70,7 +70,7 @@ public class TestTeleportCommands {
 
         plugin.load();
         ((ConstructionSiteServerMock) MockBukkit.getMock()).addWorld(worldMap);
-        // I don't fucking know why MockBukkit.getMock().getWorld("test_map") and/or MockBukkit.getMock().getWorld("map/test_map") can break the whole test suite.
+        Assertions.assertEquals(worldMap, MockBukkit.getMock().getWorld(WorldUtils.getWorldRelativePath(worldMap)));
         worldMap.setSpawnLocation(8, 9, -10);
         Assertions.assertTrue(WorldUtils.getWorldFolder(worldMap).mkdirs());
         mapData = Utils.readMapData(worldMap, WorldUtils.getWorldFolder(worldMap), String.format("""
@@ -85,7 +85,7 @@ public class TestTeleportCommands {
     }
 
     @AfterAll
-    static void tearDown() {
+    void tearDown() {
         plugin.disable();
         MockBukkit.unload();
     }

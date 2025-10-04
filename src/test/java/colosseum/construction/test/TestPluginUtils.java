@@ -18,13 +18,13 @@ class TestPluginUtils {
     static File tempWorldContainer;
 
     @BeforeAll
-    static void setup() {
+    void setup() {
         plugin = new DummySite2(tempWorldContainer);
         plugin.enable();
     }
 
     @AfterAll
-    static void tearDown() {
+    void tearDown() {
         plugin.disable();
     }
 

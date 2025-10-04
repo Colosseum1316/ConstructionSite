@@ -101,6 +101,6 @@ public final class ConstructionSiteWorldMock extends WorldMock {
     @Override
     public File getWorldFolder() {
         // Simulation.
-        return map ? WorldUtils.getSingleWorldRootPath(super.getName()) : new File(ConstructionSiteProvider.getSite().getWorldContainer(), getName());
+        return map ? WorldUtils.getSingleWorldRootPath(super.getName()) : new File(ConstructionSiteProvider.getSite().getWorldContainer(), super.getName());
     }
 }
