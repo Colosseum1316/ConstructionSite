@@ -1,11 +1,10 @@
 package colosseum.construction.event
 
-import colosseum.construction.BaseUtils
 import colosseum.construction.ConstructionSiteProvider
+import colosseum.construction.WorldUtils
 import colosseum.construction.manager.MapDataManager
 import colosseum.construction.manager.SplashTextManager
 import colosseum.construction.manager.TeleportManager
-import colosseum.construction.manager.WorldManager
 import colosseum.utility.UtilPlayerBase.sendMessage
 import org.bukkit.GameMode
 import org.bukkit.entity.EntityType
@@ -48,13 +47,8 @@ import java.util.function.*
 
 class InteractionEvents: ConstructionSiteEventListener() {
 
-    private fun getWorldManager(): WorldManager {
-        return ConstructionSiteProvider.getSite().getManager(WorldManager::class.java)
-    }
-
     private fun disableInteraction(player: Player, event: Cancellable) {
-        val worldManager = getWorldManager()
-        if (BaseUtils.isLevelNamePreserved(worldManager.getWorldRelativePath(player.world))) {
+        if (WorldUtils.isLevelNamePreserved(WorldUtils.getWorldRelativePath(player.world))) {
             event.isCancelled = true
         }
         if (!ConstructionSiteProvider.getSite().getManager(MapDataManager::class.java).get(player.world).allows(player)) {
@@ -104,8 +98,7 @@ class InteractionEvents: ConstructionSiteEventListener() {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onGameModeChange(event: PlayerGameModeChangeEvent) {
-        val worldManager = getWorldManager()
-        if (BaseUtils.isLevelNamePreserved(worldManager.getWorldRelativePath(event.player.world))) {
+        if (WorldUtils.isLevelNamePreserved(WorldUtils.getWorldRelativePath(event.player.world))) {
             event.isCancelled = event.newGameMode != GameMode.ADVENTURE && event.newGameMode != GameMode.SPECTATOR
         }
     }
@@ -119,8 +112,7 @@ class InteractionEvents: ConstructionSiteEventListener() {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onTeleport(event: PlayerTeleportEvent) {
-        val worldManager = getWorldManager()
-        if (BaseUtils.isLevelNamePreserved(worldManager.getWorldRelativePath(event.to.world))) {
+        if (WorldUtils.isLevelNamePreserved(WorldUtils.getWorldRelativePath(event.to.world))) {
             event.player.gameMode = GameMode.ADVENTURE
             event.player.isFlying = false
         }
@@ -128,24 +120,21 @@ class InteractionEvents: ConstructionSiteEventListener() {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onBlockDamage(event: BlockDamageEvent) {
-        val worldManager = getWorldManager()
-        if (BaseUtils.isLevelNamePreserved(worldManager.getWorldRelativePath(event.player.world))) {
+        if (WorldUtils.isLevelNamePreserved(WorldUtils.getWorldRelativePath(event.player.world))) {
             event.isCancelled = true
         }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onBlockBreak(event: BlockBreakEvent) {
-        val worldManager = getWorldManager()
-        if (BaseUtils.isLevelNamePreserved(worldManager.getWorldRelativePath(event.player.world))) {
+        if (WorldUtils.isLevelNamePreserved(WorldUtils.getWorldRelativePath(event.player.world))) {
             event.isCancelled = true
         }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onBlockPlace(event: BlockPlaceEvent) {
-        val worldManager = getWorldManager()
-        if (BaseUtils.isLevelNamePreserved(worldManager.getWorldRelativePath(event.player.world))) {
+        if (WorldUtils.isLevelNamePreserved(WorldUtils.getWorldRelativePath(event.player.world))) {
             event.setBuild(false)
             event.isCancelled = true
         }
@@ -153,32 +142,28 @@ class InteractionEvents: ConstructionSiteEventListener() {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onBlockCanBuild(event: BlockCanBuildEvent) {
-        val worldManager = getWorldManager()
-        if (BaseUtils.isLevelNamePreserved(worldManager.getWorldRelativePath(event.block.world))) {
+        if (WorldUtils.isLevelNamePreserved(WorldUtils.getWorldRelativePath(event.block.world))) {
             event.isBuildable = false
         }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onBlockDispense(event: BlockDispenseEvent) {
-        val worldManager = getWorldManager()
-        if (BaseUtils.isLevelNamePreserved(worldManager.getWorldRelativePath(event.block.world))) {
+        if (WorldUtils.isLevelNamePreserved(WorldUtils.getWorldRelativePath(event.block.world))) {
             event.isCancelled = true
         }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onBlockExplode(event: BlockExplodeEvent) {
-        val worldManager = getWorldManager()
-        if (BaseUtils.isLevelNamePreserved(worldManager.getWorldRelativePath(event.block.world))) {
+        if (WorldUtils.isLevelNamePreserved(WorldUtils.getWorldRelativePath(event.block.world))) {
             event.isCancelled = true
         }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onRedstoneEvent(event: BlockRedstoneEvent) {
-        val worldManager = getWorldManager()
-        if (BaseUtils.isLevelNamePreserved(worldManager.getWorldRelativePath(event.block.world))) {
+        if (WorldUtils.isLevelNamePreserved(WorldUtils.getWorldRelativePath(event.block.world))) {
             event.newCurrent = event.oldCurrent
         }
     }

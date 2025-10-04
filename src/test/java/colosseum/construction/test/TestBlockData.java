@@ -15,6 +15,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 
+@SuppressWarnings("deprecation")
 class TestBlockData {
     private static DummySite plugin;
     private static WorldMock world;
@@ -23,15 +24,15 @@ class TestBlockData {
     static File tempPluginDataDir;
 
     @BeforeAll
-    static void setup() {
+    void setup() {
         plugin = new DummySite1(tempPluginDataDir);
         world = MockBukkit.getMock().addSimpleWorld("test");
-        plugin.setup();
+        plugin.enable();
     }
 
     @AfterAll
-    static void tearDown() {
-        plugin.teardown();
+    void tearDown() {
+        plugin.disable();
         MockBukkit.unload();
     }
 

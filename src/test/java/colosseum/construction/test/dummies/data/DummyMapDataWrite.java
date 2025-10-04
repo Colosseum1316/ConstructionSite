@@ -1,8 +1,11 @@
 package colosseum.construction.test.dummies.data;
 
+import colosseum.construction.data.FinalizedMapData;
 import colosseum.construction.data.MapDataImpl;
 import colosseum.utility.WorldMapConstants;
 import colosseum.utility.arcade.GameType;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import lombok.NonNull;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -14,36 +17,40 @@ import java.util.Set;
 import java.util.UUID;
 
 public final class DummyMapDataWrite extends MapDataImpl {
-    private final boolean testCurrentlyLive;
-    private final Map<String, Vector> testWarps;
-    private final Set<UUID> testAdminList;
-    private final GameType testMapGameType;
     private final String testMapName;
     private final String testMapCreator;
+    private final GameType testMapGameType;
+    private final ImmutableMap<String, Vector> testWarps;
+    private final ImmutableSet<UUID> testAdminList;
+    private final boolean testCurrentlyLive;
 
     public DummyMapDataWrite(
             World world,
             File worldFolder,
-            boolean currentlyLive,
+            @NonNull String mapName,
+            @NonNull String mapCreator,
+            @NonNull GameType mapGameType,
             @NonNull Map<String, Vector> warps,
             @NonNull Set<UUID> adminList,
-            @NonNull GameType mapGameType,
-            @NonNull String mapName,
-            @NonNull String mapCreator
+            boolean currentlyLive
     ) {
         super(world, worldFolder);
-        this.testCurrentlyLive = currentlyLive;
-        this.testWarps = warps;
-        this.testAdminList = adminList;
-        this.testMapGameType = mapGameType;
+
         this.testMapName = mapName;
         this.testMapCreator = mapCreator;
-        super.setLive(this.testCurrentlyLive);
-        super.getWarps().putAll(this.testWarps);
-        super.getAdminList().addAll(this.testAdminList);
-        super.setMapGameType(this.testMapGameType);
-        super.setMapName(this.testMapName);
-        super.setMapCreator(this.testMapCreator);
+        this.testMapGameType = mapGameType;
+
+        ImmutableMap.Builder<String, Vector> mapBuilder = ImmutableMap.builder();
+        warps.forEach((s, l) -> mapBuilder.put(s, l.clone()));
+        this.testWarps = mapBuilder.build();
+
+        ImmutableSet.Builder<UUID> setBuilder = ImmutableSet.builder();
+        adminList.forEach(v -> setBuilder.add(UUID.fromString(v.toString())));
+        this.testAdminList = setBuilder.build();
+
+        this.testCurrentlyLive = currentlyLive;
+
+        super.update(new FinalizedMapData(this.testMapName, this.testMapCreator, this.testMapGameType, this.testWarps, this.testAdminList, this.testCurrentlyLive));
     }
 
     @Override

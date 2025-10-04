@@ -27,7 +27,9 @@ kotlin {
 tasks.withType<JavaCompile>().configureEach {
     options.release.set(Integer.valueOf("${project.extra["compilation_java_version"]}"))
     options.encoding = "UTF-8"
-    options.compilerArgs.addAll(listOf("-Werror", "-Xlint:-unchecked"))
+    // https://inside.java/2024/06/18/quality-heads-up/
+    // https://github.com/projectlombok/lombok/issues/3949
+    options.compilerArgs.addAll(listOf("-proc:full", "-Werror", "-Xlint:-unchecked"))
 }
 
 base {
@@ -40,20 +42,13 @@ repositories {
     maven("https://repo.papermc.io/repository/maven-public/")
     exclusiveContent {
         forRepository {
-            maven("https://jitpack.io")
-        }
-        filter {
-            includeGroup("com.github.MockBukkit")
-        }
-    }
-    exclusiveContent {
-        forRepository {
             maven("https://coffeewarehouse.harborbucket.top/snapshots")
         }
         filter {
             includeGroup("colosseum.minecraft")
             includeGroup("colosseum.minecraft.nl.rutgerkok")
             includeGroup("net.md-5")
+            includeGroup("com.github.MockBukkit")
         }
     }
 }
@@ -119,8 +114,6 @@ tasks.jacocoTestReport {
         files(classDirectories.files.map {
             fileTree(it) {
                 include("colosseum/construction/**")
-                exclude("colosseum/construction/ConstructionSiteImpl.class")
-                exclude("colosseum/construction/data/DummyMapData.class")
             }
         })
     )
@@ -134,6 +127,7 @@ tasks.shadowJar {
         exclude(dependency("org.jetbrains:annotations:.*"))
         exclude(dependency("org.projectlombok:lombok:.*"))
     }
+    relocate("org.apache.commons.io", "colosseum.construction.shadow.org.apache.commons.io")
 }
 
 tasks.build {

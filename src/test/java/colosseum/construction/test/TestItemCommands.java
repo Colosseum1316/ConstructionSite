@@ -19,7 +19,7 @@ import org.junit.jupiter.api.io.TempDir;
 import java.io.File;
 import java.util.List;
 
-class TestItemCommand {
+class TestItemCommands {
     private static DummySite plugin;
     private static PlayerMock player;
 
@@ -27,15 +27,15 @@ class TestItemCommand {
     static File tempPluginDataDir;
 
     @BeforeAll
-    static void setup() {
+    void setup() {
         plugin = new DummySite1(tempPluginDataDir);
         player = MockBukkit.getMock().addPlayer();
-        plugin.setup();
+        plugin.enable();
     }
 
     @AfterAll
-    static void tearDown() {
-        plugin.teardown();
+    void tearDown() {
+        plugin.disable();
         MockBukkit.unload();
     }
 
@@ -54,11 +54,13 @@ class TestItemCommand {
 
             ItemStack item = new ItemStack(Material.GLASS);
             player.setItemInHand(item);
+            Assertions.assertFalse(command.canRun(MockBukkit.getMock().getConsoleSender()));
             Assertions.assertTrue(command.canRun(player));
             player.assertNoMoreSaid();
 
             item = new ItemStack(Material.AIR);
             player.setItemInHand(item);
+            Assertions.assertFalse(command.canRun(MockBukkit.getMock().getConsoleSender()));
             Assertions.assertFalse(command.canRun(player));
             player.assertSaid("§cHold an item in your hand!");
             player.assertNoMoreSaid();

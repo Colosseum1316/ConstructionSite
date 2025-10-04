@@ -1,15 +1,15 @@
 package colosseum.construction.command
 
 import colosseum.construction.ConstructionSiteProvider
-import colosseum.construction.manager.SplashTextManager
-import org.bukkit.command.Command
+import colosseum.construction.manager.ParseManager
+import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class OpAddSplashTextCommand: AbstractOpCommand(
-    listOf("addtext"),
-    "Add splash text.",
-    "/addtext <text>"
+class OpCancelParseCommand: AbstractOpCommand(
+    listOf("cancelparse"),
+    "Cancel running parse task.",
+    "/cancelparse"
 ) {
     override fun canRun(console: CommandSender): Boolean {
         return ConstructionSiteProvider.isLive()
@@ -20,12 +20,9 @@ class OpAddSplashTextCommand: AbstractOpCommand(
     }
 
     override fun runConstruction(caller: CommandSender, label: String, args: Array<String>): Boolean {
-        if (args.isEmpty()) {
-            return false
-        }
-        val content = args.joinToString(" ").trim { it <= ' ' }
-        ConstructionSiteProvider.getSite().getManager(SplashTextManager::class.java).addText(content)
-        Command.broadcastCommandMessage(caller, "Add splash text: $content", true)
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mapparse")
+        ConstructionSiteProvider.getSite().getManager(ParseManager::class.java).cancel()
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mapparse")
         return true
     }
 }
