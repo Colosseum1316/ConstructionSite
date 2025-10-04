@@ -2,6 +2,7 @@ package colosseum.construction.test.dummies;
 
 import be.seeseemelk.mockbukkit.WorldMock;
 import colosseum.construction.ConstructionSiteProvider;
+import colosseum.construction.WorldUtils;
 import org.bukkit.Difficulty;
 
 import java.io.File;
@@ -11,8 +12,21 @@ public final class ConstructionSiteWorldMock extends WorldMock {
     private boolean isAutoSave;
     private boolean pvp;
 
+    private boolean map;
+
     public ConstructionSiteWorldMock(String name) {
+        this(name, false);
+    }
+
+    public ConstructionSiteWorldMock(String name, boolean map) {
         super.setName(name);
+        this.map = map;
+    }
+
+    @Override
+    public String getName() {
+        // Simulation.
+        return map ? WorldUtils.getWorldRelativePath(getWorldFolder()) : super.getName();
     }
 
     @Override
@@ -85,6 +99,7 @@ public final class ConstructionSiteWorldMock extends WorldMock {
 
     @Override
     public File getWorldFolder() {
-        return new File(ConstructionSiteProvider.getSite().getWorldContainer(), getName());
+        // Simulation.
+        return map ? WorldUtils.getSingleWorldRootPath(super.getName()) : new File(ConstructionSiteProvider.getSite().getWorldContainer(), getName());
     }
 }
