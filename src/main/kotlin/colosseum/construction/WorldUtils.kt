@@ -14,7 +14,7 @@ object WorldUtils {
      */
     @JvmStatic
     fun isLevelNamePreserved(name: String): Boolean {
-        return name.equals(WorldMapConstants.WORLD_LOBBY, ignoreCase = true) || name.equals(WorldMapConstants.WORLD, true)
+        return name.equals(WorldMapConstants.WORLD_LOBBY, ignoreCase = true) || name.equals(WorldMapConstants.WORLD, ignoreCase = true)
     }
 
     /**
