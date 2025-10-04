@@ -1,6 +1,7 @@
 package colosseum.construction.manager
 
 import colosseum.construction.ConstructionSiteProvider
+import colosseum.construction.WorldUtils
 import colosseum.utility.UtilWorld.locToStrClean
 import colosseum.utility.WorldMapConstants.WORLD
 import colosseum.utility.WorldMapConstants.WORLD_LOBBY
@@ -15,19 +16,14 @@ import java.util.logging.*
 class TeleportManager: ConstructionSiteManager("Teleport") {
     private lateinit var serverSpawnLocation: Location
 
-    private fun getWorldManager(): WorldManager {
-        return ConstructionSiteProvider.getSite().getManager(WorldManager::class.java)
-    }
-
     private fun getMapDataManager(): MapDataManager {
         return ConstructionSiteProvider.getSite().getManager(MapDataManager::class.java)
     }
 
     override fun register() {
-        val worldManager = getWorldManager()
-        var spawnWorld = worldManager.loadWorld(WORLD)
+        var spawnWorld = WorldUtils.loadWorld(WORLD)
         if (spawnWorld == null) {
-            spawnWorld = worldManager.loadWorld(WORLD_LOBBY) ?: throw Error("Where's spawn?")
+            spawnWorld = WorldUtils.loadWorld(WORLD_LOBBY) ?: throw Error("Where's spawn?")
         }
         spawnWorld.difficulty = Difficulty.PEACEFUL
         spawnWorld.setGameRuleValue("mobGriefing", "false")
@@ -43,7 +39,7 @@ class TeleportManager: ConstructionSiteManager("Teleport") {
 
     override fun unregister() {
         try {
-            getWorldManager().unloadWorld(serverSpawnLocation.world, false)
+            WorldUtils.unloadWorld(serverSpawnLocation.world, false)
         } catch (e: Exception) {
             ConstructionSiteProvider.getSite().pluginLogger.log(Level.WARNING, "Error whilst unloading a world", e)
         }
@@ -67,9 +63,8 @@ class TeleportManager: ConstructionSiteManager("Teleport") {
             return false
         }
         return player.teleport(destination).also { v ->
-            val worldManager = getWorldManager()
             if (v) {
-                ConstructionSiteProvider.getSite().pluginLogger.info("Teleported ${player.name} to ${locToStrClean(destination)} in ${worldManager.getWorldRelativePath(destination.world)}")
+                ConstructionSiteProvider.getSite().pluginLogger.info("Teleported ${player.name} to ${locToStrClean(destination)} in ${WorldUtils.getWorldRelativePath(destination.world)}")
             } else {
                 ConstructionSiteProvider.getSite().pluginLogger.warning("Internal failure whilst teleporting ${player.name}!!!")
             }
@@ -80,8 +75,7 @@ class TeleportManager: ConstructionSiteManager("Teleport") {
         if (player.world == destination.world) {
             return true
         }
-        val worldManager = getWorldManager()
-        val path = worldManager.getWorldRelativePath(destination.world)
+        val path = WorldUtils.getWorldRelativePath(destination.world)
         return when (path.lowercase()) {
             WORLD_LOBBY, WORLD -> true
             else -> getMapDataManager().get(destination.world).allows(player)

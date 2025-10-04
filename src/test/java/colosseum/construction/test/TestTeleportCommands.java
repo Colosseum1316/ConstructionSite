@@ -54,9 +54,6 @@ public class TestTeleportCommands {
         worldMap = new ConstructionSiteWorldMock("test_map");
         ((ConstructionSiteServerMock) MockBukkit.getMock()).addWorld(world);
         ((ConstructionSiteServerMock) MockBukkit.getMock()).addWorld(worldLobby);
-        ((ConstructionSiteServerMock) MockBukkit.getMock()).addWorld(worldMap);
-        Assertions.assertEquals(worldMap, MockBukkit.getMock().getWorld("test_map"));
-        worldMap.setSpawnLocation(8, 9, -10);
         Assertions.assertEquals(worldLobby, MockBukkit.getMock().getWorld(WorldMapConstants.WORLD_LOBBY));
         Assertions.assertEquals(world, MockBukkit.getMock().getWorld(WorldMapConstants.WORLD));
 
@@ -71,6 +68,9 @@ public class TestTeleportCommands {
         ((ConstructionSiteServerMock) MockBukkit.getMock()).addPlayer(player3);
 
         plugin.load();
+        ((ConstructionSiteServerMock) MockBukkit.getMock()).addWorld(worldMap);
+        Assertions.assertEquals(worldMap, MockBukkit.getMock().getWorld("test_map"));
+        worldMap.setSpawnLocation(8, 9, -10);
         Assertions.assertTrue(worldMap.getWorldFolder().mkdirs());
         mapData = Utils.readMapData(worldMap, worldMap.getWorldFolder(), String.format("""
                 currentlyLive:true
@@ -206,22 +206,5 @@ public class TestTeleportCommands {
         player2.assertNoMoreSaid();
         player1.assertLocation(new Location(worldMap, 8, 9, -10), 1);
         player2.assertLocation(new Location(worldMap, 8, 9, -10), 1);
-    }
-
-    void testTeleportMapCommand() {
-        AbstractTeleportCommand command = new TeleportMapCommand();
-        String label = command.getAliases().get(0);
-        TeleportManager manager = ConstructionSiteProvider.getSite().getManager(TeleportManager.class);
-        Assertions.assertTrue(manager.teleportToServerSpawn(player1));
-        Assertions.assertTrue(manager.teleportToServerSpawn(player2));
-        Assertions.assertTrue(manager.teleportPlayer(player1, new Location(world, 1, 2, 3)));
-        Assertions.assertTrue(manager.teleportPlayer(player2, new Location(world, 1, 2, 3)));
-
-        Assertions.assertTrue(command.runConstruction(player1, label, new String[]{worldMap.getUID().toString()}));
-        Assertions.assertTrue(command.runConstruction(player2, label, new String[]{worldMap.getUID().toString()}));
-        player1.assertSaid("Teleported to test_map");
-        player1.assertNoMoreSaid();
-        player2.assertSaid("Teleported to test_map");
-        player2.assertNoMoreSaid();
     }
 }

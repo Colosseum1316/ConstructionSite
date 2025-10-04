@@ -1,14 +1,12 @@
 package colosseum.construction.command
 
-import colosseum.construction.BaseUtils
-import colosseum.construction.BaseUtils.getGameTypes
 import colosseum.construction.ConstructionSiteProvider
-import colosseum.construction.PluginUtils
+import colosseum.construction.GameTypeUtils
+import colosseum.construction.WorldUtils
 import colosseum.construction.data.FinalizedMapData
 import colosseum.construction.data.MutableMapData
 import colosseum.construction.manager.MapDataManager
 import colosseum.construction.manager.TeleportManager
-import colosseum.construction.manager.WorldManager
 import colosseum.utility.arcade.GameType
 import com.google.common.collect.ImmutableSet
 import org.bukkit.Difficulty
@@ -59,10 +57,6 @@ class NewMapCommand: AbstractOpCommand(
         return ConstructionSiteProvider.getSite().getManager(MapDataManager::class.java)
     }
 
-    private fun getWorldManager(): WorldManager {
-        return ConstructionSiteProvider.getSite().getManager(WorldManager::class.java)
-    }
-
     override fun onTabComplete(
         sender: CommandSender,
         command: Command,
@@ -70,7 +64,7 @@ class NewMapCommand: AbstractOpCommand(
         args: Array<String>
     ): List<String>? {
         if (args.size == 1) {
-            return StringUtil.copyPartialMatches(args[0], getGameTypes().map { v -> v.name }, ArrayList())
+            return StringUtil.copyPartialMatches(args[0], GameTypeUtils.getGameTypes().map { v -> v.name }, ArrayList())
         }
         if (args.size == 2) {
             return StringUtil.copyPartialMatches(args[1], listOf(VOID_OVERWORLD, VOID_NETHER, VOID_END), ArrayList())
@@ -82,15 +76,14 @@ class NewMapCommand: AbstractOpCommand(
         if (args.isEmpty() || args.size > 2) {
             return false
         }
-        val gameType = BaseUtils.determineGameType(args[0], true)
+        val gameType = GameTypeUtils.determineGameType(args[0], true)
         if (gameType == GameType.None) {
-            PluginUtils.printValidGameTypes(caller)
+            GameTypeUtils.printValidGameTypes(caller)
             return true
         }
 
         val worldFolderName = "${gameType.name}-${caller.name}-${System.nanoTime()}"
-        val worldManager = getWorldManager()
-        var worldCreator = worldManager.getWorldCreator(worldManager.getWorldRelativePath(worldManager.getSingleWorldRootPath(worldFolderName)))
+        var worldCreator = WorldUtils.getWorldCreator(WorldUtils.getWorldRelativePath(WorldUtils.getSingleWorldRootPath(worldFolderName)))
         worldCreator.type(WorldType.FLAT)
         worldCreator.generateStructures(false)
 
@@ -119,7 +112,7 @@ class NewMapCommand: AbstractOpCommand(
         }
 
         ConstructionSiteProvider.getScheduler().schedule {
-            val world = worldManager.createOrLoadWorld(worldCreator) ?: throw RuntimeException("Could not create world ${worldCreator.name()}")
+            val world = WorldUtils.createOrLoadWorld(worldCreator) ?: throw RuntimeException("Could not create world ${worldCreator.name()}")
             world.difficulty = Difficulty.EASY
             world.setSpawnLocation(0, 106, 0)
             world.setGameRuleValue("mobGriefing", "false")

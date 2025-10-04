@@ -1,7 +1,7 @@
 package colosseum.construction.command
 
-import colosseum.construction.BaseUtils
 import colosseum.construction.ConstructionSiteProvider
+import colosseum.construction.WorldUtils
 import colosseum.construction.data.FinalizedMapData
 import colosseum.construction.data.MutableMapData
 import colosseum.utility.UtilPlayerBase
@@ -30,8 +30,7 @@ class TeleportWarpCommand: AbstractTeleportCommand(
     }
 
     override fun canRun(caller: Player): Boolean {
-        val worldManager = getWorldManager()
-        if (BaseUtils.isLevelNamePreserved(worldManager.getWorldRelativePath(caller.world))) {
+        if (WorldUtils.isLevelNamePreserved(WorldUtils.getWorldRelativePath(caller.world))) {
             UtilPlayerBase.sendMessage(caller, "&cCannot use warps in lobby!")
             return false
         }
@@ -42,9 +41,8 @@ class TeleportWarpCommand: AbstractTeleportCommand(
         if (args.isEmpty() || args.size > 2) {
             return false
         }
-        val worldManager = getWorldManager()
         val data = getMapDataManager().get(caller.world)
-        val path = worldManager.getWorldRelativePath(caller.world)
+        val path = WorldUtils.getWorldRelativePath(caller.world)
 
         val op = args[0].lowercase()
         val knownWarps = data.warps()

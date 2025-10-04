@@ -1,6 +1,7 @@
 package colosseum.construction.command
 
 import colosseum.construction.ConstructionSiteProvider
+import colosseum.construction.WorldUtils
 import colosseum.construction.data.FinalizedMapData
 import colosseum.construction.data.MutableMapData
 import org.bukkit.command.Command
@@ -24,8 +25,7 @@ class MapAuthorCommand: AbstractMapCreditCommand(
         mapDataSupplier: Supplier<MutableMapData>
     ): Boolean {
         val world = caller.world
-        val worldManager = getWorldManager()
-        val path = worldManager.getWorldRelativePath(world)
+        val path = WorldUtils.getWorldRelativePath(world)
         val data = mapDataSupplier.get()
         val newMapCreator = contentSupplier.get()
         ConstructionSiteProvider.getScheduler().scheduleAsync {

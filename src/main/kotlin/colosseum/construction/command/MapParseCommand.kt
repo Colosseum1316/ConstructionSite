@@ -1,6 +1,7 @@
 package colosseum.construction.command
 
 import colosseum.construction.ConstructionSiteProvider
+import colosseum.construction.WorldUtils
 import colosseum.construction.manager.ParseManager
 import colosseum.construction.manager.TeleportManager
 import colosseum.utility.UtilPlayerBase
@@ -86,8 +87,7 @@ class MapParseCommand: AbstractMapAdminCommand(
             return true
         }
 
-        val worldManager = getWorldManager()
-        val path = worldManager.getWorldRelativePath(world)
+        val path = WorldUtils.getWorldRelativePath(world)
         // Teleport players out
         for (other in world.players) {
             ConstructionSiteProvider.getSite().getManager(TeleportManager::class.java).teleportToServerSpawn(other)

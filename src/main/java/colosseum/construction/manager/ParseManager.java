@@ -3,6 +3,7 @@ package colosseum.construction.manager;
 import colosseum.construction.ConstructionSite;
 import colosseum.construction.ConstructionSiteProvider;
 import colosseum.construction.MapParser;
+import colosseum.construction.WorldUtils;
 import colosseum.construction.data.FinalizedMapData;
 import colosseum.utility.UtilZipper;
 import colosseum.utility.WorldMapConstants;
@@ -24,7 +25,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
-@ManagerDependency(WorldManager.class)
 public final class ParseManager extends ConstructionSiteManager {
     private volatile MapParser parser;
     private BukkitTask parserBukkitTask;
@@ -36,13 +36,9 @@ public final class ParseManager extends ConstructionSiteManager {
         super("Parse");
     }
 
-    private WorldManager getWorldManager() {
-        return ConstructionSiteProvider.getSite().getManager(WorldManager.class);
-    }
-
     @Override
     public void register() {
-        File[] files = getWorldManager().getOnParseRootPath().listFiles();
+        File[] files = WorldUtils.getOnParseRootPath().listFiles();
         if (files != null) {
             for (File file : files) {
                 ConstructionSiteProvider.getSite().getPluginLogger().warning("Deleting " + file.getAbsolutePath());
@@ -67,18 +63,17 @@ public final class ParseManager extends ConstructionSiteManager {
             }
             originalWorld.save();
             try {
-                getWorldManager().unloadWorld(originalWorld, true);
+                WorldUtils.unloadWorld(originalWorld, true);
             } catch (Exception e) {
                 ConstructionSiteProvider.getSite().getPluginLogger().log(Level.SEVERE, "Cannot unload world for parsing!", e);
                 return;
             }
             try {
                 running.set(true);
-                WorldManager worldManager = getWorldManager();
 
-                final File originalWorldFolder = worldManager.getWorldFolder(originalWorld);
-                final String originalWorldRelativePath = worldManager.getWorldRelativePath(originalWorldFolder);
-                final File destination = worldManager.getOnParseRootPath().toPath().resolve(WorldMapConstants.PARSE_PREFIX + originalWorldFolder.getName()).toFile();
+                final File originalWorldFolder = WorldUtils.getWorldFolder(originalWorld);
+                final String originalWorldRelativePath = WorldUtils.getWorldRelativePath(originalWorldFolder);
+                final File destination = WorldUtils.getOnParseRootPath().toPath().resolve(WorldMapConstants.PARSE_PREFIX + originalWorldFolder.getName()).toFile();
 
                 ConstructionSiteProvider.getScheduler().scheduleAsync(() -> {
                     try {
@@ -102,7 +97,7 @@ public final class ParseManager extends ConstructionSiteManager {
                         }
 
                         ConstructionSiteProvider.getScheduler().schedule(() -> {
-                            worldManager.loadWorld(originalWorldRelativePath);
+                            WorldUtils.loadWorld(originalWorldRelativePath);
                             parser = new MapParser(destination, args, startPoint, radius);
                             parserBukkitTask = ConstructionSiteProvider.getScheduler().scheduleAsync(parser, BukkitTask.class);
                         });
@@ -143,7 +138,7 @@ public final class ParseManager extends ConstructionSiteManager {
                             FileUtils.deleteQuietly(file);
                         }
                     }
-                    File zip = getWorldManager().getParsedZipOutputRootPath().toPath().resolve(worldFolder.getName() + "-" + System.currentTimeMillis() + "-" + mapData.getMapName() + "-" + mapData.getMapGameType().name() + ".zip").toFile();
+                    File zip = WorldUtils.getParsedZipOutputRootPath().toPath().resolve(worldFolder.getName() + "-" + System.currentTimeMillis() + "-" + mapData.getMapName() + "-" + mapData.getMapGameType().name() + ".zip").toFile();
                     UtilZipper.zip(worldFolder, zip);
                     ConstructionSiteProvider.getSite().getPluginLogger().info("Created " + zip.getAbsolutePath());
                     this.cancel();

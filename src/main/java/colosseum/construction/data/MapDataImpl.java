@@ -1,10 +1,10 @@
 package colosseum.construction.data;
 
-import colosseum.construction.BaseUtils;
 import colosseum.construction.Constants;
 import colosseum.construction.ConstructionSite;
 import colosseum.construction.ConstructionSiteProvider;
-import colosseum.construction.manager.WorldManager;
+import colosseum.construction.GameTypeUtils;
+import colosseum.construction.WorldUtils;
 import colosseum.utility.UtilWorld;
 import colosseum.utility.WorldMapConstants;
 import colosseum.utility.arcade.GameType;
@@ -61,7 +61,7 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
 
     protected void init() {
         if (world != null) {
-            Validate.isTrue(ConstructionSiteProvider.getSite().getManager(WorldManager.class).getWorldFolder(world).equals(worldFolder));
+            Validate.isTrue(WorldUtils.getWorldFolder(world).equals(worldFolder));
         }
         this.datFile = worldFolder.toPath().resolve(WorldMapConstants.MAP_DAT).toFile();
         if (this.datFile.exists()) {
@@ -99,7 +99,7 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
                         }
                         case "MAP_NAME" -> mapName = tokens.get(1);
                         case "MAP_AUTHOR", "MAP_CREATOR" -> mapCreator = tokens.get(1);
-                        case "GAME_TYPE" -> mapGameType = BaseUtils.determineGameType(tokens.get(1), true);
+                        case "GAME_TYPE" -> mapGameType = GameTypeUtils.determineGameType(tokens.get(1), true);
                         case "ADMIN_LIST", "BUILD_LIST" -> adminList.addAll(Arrays.stream(tokens.get(1).split(",")).map(UUID::fromString).toList());
                     }
                 }

@@ -1,6 +1,7 @@
 package colosseum.construction.command
 
 import colosseum.construction.ConstructionSiteProvider
+import colosseum.construction.WorldUtils
 import colosseum.construction.data.FinalizedMapData
 import colosseum.construction.data.MutableMapData
 import colosseum.utility.UtilPlayerBase.searchOnline
@@ -20,9 +21,8 @@ class MapAdminCommand: AbstractMapAdminCommand(
         val target = searchOnline(caller, args[0], true)
         if (target != null) {
             val world = caller.world
-            val worldManager = getWorldManager()
             val data = getMapDataManager().get(world) as MutableMapData
-            val path = worldManager.getWorldRelativePath(world)
+            val path = WorldUtils.getWorldRelativePath(world)
             val adminList = data.adminList().toMutableSet()
             var add = false
             if (adminList.add(target.uniqueId)) {

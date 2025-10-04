@@ -2,8 +2,8 @@ package colosseum.construction.test;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
-import colosseum.construction.BaseUtils;
 import colosseum.construction.ConstructionSiteProvider;
+import colosseum.construction.GameTypeUtils;
 import colosseum.construction.command.GameTypeInfoCommand;
 import colosseum.construction.manager.GameTypeInfoManager;
 import colosseum.construction.test.dummies.DummySite;
@@ -67,9 +67,9 @@ class TestGameTypeInfoCommand {
         assertSaidValidGameTypes.accept(new String[]{"invalid", "invalid", "invalid", "invalid"}, false);
         assertSaidValidGameTypes.accept(new String[]{"add", "invalid", "invalid", "invalid"}, true);
         assertSaidValidGameTypes.accept(new String[]{"clear", "invalid", "invalid", "invalid"}, false);
-        assertSaidValidGameTypes.accept(new String[]{"clear", BaseUtils.getGameTypes().get(0).name(), "invalid", "invalid"}, false);
+        assertSaidValidGameTypes.accept(new String[]{"clear", GameTypeUtils.getGameTypes().get(0).name(), "invalid", "invalid"}, false);
         assertSaidValidGameTypes.accept(new String[]{"delete", "invalid", "invalid", "invalid"}, false);
-        assertSaidValidGameTypes.accept(new String[]{"delete", BaseUtils.getGameTypes().get(0).name(), "invalid", "invalid"}, false);
+        assertSaidValidGameTypes.accept(new String[]{"delete", GameTypeUtils.getGameTypes().get(0).name(), "invalid", "invalid"}, false);
 
         assertSaidValidGameTypes.accept(new String[]{GameType.None.name()}, true);
         assertSaidValidGameTypes.accept(new String[]{"invalid"}, true);
@@ -90,8 +90,8 @@ class TestGameTypeInfoCommand {
         assertSaidValidGameTypes.accept(new String[]{"add", "invalid", "line", "1"}, true);
         assertSaidValidGameTypes.accept(new String[]{"delete", GameType.None.name(), "1"}, true);
         assertSaidValidGameTypes.accept(new String[]{"delete", "invalid", "1"}, true);
-        assertSaidValidGameTypes.accept(new String[]{"delete", BaseUtils.getGameTypes().get(0).name(), "nan"}, false);
-        assertSaidValidGameTypes.accept(new String[]{"delete", BaseUtils.getGameTypes().get(0).name(), "a"}, false);
+        assertSaidValidGameTypes.accept(new String[]{"delete", GameTypeUtils.getGameTypes().get(0).name(), "nan"}, false);
+        assertSaidValidGameTypes.accept(new String[]{"delete", GameTypeUtils.getGameTypes().get(0).name(), "a"}, false);
     }
 
     @Test
@@ -99,7 +99,7 @@ class TestGameTypeInfoCommand {
         GameTypeInfoCommand command = new GameTypeInfoCommand();
         String label = command.getAliases().get(0);
 
-        for (GameType gameType : BaseUtils.getGameTypes()) {
+        for (GameType gameType : GameTypeUtils.getGameTypes()) {
             command.runConstruction(player, label, new String[]{gameType.name()});
             player.assertSaid("§cNo info found for §e" + gameType.name());
 

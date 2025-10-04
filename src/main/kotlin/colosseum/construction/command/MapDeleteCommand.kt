@@ -1,6 +1,7 @@
 package colosseum.construction.command
 
 import colosseum.construction.ConstructionSiteProvider
+import colosseum.construction.WorldUtils
 import colosseum.construction.manager.MapDataManager
 import colosseum.construction.manager.TeleportManager
 import colosseum.utility.UtilPlayerBase
@@ -38,15 +39,14 @@ class MapDeleteCommand: AbstractMapAdminCommand(
                 UtilPlayerBase.sendMessage(caller, "&cUUID mismatch!")
                 return true
             }
-            val worldManager = getWorldManager()
-            val f = worldManager.getWorldFolder(world)
+            val f = WorldUtils.getWorldFolder(world)
             val site = ConstructionSiteProvider.getSite()
             for (other in world.players) {
                 site.getManager(TeleportManager::class.java).teleportToServerSpawn(other)
             }
-            worldManager.unloadWorld(world, false)
+            WorldUtils.unloadWorld(world, false)
             site.getManager(MapDataManager::class.java).discard(world)
-            Command.broadcastCommandMessage(caller, "Deleting world ${worldManager.getWorldRelativePath(f)}", true)
+            Command.broadcastCommandMessage(caller, "Deleting world ${WorldUtils.getWorldRelativePath(f)}", true)
             ConstructionSiteProvider.getScheduler().scheduleAsync {
                 FileUtils.deleteQuietly(f)
             }

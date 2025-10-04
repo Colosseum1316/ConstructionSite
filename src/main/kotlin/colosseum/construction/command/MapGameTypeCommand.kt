@@ -1,9 +1,8 @@
 package colosseum.construction.command
 
-import colosseum.construction.BaseUtils
-import colosseum.construction.BaseUtils.getGameTypes
 import colosseum.construction.ConstructionSiteProvider
-import colosseum.construction.PluginUtils
+import colosseum.construction.GameTypeUtils
+import colosseum.construction.WorldUtils
 import colosseum.construction.data.FinalizedMapData
 import colosseum.construction.data.MutableMapData
 import colosseum.utility.arcade.GameType
@@ -25,7 +24,7 @@ class MapGameTypeCommand: AbstractMapAdminCommand(
         args: Array<String>
     ): List<String>? {
         if (args.size == 1) {
-            return StringUtil.copyPartialMatches(args[0], getGameTypes().map { v -> v.name }, ArrayList())
+            return StringUtil.copyPartialMatches(args[0], GameTypeUtils.getGameTypes().map { v -> v.name }, ArrayList())
         }
         return null
     }
@@ -36,13 +35,12 @@ class MapGameTypeCommand: AbstractMapAdminCommand(
         }
 
         val world = caller.world
-        val worldManager = getWorldManager()
-        val worldFolder = worldManager.getWorldFolder(world)
-        val path = worldManager.getWorldRelativePath(worldFolder)
+        val worldFolder = WorldUtils.getWorldFolder(world)
+        val path = WorldUtils.getWorldRelativePath(worldFolder)
         val data = getMapDataManager().get(world) as MutableMapData
-        val newGameType = BaseUtils.determineGameType(args[0], true)
+        val newGameType = GameTypeUtils.determineGameType(args[0], true)
         if (newGameType == GameType.None) {
-            PluginUtils.printValidGameTypes(caller)
+            GameTypeUtils.printValidGameTypes(caller)
             return true
         }
         ConstructionSiteProvider.getScheduler().scheduleAsync {
