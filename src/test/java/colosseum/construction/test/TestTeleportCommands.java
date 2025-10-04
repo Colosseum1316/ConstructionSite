@@ -70,6 +70,7 @@ public class TestTeleportCommands {
 
         plugin.load();
         ((ConstructionSiteServerMock) MockBukkit.getMock()).addWorld(worldMap);
+        // I don't fucking know why MockBukkit.getMock().getWorld("test_map") and/or MockBukkit.getMock().getWorld("map/test_map") can break the whole test suite.
         worldMap.setSpawnLocation(8, 9, -10);
         Assertions.assertTrue(WorldUtils.getWorldFolder(worldMap).mkdirs());
         mapData = Utils.readMapData(worldMap, WorldUtils.getWorldFolder(worldMap), String.format("""

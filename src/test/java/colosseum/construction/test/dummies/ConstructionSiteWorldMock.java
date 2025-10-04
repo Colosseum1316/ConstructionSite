@@ -23,6 +23,7 @@ public final class ConstructionSiteWorldMock extends WorldMock {
         this.map = map;
     }
 
+    /** getName is not used in actual plugin. MockBukkit relies on it. */
     @Override
     public String getName() {
         // Simulation.
