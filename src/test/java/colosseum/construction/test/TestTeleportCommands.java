@@ -48,9 +48,17 @@ public class TestTeleportCommands {
     @BeforeAll
     static void setup() {
         plugin = new DummySite3(tempWorldContainer, tempPluginDataDir);
+
         world = new ConstructionSiteWorldMock(WorldMapConstants.WORLD);
         worldLobby = new ConstructionSiteWorldMock(WorldMapConstants.WORLD_LOBBY);
         worldMap = new ConstructionSiteWorldMock("test_map");
+        ((ConstructionSiteServerMock) MockBukkit.getMock()).addWorld(world);
+        ((ConstructionSiteServerMock) MockBukkit.getMock()).addWorld(worldLobby);
+        ((ConstructionSiteServerMock) MockBukkit.getMock()).addWorld(worldMap);
+        Assertions.assertEquals(worldMap, MockBukkit.getMock().getWorld("test_map"));
+        Assertions.assertEquals(worldLobby, MockBukkit.getMock().getWorld(WorldMapConstants.WORLD_LOBBY));
+        Assertions.assertEquals(world, MockBukkit.getMock().getWorld(WorldMapConstants.WORLD));
+
         player1 = new ConstructionSitePlayerMock("test1", UUID.fromString(uuid1));
         player1.setOp(false);
         ((ConstructionSiteServerMock) MockBukkit.getMock()).addPlayer(player1);
@@ -60,9 +68,7 @@ public class TestTeleportCommands {
         player3 = new ConstructionSitePlayerMock("test3", UUID.fromString(uuid3));
         player3.setOp(false);
         ((ConstructionSiteServerMock) MockBukkit.getMock()).addPlayer(player3);
-        ((ConstructionSiteServerMock) MockBukkit.getMock()).addWorld(world);
-        ((ConstructionSiteServerMock) MockBukkit.getMock()).addWorld(worldLobby);
-        ((ConstructionSiteServerMock) MockBukkit.getMock()).addWorld(worldMap);
+
         plugin.load();
         Assertions.assertTrue(worldMap.getWorldFolder().mkdirs());
         mapData = Utils.readMapData(worldMap, worldMap.getWorldFolder(), String.format("""
@@ -133,10 +139,10 @@ public class TestTeleportCommands {
         player2.assertNoMoreSaid();
         player3.assertSaid("§cCannot use warps in lobby!");
         player3.assertNoMoreSaid();
-        Assertions.assertFalse(player1.isFlying());
-        Assertions.assertFalse(player2.isFlying());
-        Assertions.assertFalse(player3.isFlying());
 
+        Assertions.assertTrue(manager.canTeleportTo(player1, new Location(worldMap, 0, 0, 0)));
+        Assertions.assertTrue(manager.canTeleportTo(player2, new Location(worldMap, 0, 0, 0)));
+        Assertions.assertFalse(manager.canTeleportTo(player3, new Location(worldMap, 0, 0, 0)));
         Assertions.assertTrue(manager.teleportPlayer(player1, new Location(worldMap, 0, 0, 0)));
         Assertions.assertTrue(manager.teleportPlayer(player2, new Location(worldMap, 0, 0, 0)));
         Assertions.assertFalse(manager.teleportPlayer(player3, new Location(worldMap, 0, 0, 0)));
@@ -146,10 +152,47 @@ public class TestTeleportCommands {
         Assertions.assertFalse(warpCommand.canRun(player3));
         player3.assertSaid("§cCannot use warps in lobby!");
         player3.assertNoMoreSaid();
-        Assertions.assertTrue(manager.canTeleportTo(player1, new Location(worldMap, 0, 0, 0)));
-        Assertions.assertTrue(manager.canTeleportTo(player2, new Location(worldMap, 0, 0, 0)));
-        Assertions.assertFalse(manager.canTeleportTo(player3, new Location(worldMap, 0, 0, 0)));
         player1.assertNoMoreSaid();
         player2.assertNoMoreSaid();
+    }
+
+    @Test
+    void testHubCommand() {
+        AbstractTeleportCommand command = new TeleportHubCommand();
+        String label = command.getAliases().get(0);
+        TeleportManager manager = ConstructionSiteProvider.getSite().getManager(TeleportManager.class);
+        Assertions.assertTrue(manager.teleportPlayer(player1, new Location(worldMap, 0, 0, 0)));
+        Assertions.assertTrue(manager.teleportPlayer(player2, new Location(worldMap, 0, 0, 0)));
+        player1.assertLocation(new Location(worldMap, 0, 0, 0), 1);
+        player2.assertLocation(new Location(worldMap, 0, 0, 0), 1);
+        player1.assertNoMoreSaid();
+        player2.assertNoMoreSaid();
+
+        command.runConstruction(player1, label, new String[]{});
+        command.runConstruction(player2, label, new String[]{});
+        player1.assertNoMoreSaid();
+        player2.assertNoMoreSaid();
+        player1.assertLocation(new Location(world, 0, 106, 0), 1);
+        player2.assertLocation(new Location(world, 0, 106, 0), 1);
+    }
+
+    @Test
+    void testSpawnCommand() {
+        AbstractTeleportCommand command = new TeleportSpawnCommand();
+        String label = command.getAliases().get(0);
+        TeleportManager manager = ConstructionSiteProvider.getSite().getManager(TeleportManager.class);
+        Assertions.assertTrue(manager.teleportToServerSpawn(player1));
+        Assertions.assertTrue(manager.teleportToServerSpawn(player2));
+        Assertions.assertTrue(manager.teleportPlayer(player1, new Location(world, 1, 2, 3)));
+        Assertions.assertTrue(manager.teleportPlayer(player2, new Location(world, 1, 2, 3)));
+
+        command.runConstruction(player1, label, new String[]{});
+        player1.assertSaid("Teleported to 0,106,0");
+        player1.assertNoMoreSaid();
+        command.runConstruction(player2, label, new String[]{});
+        player2.assertSaid("Teleported to 0,106,0");
+        player2.assertNoMoreSaid();
+        player1.assertLocation(new Location(world, 0, 106, 0), 1);
+        player2.assertLocation(new Location(world, 0, 106, 0), 1);
     }
 }

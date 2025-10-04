@@ -12,7 +12,6 @@ public final class ConstructionSiteWorldMock extends WorldMock {
     private boolean pvp;
 
     public ConstructionSiteWorldMock(String name) {
-        super();
         super.setName(name);
     }
 
