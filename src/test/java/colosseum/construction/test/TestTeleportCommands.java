@@ -16,7 +16,6 @@ import colosseum.construction.test.dummies.ConstructionSiteServerMock;
 import colosseum.construction.test.dummies.ConstructionSiteWorldMock;
 import colosseum.construction.test.dummies.DummySite;
 import colosseum.construction.test.dummies.DummySite3;
-import colosseum.construction.test.dummies.data.DummyMapDataRead;
 import colosseum.utility.WorldMapConstants;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -77,8 +76,8 @@ class TestTeleportCommands {
         Utils.writeMapData(WorldUtils.getWorldFolder(worldMap), String.format("""
                 currentlyLive:true
                 warps:k1@-1,2,-3;k2@-5,6,-7;
-                MAP_NAME:Test map
-                MAP_AUTHOR:Test author
+                MAP_NAME:Test map1
+                MAP_AUTHOR:Test author2
                 GAME_TYPE:None
                 ADMIN_LIST:%s
                 """.trim(), uuid1));
@@ -224,6 +223,14 @@ class TestTeleportCommands {
         Assertions.assertTrue(manager.teleportPlayer(player1, new Location(world, 1, 2, 3)));
         Assertions.assertTrue(manager.teleportPlayer(player2, new Location(world, 1, 2, 3)));
 
+        Assertions.assertFalse(command.runConstruction(player1, label, new String[]{"invalid"}));
+        player1.assertSaid("§cInvalid UUID!");
+        player1.assertNoMoreSaid();
+        Assertions.assertFalse(command.runConstruction(player1, label, new String[]{"invalid", "invalid"}));
+        Assertions.assertTrue(command.runConstruction(player1, label, new String[]{}));
+        player1.assertSaid("§7Test map1 - Test author2 (None): §e" + worldMap.getUID());
+        player1.assertNoMoreSaid();
+
         Assertions.assertTrue(command.runConstruction(player1, label, new String[]{worldMap.getUID().toString()}));
         Assertions.assertTrue(command.runConstruction(player2, label, new String[]{worldMap.getUID().toString()}));
         player1.assertNoMoreSaid();
@@ -313,5 +320,25 @@ class TestTeleportCommands {
         }
 
         Assertions.assertTrue(teleportManager.teleportPlayer(player1, new Location(worldMap, 10, 11, 12)));
+        Assertions.assertTrue(command.runConstruction(player1, label, new String[]{"set", "n1"}));
+        player1.assertSaid("Created warp point §en1");
+        player1.assertNoMoreSaid();
+        Assertions.assertEquals(1, mapDataManager.get(worldMap).warps().size());
+        Assertions.assertTrue(teleportManager.teleportPlayer(player1, new Location(worldMap, 15, 17, 19)));
+        Assertions.assertTrue(command.runConstruction(player1, label, new String[]{"set", "n1"}));
+        player1.assertSaid("§c\"n1\" already exists!");
+        player1.assertNoMoreSaid();
+        Assertions.assertEquals(1, mapDataManager.get(worldMap).warps().size());
+        Assertions.assertTrue(command.runConstruction(player1, label, new String[]{"n1"}));
+        player1.assertSaid("Teleported to warp point §en1");
+        player1.assertNoMoreSaid();
+        player1.assertLocation(new Location(worldMap, 10, 11, 12), 1);
+        Assertions.assertTrue(command.runConstruction(player1, label, new String[]{"delete", "n1"}));
+        player1.assertSaid("Deleting warp point §en1");
+        player1.assertNoMoreSaid();
+        Assertions.assertTrue(command.runConstruction(player1, label, new String[]{"delete", "n1"}));
+        player1.assertSaid("§c\"n1\" does not exist!");
+        player1.assertNoMoreSaid();
+        Assertions.assertTrue(mapDataManager.get(worldMap).warps().isEmpty());
     }
 }
