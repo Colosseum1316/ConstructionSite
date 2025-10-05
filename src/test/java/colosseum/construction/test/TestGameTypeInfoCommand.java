@@ -12,6 +12,7 @@ import colosseum.utility.arcade.GameType;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -38,6 +39,7 @@ class TestGameTypeInfoCommand {
         MockBukkit.unload();
     }
 
+    @Order(0)
     @Test
     void testPermission() {
         GameTypeInfoCommand command = new GameTypeInfoCommand();
@@ -45,6 +47,7 @@ class TestGameTypeInfoCommand {
         Assertions.assertTrue(command.canRun(player));
     }
 
+    @Order(1)
     @Test
     void testInvalidCases() {
         GameTypeInfoCommand command = new GameTypeInfoCommand();
@@ -94,6 +97,7 @@ class TestGameTypeInfoCommand {
         assertSaidValidGameTypes.accept(new String[]{"delete", GameTypeUtils.getGameTypes().get(0).name(), "a"}, false);
     }
 
+    @Order(2)
     @Test
     void testValidCases() {
         GameTypeInfoCommand command = new GameTypeInfoCommand();

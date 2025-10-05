@@ -13,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -39,6 +40,7 @@ class TestItemCommands {
         MockBukkit.unload();
     }
 
+    @Order(0)
     @Test
     void testPermission() {
         ItemCommand[] commands = new ItemCommand[]{
@@ -67,6 +69,7 @@ class TestItemCommands {
         }
     }
 
+    @Order(1)
     @Test
     void testAddAndClearLore() {
         player.assertNoMoreSaid();
@@ -101,6 +104,7 @@ class TestItemCommands {
         Assertions.assertEquals(0, item.getItemMeta().getLore().size());
     }
 
+    @Order(2)
     @Test
     void testItemName() {
         player.assertNoMoreSaid();

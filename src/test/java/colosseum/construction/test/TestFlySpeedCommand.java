@@ -8,6 +8,7 @@ import colosseum.construction.test.dummies.DummySite1;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -34,6 +35,7 @@ class TestFlySpeedCommand {
         MockBukkit.unload();
     }
 
+    @Order(0)
     @Test
     void testPermission() {
         FlySpeedCommand command = new FlySpeedCommand();
@@ -44,6 +46,7 @@ class TestFlySpeedCommand {
         Assertions.assertFalse(command.canRun(MockBukkit.getMock().getConsoleSender()));
     }
 
+    @Order(1)
     @Test
     void testInvalidInputs() {
         FlySpeedCommand command = new FlySpeedCommand();
@@ -62,6 +65,7 @@ class TestFlySpeedCommand {
         Assertions.assertFalse(command.runConstruction(player, label, new String[]{"-10"}));
     }
 
+    @Order(2)
     @Test
     void testValidInputs() {
         FlySpeedCommand command = new FlySpeedCommand();

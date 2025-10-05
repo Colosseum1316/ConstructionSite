@@ -15,6 +15,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -41,6 +42,7 @@ class TestSplashTextCommands {
         MockBukkit.unload();
     }
 
+    @Order(0)
     @Test
     void testPermission() {
         AbstractOpCommand[] commands = new AbstractOpCommand[] {
@@ -57,6 +59,7 @@ class TestSplashTextCommands {
         }
     }
 
+    @Order(1)
     @Test
     void testAddAndClearSplashText() {
         player.assertNoMoreSaid();
