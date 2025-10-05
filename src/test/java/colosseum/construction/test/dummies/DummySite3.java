@@ -52,6 +52,7 @@ public final class DummySite3 implements DummySite {
 
     @Override
     public void enable() {
+        ConstructionSiteProvider.setScheduler(new DummySchedules());
         PluginUtils.registerManagers(managersReference, managers);
         ConstructionSiteProvider.setLive(true);
     }
@@ -60,6 +61,7 @@ public final class DummySite3 implements DummySite {
     public void disable() {
         ConstructionSiteProvider.setLive(false);
         PluginUtils.unregisterManagers(managersReference, managers);
+        ConstructionSiteProvider.setScheduler(null);
         managers.clear();
         managersReference.clear();
         ConstructionSiteProvider.setSite(null);

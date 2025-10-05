@@ -1,6 +1,9 @@
 package colosseum.construction.test.dummies;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
+import colosseum.utility.UtilPlayerBase;
+import net.md_5.bungee.api.chat.BaseComponent;
+import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
@@ -43,5 +46,15 @@ public final class ConstructionSitePlayerMock extends PlayerMock {
             throw new IllegalArgumentException("Invalid fly speed: " + flySpeed);
         }
         this.flySpeed = flySpeed;
+    }
+
+    @Override
+    public Player.Spigot spigot() {
+        return new Player.Spigot() {
+            @Override
+            public void sendMessage(BaseComponent component) {
+                UtilPlayerBase.sendMessage(ConstructionSitePlayerMock.this, component.toLegacyText());
+            }
+        };
     }
 }

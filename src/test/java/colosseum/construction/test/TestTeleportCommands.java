@@ -22,6 +22,7 @@ import org.bukkit.Location;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -75,7 +76,7 @@ class TestTeleportCommands {
         Assertions.assertTrue(WorldUtils.getWorldFolder(worldMap).mkdirs());
         mapData = Utils.readMapData(worldMap, WorldUtils.getWorldFolder(worldMap), String.format("""
                 currentlyLive:true
-                warps:k1@0,0,0;k2@0,1,0;
+                warps:k1@-1,2,-3;k2@-5,6,-7;
                 MAP_NAME:Test map
                 MAP_AUTHOR:Test author
                 GAME_TYPE:None
@@ -90,6 +91,7 @@ class TestTeleportCommands {
         MockBukkit.unload();
     }
 
+    @Order(0)
     @Test
     void testPermission() {
         AbstractTeleportCommand[] commands = new AbstractTeleportCommand[] {
@@ -158,6 +160,7 @@ class TestTeleportCommands {
         player2.assertNoMoreSaid();
     }
 
+    @Order(1)
     @Test
     void testHubCommand() {
         AbstractTeleportCommand command = new TeleportHubCommand();
@@ -178,6 +181,7 @@ class TestTeleportCommands {
         player2.assertLocation(new Location(world, 0, 106, 0), 1);
     }
 
+    @Order(2)
     @Test
     void testSpawnCommand() {
         AbstractTeleportCommand command = new TeleportSpawnCommand();
@@ -209,6 +213,7 @@ class TestTeleportCommands {
         player2.assertLocation(new Location(worldMap, 8, 9, -10), 1);
     }
 
+    @Order(3)
     @Test
     void testTeleportMapCommand() {
         AbstractTeleportCommand command = new TeleportMapCommand();
@@ -229,5 +234,66 @@ class TestTeleportCommands {
         Assertions.assertTrue(player2.isFlying());
         player1.assertLocation(new Location(worldMap, 8, 9, -10), 1);
         player2.assertLocation(new Location(worldMap, 8, 9, -10), 1);
+    }
+
+    @Order(4)
+    @Test
+    void testWarpCommand() {
+        AbstractTeleportCommand command = new TeleportWarpCommand();
+        String label = command.getAliases().get(0);
+        TeleportManager manager = ConstructionSiteProvider.getSite().getManager(TeleportManager.class);
+
+        Assertions.assertTrue(manager.teleportPlayer(player1, new Location(worldMap, 1, 2, 3)));
+
+        Assertions.assertFalse(command.runConstruction(player1, label, new String[]{}));
+        Assertions.assertFalse(command.runConstruction(player1, label, new String[]{"invalid", "invalid", "invalid"}));
+        Assertions.assertFalse(command.runConstruction(player1, label, new String[]{"set"}));
+        Assertions.assertFalse(command.runConstruction(player1, label, new String[]{"delete"}));
+        Assertions.assertTrue(command.runConstruction(player1, label, new String[]{"list"}));
+        player1.assertSaid("§ek1: -1.0,2.0,-3.0");
+        player1.assertSaid("§ek2: -5.0,6.0,-7.0");
+        player1.assertNoMoreSaid();
+
+        Assertions.assertFalse(command.runConstruction(player1, label, new String[]{"0"}));
+        player1.assertSaid("§cInvalid input.");
+        player1.assertNoMoreSaid();
+        Assertions.assertFalse(command.runConstruction(player1, label, new String[]{"a"}));
+        player1.assertSaid("§cInvalid input.");
+        player1.assertNoMoreSaid();
+        Assertions.assertFalse(command.runConstruction(player1, label, new String[]{" "}));
+        player1.assertSaid("§cInvalid input.");
+        player1.assertNoMoreSaid();
+        Assertions.assertTrue(command.runConstruction(player1, label, new String[]{"ab"}));
+        player1.assertSaid("§cUnknown warp point \"ab\"");
+        player1.assertNoMoreSaid();
+        Assertions.assertTrue(command.runConstruction(player1, label, new String[]{"k1"}));
+        player1.assertSaid("Teleported to warp point §ek1");
+        player1.assertNoMoreSaid();
+        player1.assertLocation(new Location(worldMap, -1, 2, -3), 1);
+        Assertions.assertTrue(command.runConstruction(player1, label, new String[]{"k2"}));
+        player1.assertSaid("Teleported to warp point §ek2");
+        player1.assertNoMoreSaid();
+        player1.assertLocation(new Location(worldMap, -5, 6, -7), 1);
+
+        Assertions.assertTrue(command.runConstruction(player1, label, new String[]{"delete", "k3"}));
+        player1.assertSaid("§c\"k3\" does not exist!");
+        player1.assertNoMoreSaid();
+        Assertions.assertTrue(command.runConstruction(player1, label, new String[]{"delete", "k1"}));
+        player1.assertSaid("Deleting warp point §ek1");
+        player1.assertNoMoreSaid();
+        Assertions.assertTrue(command.runConstruction(player1, label, new String[]{"delete", "k1"}));
+        player1.assertSaid("§c\"k1\" does not exist!");
+        player1.assertNoMoreSaid();
+        Assertions.assertTrue(command.runConstruction(player1, label, new String[]{"delete", "k2"}));
+        player1.assertSaid("Deleting warp point §ek2");
+        player1.assertNoMoreSaid();
+        Assertions.assertTrue(command.runConstruction(player1, label, new String[]{"delete", "k2"}));
+        player1.assertSaid("§c\"k2\" does not exist!");
+        player1.assertNoMoreSaid();
+        Assertions.assertTrue(command.runConstruction(player1, label, new String[]{"list"}));
+        player1.assertSaid("§cNo warp point yet! Add some!");
+        player1.assertNoMoreSaid();
+
+        Assertions.assertTrue(manager.teleportPlayer(player1, new Location(worldMap, 10, 11, 12)));
     }
 }
