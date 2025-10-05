@@ -9,6 +9,7 @@ import colosseum.construction.command.TeleportMapCommand;
 import colosseum.construction.command.TeleportSpawnCommand;
 import colosseum.construction.command.TeleportWarpCommand;
 import colosseum.construction.command.vanilla.TeleportCommand;
+import colosseum.construction.manager.MapDataManager;
 import colosseum.construction.manager.TeleportManager;
 import colosseum.construction.test.dummies.ConstructionSitePlayerMock;
 import colosseum.construction.test.dummies.ConstructionSiteServerMock;
@@ -40,7 +41,6 @@ class TestTeleportCommands {
     private static ConstructionSiteWorldMock world;
     private static ConstructionSiteWorldMock worldLobby;
     private static ConstructionSiteWorldMock worldMap;
-    private static DummyMapDataRead mapData;
 
     @TempDir
     static File tempWorldContainer;
@@ -74,7 +74,7 @@ class TestTeleportCommands {
         Assertions.assertEquals(worldMap, MockBukkit.getMock().getWorld(WorldUtils.getWorldRelativePath(worldMap)));
         worldMap.setSpawnLocation(8, 9, -10);
         Assertions.assertTrue(WorldUtils.getWorldFolder(worldMap).mkdirs());
-        mapData = Utils.readMapData(worldMap, WorldUtils.getWorldFolder(worldMap), String.format("""
+        Utils.writeMapData(WorldUtils.getWorldFolder(worldMap), String.format("""
                 currentlyLive:true
                 warps:k1@-1,2,-3;k2@-5,6,-7;
                 MAP_NAME:Test map
@@ -241,9 +241,10 @@ class TestTeleportCommands {
     void testWarpCommand() {
         AbstractTeleportCommand command = new TeleportWarpCommand();
         String label = command.getAliases().get(0);
-        TeleportManager manager = ConstructionSiteProvider.getSite().getManager(TeleportManager.class);
+        TeleportManager teleportManager = ConstructionSiteProvider.getSite().getManager(TeleportManager.class);
+        MapDataManager mapDataManager = ConstructionSiteProvider.getSite().getManager(MapDataManager.class);
 
-        Assertions.assertTrue(manager.teleportPlayer(player1, new Location(worldMap, 1, 2, 3)));
+        Assertions.assertTrue(teleportManager.teleportPlayer(player1, new Location(worldMap, 1, 2, 3)));
 
         Assertions.assertFalse(command.runConstruction(player1, label, new String[]{}));
         Assertions.assertFalse(command.runConstruction(player1, label, new String[]{"invalid", "invalid", "invalid"}));
@@ -278,6 +279,7 @@ class TestTeleportCommands {
         Assertions.assertTrue(command.runConstruction(player1, label, new String[]{"delete", "k3"}));
         player1.assertSaid("§c\"k3\" does not exist!");
         player1.assertNoMoreSaid();
+        Assertions.assertEquals(2, mapDataManager.get(worldMap).warps().size());
         Assertions.assertTrue(command.runConstruction(player1, label, new String[]{"delete", "k1"}));
         player1.assertSaid("Deleting warp point §ek1");
         player1.assertNoMoreSaid();
@@ -293,7 +295,23 @@ class TestTeleportCommands {
         Assertions.assertTrue(command.runConstruction(player1, label, new String[]{"list"}));
         player1.assertSaid("§cNo warp point yet! Add some!");
         player1.assertNoMoreSaid();
+        Assertions.assertTrue(mapDataManager.get(worldMap).warps().isEmpty());
 
-        Assertions.assertTrue(manager.teleportPlayer(player1, new Location(worldMap, 10, 11, 12)));
+        Assertions.assertFalse(command.runConstruction(player1, label, new String[]{"list", "aa"}));
+        Assertions.assertFalse(command.runConstruction(player1, label, new String[]{"set", "s"}));
+        player1.assertSaid("§cInvalid input.");
+        player1.assertNoMoreSaid();
+        Assertions.assertFalse(command.runConstruction(player1, label, new String[]{"delete", "1s"}));
+        player1.assertSaid("§cInvalid input.");
+        player1.assertNoMoreSaid();
+        for (String a : new String[]{"set", "delete"}) {
+            for (String b : new String[]{"list", "set", "delete"}) {
+                Assertions.assertFalse(command.runConstruction(player1, label, new String[]{a, b}));
+                player1.assertSaid("§cYou can't use \"list\", \"delete\" or \"set\" as warp point name!");
+                player1.assertNoMoreSaid();
+            }
+        }
+
+        Assertions.assertTrue(teleportManager.teleportPlayer(player1, new Location(worldMap, 10, 11, 12)));
     }
 }

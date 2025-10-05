@@ -18,13 +18,17 @@ import java.util.logging.SimpleFormatter;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Utils {
-    public static DummyMapDataRead readMapData(final World world, final File worldDir, final String testCase) {
+    public static void writeMapData(final File worldDir, final String testCase) {
         File mapDat = worldDir.toPath().resolve(WorldMapConstants.MAP_DAT).toFile();
         Assertions.assertDoesNotThrow(() -> {
             try (FileWriter writer = new FileWriter(mapDat); BufferedWriter buffer = new BufferedWriter(writer)) {
                 buffer.write(testCase);
             }
         });
+    }
+
+    public static DummyMapDataRead readMapData(final World world, final File worldDir, final String testCase) {
+        writeMapData(worldDir, testCase);
         return readMapData(world, worldDir);
     }
 
