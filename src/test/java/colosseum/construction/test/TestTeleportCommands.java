@@ -231,6 +231,11 @@ class TestTeleportCommands {
         player1.assertSaid("§7Test map1 - Test author2 (None): §e" + worldMap.getUID());
         player1.assertNoMoreSaid();
 
+        // Possibility of UUID.randomUUID().equals(worldMap.getUID()) is practically zero.
+        Assertions.assertFalse(command.runConstruction(player1, label, new String[]{UUID.randomUUID().toString()}));
+        player1.assertSaid("§cUnknown world!");
+        player1.assertNoMoreSaid();
+
         Assertions.assertTrue(command.runConstruction(player1, label, new String[]{worldMap.getUID().toString()}));
         Assertions.assertTrue(command.runConstruction(player2, label, new String[]{worldMap.getUID().toString()}));
         player1.assertNoMoreSaid();
