@@ -36,7 +36,7 @@ class TeleportCommand: AbstractTeleportCommand(
         }
         if (getTeleportManager().teleportPlayer(caller, target)) {
             UtilPlayerBase.sendMessage(caller, "You teleported to &e${target.name}")
-            ConstructionSiteProvider.getSite().pluginLogger.info("${caller.name} teleported to ${target.name}.")
+            ConstructionSiteProvider.getSite().pluginLogger.info("${caller.name} teleported to ${target.name}")
         } else {
             sayTeleportFail(caller)
         }
@@ -62,13 +62,13 @@ class TeleportCommand: AbstractTeleportCommand(
                 } else {
                     if (getTeleportManager().teleportPlayer(from, to)) {
                         if (to != caller) {
-                            UtilPlayerBase.sendMessage(caller, "You teleported &e${from.name}&r to &e${to.name}.")
-                            UtilPlayerBase.sendMessage(from, "&e${caller.name}&r teleported you to &e${to.name}.")
+                            UtilPlayerBase.sendMessage(caller, "You teleported &e${from.name}&r to &e${to.name}")
+                            UtilPlayerBase.sendMessage(from, "&e${caller.name}&r teleported you to &e${to.name}")
                         } else {
-                            UtilPlayerBase.sendMessage(caller, "You teleported &e${from.name}&r to you.")
-                            UtilPlayerBase.sendMessage(from, "You were teleported to &e${to.name}&r.")
+                            UtilPlayerBase.sendMessage(caller, "You teleported &e${from.name}&r to you")
+                            UtilPlayerBase.sendMessage(from, "You are teleported to &e${to.name}")
                         }
-                        ConstructionSiteProvider.getSite().pluginLogger.info("${caller.name} teleported ${from.name} to ${to.name}.")
+                        ConstructionSiteProvider.getSite().pluginLogger.info("${caller.name} teleported ${from.name} to ${to.name}")
                     } else {
                         sayTeleportFail(caller)
                     }
@@ -83,7 +83,7 @@ class TeleportCommand: AbstractTeleportCommand(
                 destination.y = y
                 destination.z = z
                 if (getTeleportManager().teleportPlayer(caller, destination)) {
-                    UtilPlayerBase.sendMessage(caller, "You teleported to &e${locToStrClean(destination)}&r")
+                    UtilPlayerBase.sendMessage(caller, "You teleported to &e${locToStrClean(destination)}")
                 } else {
                     sayTeleportFail(caller)
                 }

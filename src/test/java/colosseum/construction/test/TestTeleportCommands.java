@@ -59,10 +59,10 @@ class TestTeleportCommands {
         Assertions.assertEquals(world, MockBukkit.getMock().getWorld(WorldMapConstants.WORLD));
 
         player1 = new ConstructionSitePlayerMock("test1", UUID.fromString(uuid1));
-        player1.setOp(false);
+        player1.setOp(true);
         ((ConstructionSiteServerMock) MockBukkit.getMock()).addPlayer(player1);
         player2 = new ConstructionSitePlayerMock("test2", UUID.fromString(uuid2));
-        player2.setOp(true);
+        player2.setOp(false);
         ((ConstructionSiteServerMock) MockBukkit.getMock()).addPlayer(player2);
         player3 = new ConstructionSitePlayerMock("test3", UUID.fromString(uuid3));
         player3.setOp(false);
@@ -80,7 +80,7 @@ class TestTeleportCommands {
                 MAP_AUTHOR:Test author2
                 GAME_TYPE:None
                 ADMIN_LIST:%s
-                """.trim(), uuid1));
+                """.trim(), uuid2));
         plugin.enable();
     }
 
@@ -90,7 +90,7 @@ class TestTeleportCommands {
         MockBukkit.unload();
     }
 
-    @Order(0)
+    @Order(1)
     @Test
     void testPermission() {
         AbstractTeleportCommand[] commands = new AbstractTeleportCommand[] {
@@ -159,7 +159,7 @@ class TestTeleportCommands {
         player2.assertNoMoreSaid();
     }
 
-    @Order(1)
+    @Order(2)
     @Test
     void testHubCommand() {
         AbstractTeleportCommand command = new TeleportHubCommand();
@@ -180,7 +180,7 @@ class TestTeleportCommands {
         player2.assertLocation(new Location(world, 0, 106, 0), 1);
     }
 
-    @Order(2)
+    @Order(3)
     @Test
     void testSpawnCommand() {
         AbstractTeleportCommand command = new TeleportSpawnCommand();
@@ -212,7 +212,7 @@ class TestTeleportCommands {
         player2.assertLocation(new Location(worldMap, 8, 9, -10), 1);
     }
 
-    @Order(3)
+    @Order(4)
     @Test
     void testTeleportMapCommand() {
         AbstractTeleportCommand command = new TeleportMapCommand();
@@ -220,8 +220,10 @@ class TestTeleportCommands {
         TeleportManager manager = ConstructionSiteProvider.getSite().getManager(TeleportManager.class);
         Assertions.assertTrue(manager.teleportToServerSpawn(player1));
         Assertions.assertTrue(manager.teleportToServerSpawn(player2));
+        Assertions.assertTrue(manager.teleportToServerSpawn(player3));
         Assertions.assertTrue(manager.teleportPlayer(player1, new Location(world, 1, 2, 3)));
         Assertions.assertTrue(manager.teleportPlayer(player2, new Location(world, 1, 2, 3)));
+        Assertions.assertTrue(manager.teleportPlayer(player3, new Location(world, 1, 2, 3)));
 
         Assertions.assertFalse(command.runConstruction(player1, label, new String[]{"invalid"}));
         player1.assertSaid("§cInvalid UUID!");
@@ -238,6 +240,10 @@ class TestTeleportCommands {
 
         Assertions.assertTrue(command.runConstruction(player1, label, new String[]{worldMap.getUID().toString()}));
         Assertions.assertTrue(command.runConstruction(player2, label, new String[]{worldMap.getUID().toString()}));
+        Assertions.assertTrue(command.runConstruction(player3, label, new String[]{worldMap.getUID().toString()}));
+        player3.assertSaid("§cTeleportation unsuccessful...");
+        player3.assertNoMoreSaid();
+        player3.assertLocation(new Location(world, 1, 2, 3), 1);
         player1.assertNoMoreSaid();
         player1.assertGameMode(GameMode.CREATIVE);
         Assertions.assertTrue(player1.isFlying());
@@ -248,7 +254,7 @@ class TestTeleportCommands {
         player2.assertLocation(new Location(worldMap, 8, 9, -10), 1);
     }
 
-    @Order(4)
+    @Order(5)
     @Test
     void testWarpCommand() {
         AbstractTeleportCommand command = new TeleportWarpCommand();
@@ -334,6 +340,9 @@ class TestTeleportCommands {
         player1.assertSaid("§c\"n1\" already exists!");
         player1.assertNoMoreSaid();
         Assertions.assertEquals(1, mapDataManager.get(worldMap).warps().size());
+        Assertions.assertTrue(command.runConstruction(player1, label, new String[]{"list"}));
+        player1.assertSaid("§en1: 10.0,11.0,12.0");
+        player1.assertNoMoreSaid();
         Assertions.assertTrue(command.runConstruction(player1, label, new String[]{"n1"}));
         player1.assertSaid("Teleported to warp point §en1");
         player1.assertNoMoreSaid();
@@ -345,5 +354,75 @@ class TestTeleportCommands {
         player1.assertSaid("§c\"n1\" does not exist!");
         player1.assertNoMoreSaid();
         Assertions.assertTrue(mapDataManager.get(worldMap).warps().isEmpty());
+        Assertions.assertTrue(command.runConstruction(player1, label, new String[]{"list"}));
+        player1.assertSaid("§cNo warp point yet! Add some!");
+        player1.assertNoMoreSaid();
+    }
+
+    @Order(6)
+    @Test
+    void testTeleportCommand() {
+        AbstractTeleportCommand command = new TeleportCommand();
+        String label = command.getAliases().get(0);
+        TeleportManager teleportManager = ConstructionSiteProvider.getSite().getManager(TeleportManager.class);
+
+        Assertions.assertTrue(teleportManager.teleportPlayer(player1, new Location(world, 5, 6, 7)));
+        Assertions.assertTrue(teleportManager.teleportPlayer(player2, new Location(worldMap, 8, 9, 10)));
+        Assertions.assertTrue(teleportManager.teleportPlayer(player3, new Location(worldLobby, 1, 2, 3)));
+
+        Assertions.assertFalse(command.runConstruction(player1, label, new String[]{}));
+        Assertions.assertFalse(command.runConstruction(player1, label, new String[]{"1", "2", "3", "4"}));
+
+        player1.assertLocation(new Location(world, 5, 6, 7), 1);
+        Assertions.assertTrue(command.runConstruction(player1, label, new String[]{"~-2", "9", "~2"}));
+        player1.assertLocation(new Location(world, 3, 9, 9), 1);
+        player1.assertSaid("You teleported to §e3,9,9");
+        player1.assertNoMoreSaid();
+
+        Assertions.assertTrue(command.runConstruction(player1, label, new String[]{"test1"}));
+        player1.assertLocation(new Location(world, 3, 9, 9), 1);
+        player1.assertNoMoreSaid();
+
+        Assertions.assertTrue(command.runConstruction(player1, label, new String[]{"test2"}));
+        player1.assertLocation(new Location(worldMap, 8, 9, 10), 1);
+        player1.assertSaid("You teleported to §etest2");
+        player1.assertNoMoreSaid();
+
+        Assertions.assertTrue(command.runConstruction(player1, label, new String[]{"test1", "test3"}));
+        player1.assertLocation(new Location(worldLobby, 1, 2, 3), 1);
+        player1.assertSaid("You teleported to §etest3");
+        player1.assertNoMoreSaid();
+
+        Assertions.assertTrue(command.runConstruction(player1, label, new String[]{"test3", "test2"}));
+        player3.assertLocation(new Location(worldLobby, 1, 2, 3), 1);
+        player3.assertNoMoreSaid();
+        player1.assertSaid("§cTeleportation unsuccessful...");
+        player1.assertNoMoreSaid();
+
+        Assertions.assertTrue(command.runConstruction(player3, label, new String[]{"test2"}));
+        player3.assertLocation(new Location(worldLobby, 1, 2, 3), 1);
+        player3.assertSaid("§cTeleportation unsuccessful...");
+        player3.assertNoMoreSaid();
+
+        Assertions.assertTrue(command.runConstruction(player2, label, new String[]{"test1", "test3"}));
+        player1.assertLocation(new Location(worldLobby, 1, 2, 3), 1);
+        player2.assertSaid("§cTeleportation unsuccessful...");
+        player2.assertNoMoreSaid();
+        player1.assertNoMoreSaid();
+
+        Assertions.assertTrue(command.runConstruction(player1, label, new String[]{"test2", "test3"}));
+        player2.assertLocation(new Location(worldLobby, 1, 2, 3), 1);
+        player1.assertSaid("You teleported §etest2§r to §etest3");
+        player1.assertNoMoreSaid();
+        player2.assertSaid("§etest1§r teleported you to §etest3");
+        player2.assertNoMoreSaid();
+
+        Assertions.assertTrue(teleportManager.teleportPlayer(player1, new Location(world, 5, 6, 7)));
+        Assertions.assertTrue(command.runConstruction(player1, label, new String[]{"test3", "test1"}));
+        player3.assertLocation(new Location(world, 5, 6, 7), 1);
+        player3.assertSaid("You are teleported to §etest1");
+        player3.assertNoMoreSaid();
+        player1.assertSaid("You teleported §etest3§r to you");
+        player1.assertNoMoreSaid();
     }
 }

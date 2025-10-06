@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class GameTypeUtils {
     public static void printValidGameTypes(CommandSender caller) {
-        UtilPlayerBase.sendMessage(caller, String.format("&cValid game types: &e%s&r", String.join("&r, &e", GameTypeUtils.getGameTypes().stream().map(Enum::toString).toArray(String[]::new))));
+        UtilPlayerBase.sendMessage(caller, String.format("&cValid game types: &e%s", String.join("&r, &e", GameTypeUtils.getGameTypes().stream().map(Enum::toString).toArray(String[]::new))));
     }
 
     public static List<GameType> getGameTypes() {
