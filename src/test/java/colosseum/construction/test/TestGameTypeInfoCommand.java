@@ -39,7 +39,7 @@ class TestGameTypeInfoCommand {
         MockBukkit.unload();
     }
 
-    @Order(0)
+    @Order(1)
     @Test
     void testPermission() {
         GameTypeInfoCommand command = new GameTypeInfoCommand();
@@ -47,7 +47,7 @@ class TestGameTypeInfoCommand {
         Assertions.assertTrue(command.canRun(player));
     }
 
-    @Order(1)
+    @Order(2)
     @Test
     void testInvalidCases() {
         GameTypeInfoCommand command = new GameTypeInfoCommand();
@@ -97,7 +97,7 @@ class TestGameTypeInfoCommand {
         assertSaidValidGameTypes.accept(new String[]{"delete", GameTypeUtils.getGameTypes().get(0).name(), "a"}, false);
     }
 
-    @Order(2)
+    @Order(3)
     @Test
     void testValidCases() {
         GameTypeInfoCommand command = new GameTypeInfoCommand();

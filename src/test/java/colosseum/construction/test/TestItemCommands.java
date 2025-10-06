@@ -40,7 +40,7 @@ class TestItemCommands {
         MockBukkit.unload();
     }
 
-    @Order(0)
+    @Order(1)
     @Test
     void testPermission() {
         ItemCommand[] commands = new ItemCommand[]{
@@ -69,7 +69,7 @@ class TestItemCommands {
         }
     }
 
-    @Order(1)
+    @Order(2)
     @Test
     void testAddAndClearLore() {
         player.assertNoMoreSaid();
@@ -104,7 +104,7 @@ class TestItemCommands {
         Assertions.assertEquals(0, item.getItemMeta().getLore().size());
     }
 
-    @Order(2)
+    @Order(3)
     @Test
     void testItemName() {
         player.assertNoMoreSaid();

@@ -75,7 +75,7 @@ class TestMapData {
         return Utils.readMapData(TestMapData.world, TestMapData.tempWorldDir, testCase);
     }
 
-    @Order(0)
+    @Order(1)
     @Test
     void testRead() {
         MapData data = testRead0(String.format("""
@@ -148,7 +148,7 @@ class TestMapData {
         assertion.assertion(data, mapName, mapCreator, mapGameType, warps, adminList, currentlyLive);
     }
 
-    @Order(1)
+    @Order(2)
     @Test
     void testWrite() {
         testWrite0("TEST MAP NONETYPE", "TEST MAP NONETYPE AUTHOR", GameType.None, Collections.emptyMap(), Collections.emptySet(), true, (data, mapName, mapCreator, mapGameType, warps, adminList, currentlyLive) -> {

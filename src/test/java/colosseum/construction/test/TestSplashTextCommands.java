@@ -42,7 +42,7 @@ class TestSplashTextCommands {
         MockBukkit.unload();
     }
 
-    @Order(0)
+    @Order(1)
     @Test
     void testPermission() {
         AbstractOpCommand[] commands = new AbstractOpCommand[] {
@@ -59,7 +59,7 @@ class TestSplashTextCommands {
         }
     }
 
-    @Order(1)
+    @Order(2)
     @Test
     void testAddAndClearSplashText() {
         player.assertNoMoreSaid();

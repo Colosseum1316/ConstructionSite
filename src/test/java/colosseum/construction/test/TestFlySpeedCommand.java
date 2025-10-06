@@ -35,7 +35,7 @@ class TestFlySpeedCommand {
         MockBukkit.unload();
     }
 
-    @Order(0)
+    @Order(1)
     @Test
     void testPermission() {
         FlySpeedCommand command = new FlySpeedCommand();
@@ -46,7 +46,7 @@ class TestFlySpeedCommand {
         Assertions.assertFalse(command.canRun(MockBukkit.getMock().getConsoleSender()));
     }
 
-    @Order(1)
+    @Order(2)
     @Test
     void testInvalidInputs() {
         FlySpeedCommand command = new FlySpeedCommand();
@@ -65,7 +65,7 @@ class TestFlySpeedCommand {
         Assertions.assertFalse(command.runConstruction(player, label, new String[]{"-10"}));
     }
 
-    @Order(2)
+    @Order(3)
     @Test
     void testValidInputs() {
         FlySpeedCommand command = new FlySpeedCommand();
