@@ -15,8 +15,8 @@ import org.junit.jupiter.api.io.TempDir;
 import java.io.File;
 
 class TestFlySpeedCommand {
-    private static DummySite plugin;
-    private static ConstructionSitePlayerMock player;
+    private DummySite plugin;
+    private ConstructionSitePlayerMock player;
 
     @TempDir
     static File tempPluginDataDir;

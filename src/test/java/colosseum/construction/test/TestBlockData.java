@@ -17,8 +17,8 @@ import java.io.File;
 
 @SuppressWarnings("deprecation")
 class TestBlockData {
-    private static DummySite plugin;
-    private static WorldMock world;
+    private DummySite plugin;
+    private WorldMock world;
 
     @TempDir
     static File tempPluginDataDir;

@@ -30,16 +30,16 @@ import java.io.File;
 import java.util.UUID;
 
 class TestTeleportCommands {
-    private static DummySite plugin;
+    private DummySite plugin;
     private static final String uuid1 = "5da001d1-f9a4-4c95-9736-9a98327848bf";
-    private static ConstructionSitePlayerMock player1;
+    private ConstructionSitePlayerMock player1;
     private static final String uuid2 = "07e79d0b-f86d-4bed-ae37-d87df8d94693";
-    private static ConstructionSitePlayerMock player2;
+    private ConstructionSitePlayerMock player2;
     private static final String uuid3 = "3e65ea50-cd1a-45fb-81d7-7e27c14662d4";
-    private static ConstructionSitePlayerMock player3;
-    private static ConstructionSiteWorldMock world;
-    private static ConstructionSiteWorldMock worldLobby;
-    private static ConstructionSiteWorldMock worldMap;
+    private ConstructionSitePlayerMock player3;
+    private ConstructionSiteWorldMock world;
+    private ConstructionSiteWorldMock worldLobby;
+    private ConstructionSiteWorldMock worldMap;
 
     @TempDir
     static File tempWorldContainer;

@@ -23,8 +23,8 @@ import java.io.File;
 import java.util.List;
 
 class TestSplashTextCommands {
-    private static DummySite plugin;
-    private static PlayerMock player;
+    private DummySite plugin;
+    private PlayerMock player;
 
     @TempDir
     static File tempPluginDataDir;

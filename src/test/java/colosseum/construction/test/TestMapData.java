@@ -27,8 +27,8 @@ import java.util.Set;
 import java.util.UUID;
 
 class TestMapData {
-    private static DummySite plugin;
-    private static WorldMock world;
+    private DummySite plugin;
+    private WorldMock world;
 
     @TempDir
     static File tempWorldDir;
@@ -36,11 +36,11 @@ class TestMapData {
     static File tempPluginDataDir;
 
     private static final String uuid1 = "5da001d1-f9a4-4c95-9736-9a98327848bf";
-    private static PlayerMock player1;
+    private PlayerMock player1;
     private static final String uuid2 = "07e79d0b-f86d-4bed-ae37-d87df8d94693";
-    private static PlayerMock player2;
+    private PlayerMock player2;
     private static final String uuid3 = "3e65ea50-cd1a-45fb-81d7-7e27c14662d4";
-    private static PlayerMock player3;
+    private PlayerMock player3;
 
     @BeforeAll
     void setup() {
@@ -72,7 +72,7 @@ class TestMapData {
     }
 
     private DummyMapDataRead testRead0(final String testCase) {
-        return Utils.readMapData(TestMapData.world, TestMapData.tempWorldDir, testCase);
+        return Utils.readMapData(world, tempWorldDir, testCase);
     }
 
     @Order(1)
@@ -143,8 +143,8 @@ class TestMapData {
             boolean currentlyLive,
             DummyMapWriteAssertionCallback assertion
     ) {
-        new DummyMapDataWrite(TestMapData.world, TestMapData.tempWorldDir, mapName, mapCreator, mapGameType, warps, adminList, currentlyLive).write();
-        MapData data = Utils.readMapData(TestMapData.world, TestMapData.tempWorldDir);
+        new DummyMapDataWrite(world, tempWorldDir, mapName, mapCreator, mapGameType, warps, adminList, currentlyLive).write();
+        MapData data = Utils.readMapData(world, tempWorldDir);
         assertion.assertion(data, mapName, mapCreator, mapGameType, warps, adminList, currentlyLive);
     }
 
