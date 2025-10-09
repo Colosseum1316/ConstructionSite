@@ -11,8 +11,9 @@ public final class ConstructionSiteWorldMock extends WorldMock {
     private Difficulty difficulty;
     private boolean isAutoSave;
     private boolean pvp;
+    private long daytime;
 
-    private boolean map;
+    private final boolean map;
 
     public ConstructionSiteWorldMock(String name) {
         this(name, false);
@@ -61,8 +62,31 @@ public final class ConstructionSiteWorldMock extends WorldMock {
     }
 
     @Override
+    public long getTime() {
+        long time = getFullTime() % 24000;
+        if (time < 0) {
+            time += 24000;
+        }
+        return time;
+    }
+
+    @Override
     public void setTime(long time) {
-        // no op
+        long margin = (time - getFullTime()) % 24000;
+        if (margin < 0) {
+            margin += 24000;
+        }
+        setFullTime(getFullTime() + margin);
+    }
+
+    @Override
+    public long getFullTime() {
+        return daytime;
+    }
+
+    @Override
+    public void setFullTime(long time) {
+        this.daytime = time;
     }
 
     @Override
