@@ -2,6 +2,7 @@ package colosseum.construction.command.vanilla
 
 import colosseum.construction.command.AbstractMapAdminCommand
 import org.bukkit.Difficulty
+import org.bukkit.World
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
@@ -44,9 +45,25 @@ class DifficultyCommand: AbstractMapAdminCommand(
             return false
         }
 
+        try {
+            val v = args[0].toInt()
+            if (v < 0 || v > 3) {
+                return false
+            }
+            val difficulty = Difficulty.getByValue(v)
+            setDifficulty(caller, caller.world, difficulty)
+            return true
+        } catch (e: Exception) {
+            // no op
+        }
+
         val difficulty = Difficulty.getByValue(method.invoke(vanilla, caller, args[0]) as Int) ?: return false
-        caller.world.difficulty = difficulty
-        Command.broadcastCommandMessage(caller, "Set map ${getMapDataManager().get(caller.world).mapName} world difficulty to $difficulty", true)
+        setDifficulty(caller, caller.world, difficulty)
         return true
+    }
+
+    private fun setDifficulty(caller: Player, world: World, difficulty: Difficulty) {
+        world.difficulty = difficulty
+        Command.broadcastCommandMessage(caller, "Set map ${getMapDataManager().get(world).mapName} world difficulty to $difficulty", true)
     }
 }
