@@ -11,8 +11,9 @@ final class ConstructionSiteSchedulesImpl implements ConstructionSiteSchedules {
         if (!clazz.equals(BukkitTask.class) && !clazz.equals(Void.class)) {
             throw new UnsupportedOperationException();
         }
+        BukkitTask task = Bukkit.getScheduler().runTask(ConstructionSiteProvider.getPlugin(), runnable);
         if (clazz.equals(BukkitTask.class)) {
-            return (T) Bukkit.getScheduler().runTask(ConstructionSiteProvider.getPlugin(), runnable);
+            return (T) task;
         } else {
             return null;
         }
@@ -23,8 +24,9 @@ final class ConstructionSiteSchedulesImpl implements ConstructionSiteSchedules {
         if (!clazz.equals(BukkitTask.class) && !clazz.equals(Void.class)) {
             throw new UnsupportedOperationException();
         }
+        BukkitTask task = Bukkit.getScheduler().runTaskLater(ConstructionSiteProvider.getPlugin(), runnable, delay);
         if (clazz.equals(BukkitTask.class)) {
-            return (T) Bukkit.getScheduler().runTaskLater(ConstructionSiteProvider.getPlugin(), runnable, delay);
+            return (T) task;
         } else {
             return null;
         }
@@ -35,8 +37,9 @@ final class ConstructionSiteSchedulesImpl implements ConstructionSiteSchedules {
         if (!clazz.equals(BukkitTask.class) && !clazz.equals(Void.class)) {
             throw new UnsupportedOperationException();
         }
+        BukkitTask task = Bukkit.getScheduler().runTaskTimer(ConstructionSiteProvider.getPlugin(), runnable, delay, period);
         if (clazz.equals(BukkitTask.class)) {
-            return (T) Bukkit.getScheduler().runTaskTimer(ConstructionSiteProvider.getPlugin(), runnable, delay, period);
+            return (T) task;
         } else {
             return null;
         }
@@ -47,8 +50,9 @@ final class ConstructionSiteSchedulesImpl implements ConstructionSiteSchedules {
         if (!clazz.equals(BukkitTask.class) && !clazz.equals(Void.class)) {
             throw new UnsupportedOperationException();
         }
+        BukkitTask task = Bukkit.getScheduler().runTaskAsynchronously(ConstructionSiteProvider.getPlugin(), runnable);
         if (clazz.equals(BukkitTask.class)) {
-            return (T) Bukkit.getScheduler().runTaskAsynchronously(ConstructionSiteProvider.getPlugin(), runnable);
+            return (T) task;
         } else {
             return null;
         }
