@@ -59,7 +59,7 @@ dependencies {
         isTransitive = false
     })
     shadow(implementation("colosseum.minecraft:ColosseumUtility:0.1-SNAPSHOT") {
-        exclude("org.jetbrains", "annotations")
+        isTransitive = false
     })
 
     compileOnly("commons-io:commons-io:${project.findProperty("commons_io_version")}")
