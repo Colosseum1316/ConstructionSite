@@ -48,6 +48,8 @@ class TestTeleportCommands {
 
     @BeforeAll
     void setup() {
+        tearDown();
+
         plugin = new DummySite3(tempWorldContainer, tempPluginDataDir);
 
         world = new ConstructionSiteWorldMock(WorldMapConstants.WORLD);
@@ -86,8 +88,7 @@ class TestTeleportCommands {
 
     @AfterAll
     void tearDown() {
-        plugin.disable();
-        MockBukkit.unload();
+        Utils.tearDown(plugin);
     }
 
     @Order(1)

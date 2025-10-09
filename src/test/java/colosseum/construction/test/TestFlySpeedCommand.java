@@ -23,6 +23,7 @@ class TestFlySpeedCommand {
 
     @BeforeAll
     void setup() {
+        tearDown();
         plugin = new DummySite1(tempPluginDataDir);
         player = new ConstructionSitePlayerMock("test");
         MockBukkit.getMock().addPlayer(player);
@@ -31,8 +32,7 @@ class TestFlySpeedCommand {
 
     @AfterAll
     void tearDown() {
-        plugin.disable();
-        MockBukkit.unload();
+        Utils.tearDown(plugin);
     }
 
     @Order(1)

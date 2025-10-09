@@ -25,6 +25,7 @@ class TestBlockData {
 
     @BeforeAll
     void setup() {
+        tearDown();
         plugin = new DummySite1(tempPluginDataDir);
         world = MockBukkit.getMock().addSimpleWorld("test");
         plugin.enable();
@@ -32,8 +33,7 @@ class TestBlockData {
 
     @AfterAll
     void tearDown() {
-        plugin.disable();
-        MockBukkit.unload();
+        Utils.tearDown(plugin);
     }
 
     @Test

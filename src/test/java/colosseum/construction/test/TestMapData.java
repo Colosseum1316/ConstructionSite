@@ -44,8 +44,9 @@ class TestMapData {
 
     @BeforeAll
     void setup() {
+        tearDown();
         plugin = new DummySite1(tempPluginDataDir);
-        world = MockBukkit.getMock().addSimpleWorld("world");
+        world = MockBukkit.getMock().addSimpleWorld(WorldMapConstants.WORLD);
         player1 = new PlayerMock("test1", UUID.fromString(uuid1));
         player1.setOp(false);
         MockBukkit.getMock().addPlayer(player1);
@@ -60,8 +61,7 @@ class TestMapData {
 
     @AfterAll
     void tearDown() {
-        plugin.disable();
-        MockBukkit.unload();
+        Utils.tearDown(plugin);
     }
 
     @BeforeEach

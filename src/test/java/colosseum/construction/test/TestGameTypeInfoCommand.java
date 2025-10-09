@@ -28,6 +28,7 @@ class TestGameTypeInfoCommand {
 
     @BeforeAll
     void setup() {
+        tearDown();
         plugin = new DummySite1(tempPluginDataDir);
         player = MockBukkit.getMock().addPlayer();
         plugin.enable();
@@ -35,8 +36,7 @@ class TestGameTypeInfoCommand {
 
     @AfterAll
     void tearDown() {
-        plugin.disable();
-        MockBukkit.unload();
+        Utils.tearDown(plugin);
     }
 
     @Order(1)

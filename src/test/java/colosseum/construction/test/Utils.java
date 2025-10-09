@@ -1,6 +1,8 @@
 package colosseum.construction.test;
 
+import be.seeseemelk.mockbukkit.MockBukkit;
 import colosseum.construction.ConstructionSite;
+import colosseum.construction.test.dummies.DummySite;
 import colosseum.construction.test.dummies.data.DummyMapDataRead;
 import colosseum.utility.WorldMapConstants;
 import lombok.AccessLevel;
@@ -46,5 +48,17 @@ public final class Utils {
         logger.setUseParentHandlers(false);
         logger.addHandler(handler);
         return logger;
+    }
+
+    // @BeforeAll and @AfterAll are terribly terrible
+    public static void tearDown(DummySite site) {
+        try {
+            site.disable();
+        } catch (Exception e) {
+            // no op
+        }
+        if (MockBukkit.getMock() != null) {
+            MockBukkit.unload();
+        }
     }
 }

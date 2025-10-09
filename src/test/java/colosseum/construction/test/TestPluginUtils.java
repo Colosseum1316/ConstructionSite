@@ -19,13 +19,14 @@ class TestPluginUtils {
 
     @BeforeAll
     void setup() {
+        tearDown();
         plugin = new DummySite2(tempWorldContainer);
         plugin.enable();
     }
 
     @AfterAll
     void tearDown() {
-        plugin.disable();
+        Utils.tearDown(plugin);
     }
 
     @Test
