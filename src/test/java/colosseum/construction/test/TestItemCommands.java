@@ -13,32 +13,34 @@ import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.util.List;
 
-class TestItemCommand {
-    private static DummySite plugin;
-    private static PlayerMock player;
+class TestItemCommands {
+    private DummySite plugin;
+    private PlayerMock player;
 
     @TempDir
     static File tempPluginDataDir;
 
     @BeforeAll
-    static void setup() {
+    void setup() {
+        tearDown();
         plugin = new DummySite1(tempPluginDataDir);
         player = MockBukkit.getMock().addPlayer();
-        plugin.setup();
+        plugin.enable();
     }
 
     @AfterAll
-    static void tearDown() {
-        plugin.teardown();
-        MockBukkit.unload();
+    void tearDown() {
+        Utils.tearDown(plugin);
     }
 
+    @Order(1)
     @Test
     void testPermission() {
         ItemCommand[] commands = new ItemCommand[]{
@@ -54,17 +56,20 @@ class TestItemCommand {
 
             ItemStack item = new ItemStack(Material.GLASS);
             player.setItemInHand(item);
+            Assertions.assertFalse(command.canRun(MockBukkit.getMock().getConsoleSender()));
             Assertions.assertTrue(command.canRun(player));
             player.assertNoMoreSaid();
 
             item = new ItemStack(Material.AIR);
             player.setItemInHand(item);
+            Assertions.assertFalse(command.canRun(MockBukkit.getMock().getConsoleSender()));
             Assertions.assertFalse(command.canRun(player));
             player.assertSaid("§cHold an item in your hand!");
             player.assertNoMoreSaid();
         }
     }
 
+    @Order(2)
     @Test
     void testAddAndClearLore() {
         player.assertNoMoreSaid();
@@ -99,6 +104,7 @@ class TestItemCommand {
         Assertions.assertEquals(0, item.getItemMeta().getLore().size());
     }
 
+    @Order(3)
     @Test
     void testItemName() {
         player.assertNoMoreSaid();

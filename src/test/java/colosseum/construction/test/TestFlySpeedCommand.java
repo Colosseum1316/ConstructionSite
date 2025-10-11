@@ -2,38 +2,40 @@ package colosseum.construction.test;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
 import colosseum.construction.command.FlySpeedCommand;
-import colosseum.construction.test.dummies.ConstructionPlayerMock;
+import colosseum.construction.test.dummies.ConstructionSitePlayerMock;
 import colosseum.construction.test.dummies.DummySite;
 import colosseum.construction.test.dummies.DummySite1;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 
 class TestFlySpeedCommand {
-    private static DummySite plugin;
-    private static ConstructionPlayerMock player;
+    private DummySite plugin;
+    private ConstructionSitePlayerMock player;
 
     @TempDir
     static File tempPluginDataDir;
 
     @BeforeAll
-    static void setup() {
+    void setup() {
+        tearDown();
         plugin = new DummySite1(tempPluginDataDir);
-        player = new ConstructionPlayerMock("test");
+        player = new ConstructionSitePlayerMock("test");
         MockBukkit.getMock().addPlayer(player);
-        plugin.setup();
+        plugin.enable();
     }
 
     @AfterAll
-    static void tearDown() {
-        plugin.teardown();
-        MockBukkit.unload();
+    void tearDown() {
+        Utils.tearDown(plugin);
     }
 
+    @Order(1)
     @Test
     void testPermission() {
         FlySpeedCommand command = new FlySpeedCommand();
@@ -41,8 +43,10 @@ class TestFlySpeedCommand {
         Assertions.assertFalse(command.canRun(player));
         player.setFlying(true);
         Assertions.assertTrue(command.canRun(player));
+        Assertions.assertFalse(command.canRun(MockBukkit.getMock().getConsoleSender()));
     }
 
+    @Order(2)
     @Test
     void testInvalidInputs() {
         FlySpeedCommand command = new FlySpeedCommand();
@@ -61,6 +65,7 @@ class TestFlySpeedCommand {
         Assertions.assertFalse(command.runConstruction(player, label, new String[]{"-10"}));
     }
 
+    @Order(3)
     @Test
     void testValidInputs() {
         FlySpeedCommand command = new FlySpeedCommand();

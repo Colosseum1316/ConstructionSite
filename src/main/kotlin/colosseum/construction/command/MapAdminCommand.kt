@@ -1,9 +1,11 @@
 package colosseum.construction.command
 
 import colosseum.construction.ConstructionSiteProvider
+import colosseum.construction.WorldUtils
+import colosseum.construction.data.FinalizedMapData
 import colosseum.construction.data.MutableMapData
 import colosseum.utility.UtilPlayerBase.searchOnline
-import org.bukkit.Bukkit
+import com.google.common.collect.ImmutableSet
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
 
@@ -19,19 +21,24 @@ class MapAdminCommand: AbstractMapAdminCommand(
         val target = searchOnline(caller, args[0], true)
         if (target != null) {
             val world = caller.world
-            val worldManager = getWorldManager()
             val data = getMapDataManager().get(world) as MutableMapData
-            val path = worldManager.getWorldRelativePath(world)
-            if (data.adminList.add(target.uniqueId)) {
-                Command.broadcastCommandMessage(caller, "${target.name} is now admin in ${data.mapName}", true)
-                ConstructionSiteProvider.getSite().pluginLogger.info("World $path: ${target.name} is now admin in ${data.mapName}")
+            val path = WorldUtils.getWorldRelativePath(world)
+            val adminList = data.adminList().toMutableSet()
+            var add = false
+            if (adminList.add(target.uniqueId)) {
+                add = true
             } else {
-                data.adminList.remove(target.uniqueId)
-                Command.broadcastCommandMessage(caller, "${target.name} is no longer admin in ${data.mapName}", true)
-                ConstructionSiteProvider.getSite().pluginLogger.info("World $path: ${target.name} is no longer admin in ${data.mapName}")
+                adminList.remove(target.uniqueId)
             }
-            Bukkit.getScheduler().runTaskAsynchronously(ConstructionSiteProvider.getPlugin()) {
-                data.write()
+            ConstructionSiteProvider.getScheduler().scheduleAsync {
+                data.update(FinalizedMapData(ImmutableSet.copyOf(adminList)))
+                if (add) {
+                    Command.broadcastCommandMessage(caller, "${target.name} is now admin in ${data.mapName}", true)
+                    ConstructionSiteProvider.getSite().pluginLogger.info("World $path: ${target.name} is now admin in ${data.mapName}")
+                } else {
+                    Command.broadcastCommandMessage(caller, "${target.name} is no longer admin in ${data.mapName}", true)
+                    ConstructionSiteProvider.getSite().pluginLogger.info("World $path: ${target.name} is no longer admin in ${data.mapName}")
+                }
             }
         }
         return true

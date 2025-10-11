@@ -1,13 +1,12 @@
 package colosseum.construction.manager
 
-import colosseum.construction.BaseUtils
-import colosseum.construction.ConstructionSiteProvider
+import colosseum.construction.WorldUtils
 import colosseum.construction.data.DummyMapData
 import colosseum.construction.data.FinalizedMapData
 import colosseum.construction.data.MapDataImpl
+import colosseum.construction.data.MutableMapData
 import colosseum.utility.MapData
-import com.google.common.cache.Cache
-import com.google.common.cache.CacheBuilder
+import com.google.common.collect.Maps
 import org.bukkit.World
 import java.io.File
 import java.util.concurrent.*
@@ -15,54 +14,51 @@ import java.util.function.*
 
 @ManagerDependency(WorldManager::class)
 class MapDataManager: ConstructionSiteManager("MapData") {
-    private val mapData: Cache<String, MapData> = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).build()
-    private val lock = Object()
+    private val mapData: ConcurrentMap<String, MapData> = Maps.newConcurrentMap()
 
     companion object {
-        private fun getWorldManager(): WorldManager {
-            return ConstructionSiteProvider.getSite().getManager(WorldManager::class.java)
-        }
-
         private var getMapRootDir = Function<World, File> { world ->
-            getWorldManager().getWorldFolder(world)
+            WorldUtils.getWorldFolder(world)
+        }
+    }
+
+    override fun register() {
+        WorldUtils.getMapsRootPath().listFiles()?.forEach { f ->
+            if (f.isDirectory) {
+                val path = WorldUtils.getWorldRelativePath(f)
+                WorldUtils.loadWorld(path)?.let { world -> get(world) }
+            }
         }
     }
 
     override fun unregister() {
-        synchronized(lock) {
-            mapData.invalidateAll()
+        mapData.entries.removeAll { entry ->
+            if (entry.value is MutableMapData) {
+                (entry.value as MutableMapData).write()
+            }
+            return@removeAll true
         }
     }
 
     fun get(world: World): MapData {
-        val rootDirFile = getMapRootDir.apply(world)
-        synchronized(lock) {
-            var data: MapData?
-            data = mapData.getIfPresent(rootDirFile.absolutePath)
-            if (data == null) {
-                val worldManager = getWorldManager()
-                data = if (BaseUtils.isLevelNamePreserved(worldManager.getWorldRelativePath(world))) {
-                    DummyMapData(world, rootDirFile)
+        getMapRootDir.apply(world).also { dir ->
+            return mapData.computeIfAbsent(dir.absolutePath) {
+                return@computeIfAbsent if (WorldUtils.isLevelNamePreserved(WorldUtils.getWorldRelativePath(world))) {
+                    DummyMapData()
                 } else {
-                    MapDataImpl(world, rootDirFile)
+                    MapDataImpl(world, dir)
                 }
-                mapData.put(rootDirFile.absolutePath, data)
             }
-            return data
         }
     }
 
     fun getFinalized(worldFolder: File): FinalizedMapData {
-        val res = FinalizedMapData(MapDataImpl(null, worldFolder))
-        return res
+        return FinalizedMapData(MapDataImpl(null, worldFolder))
     }
 
     fun discard(world: World?) {
         if (world != null) {
-            val rootDirFile = getMapRootDir.apply(world)
-            synchronized(lock) {
-                mapData.invalidate(rootDirFile.absolutePath)
-            }
+            mapData.remove(getMapRootDir.apply(world).absolutePath)
         }
     }
 }
