@@ -3,12 +3,9 @@ package colosseum.construction.data;
 import colosseum.utility.arcade.GameType;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.util.UUID;
 
 public final class DummyMapData extends AbstractMapData {

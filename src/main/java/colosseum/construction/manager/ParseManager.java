@@ -96,9 +96,10 @@ public final class ParseManager extends ConstructionSiteManager {
                             }
                         }
 
+                        final FinalizedMapData mapData = site.getManager(MapDataManager.class).getFinalized(destination);
                         ConstructionSiteProvider.getScheduler().schedule(() -> {
                             WorldUtils.loadWorld(originalWorldRelativePath);
-                            parser = new MapParser(destination, args, startPoint, radius);
+                            parser = new MapParser(destination, mapData, args, startPoint, radius);
                             parserBukkitTask = ConstructionSiteProvider.getScheduler().scheduleAsync(parser, BukkitTask.class);
                         });
                     } catch (Exception e) {
@@ -204,7 +205,7 @@ public final class ParseManager extends ConstructionSiteManager {
             });
         }
         if (e != null) {
-            ConstructionSiteProvider.getSite().getPluginLogger().log(Level.SEVERE, "Error whilst parsing map", e);
+            ConstructionSiteProvider.getSite().getPluginLogger().log(Level.SEVERE, "Error whilst running scheduled task", e);
         }
     }
 }

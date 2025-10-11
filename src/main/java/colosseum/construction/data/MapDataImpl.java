@@ -119,15 +119,9 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
     @Override
     public void update(FinalizedMapData newMapData) {
         synchronized (lock) {
-            if (newMapData.getMapName().isPresent()) {
-                this.mapName = newMapData.getMapName().get();
-            }
-            if (newMapData.getMapCreator().isPresent()) {
-                this.mapCreator = newMapData.getMapCreator().get();
-            }
-            if (newMapData.getMapGameType().isPresent()) {
-                this.mapGameType = newMapData.getMapGameType().get();
-            }
+            this.mapName = newMapData.getMapName().orElse(this.mapName);
+            this.mapCreator = newMapData.getMapCreator().orElse(this.mapCreator);
+            this.mapGameType = newMapData.getMapGameType().orElse(this.mapGameType);
             if (newMapData.warps() != null) {
                 this.warps.clear();
                 this.warps.putAll(newMapData.warps());

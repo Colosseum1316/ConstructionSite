@@ -1,11 +1,11 @@
 package colosseum.construction;
 
 import colosseum.construction.data.FinalizedMapData;
-import colosseum.construction.manager.MapDataManager;
 import colosseum.utility.UtilWorld;
 import colosseum.utility.WorldMapConstants;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NonNull;
 import nl.rutgerkok.hammer.Chunk;
 import nl.rutgerkok.hammer.ChunkAccess;
 import nl.rutgerkok.hammer.World;
@@ -81,11 +81,7 @@ public final class MapParser implements Runnable {
     @SuppressWarnings("WriteOnlyObject")
     private final AtomicReference<Status> status = new AtomicReference<>(Status.RUNNING);
 
-    public MapParser(File parsableWorldFolder, List<String> args, Location startPoint) {
-        this(parsableWorldFolder, args, startPoint, 600);
-    }
-
-    public MapParser(@NotNull File parsableWorldFolder, List<String> args, Location startPoint, int radius) {
+    public MapParser(@NonNull File parsableWorldFolder, @NonNull FinalizedMapData mapData, List<String> args, Location startPoint, int radius) {
         this.parsableWorldFolder = parsableWorldFolder;
         this.parsableWorldPathString = parsableWorldFolder.getAbsolutePath();
         this.startPoint = new Vector(startPoint.getX(), startPoint.getY(), startPoint.getZ());
@@ -93,7 +89,7 @@ public final class MapParser implements Runnable {
         Validate.isTrue(radius > 0, "Radius must be greater than 0");
         this.wholeCubeSize = (long) (Math.pow(radius * 2 + 1, 2) * 256);
         ConstructionSite site = ConstructionSiteProvider.getSite();
-        this.mapData = site.getManager(MapDataManager.class).getFinalized(parsableWorldFolder);
+        this.mapData = mapData;
         for (String arg : args) {
             try {
                 dataId.add(Short.parseShort(arg));
