@@ -122,14 +122,14 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
             this.mapName = newMapData.getMapName().orElse(this.mapName);
             this.mapCreator = newMapData.getMapCreator().orElse(this.mapCreator);
             this.mapGameType = newMapData.getMapGameType().orElse(this.mapGameType);
-            if (newMapData.warps() != null) {
+            newMapData.getWarps().ifPresent(w -> {
                 this.warps.clear();
-                this.warps.putAll(newMapData.warps());
-            }
-            if (newMapData.adminList() != null) {
+                this.warps.putAll(w);
+            });
+            newMapData.getAdminList().ifPresent(a -> {
                 this.adminList.clear();
-                this.adminList.addAll(newMapData.adminList());
-            }
+                this.adminList.addAll(a);
+            });
             this.live = newMapData.getLive().orElse(this.live);
         }
     }

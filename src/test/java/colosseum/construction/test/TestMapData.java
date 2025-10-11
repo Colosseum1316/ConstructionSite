@@ -5,6 +5,7 @@ import be.seeseemelk.mockbukkit.WorldMock;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import colosseum.construction.ConstructionSiteProvider;
 import colosseum.construction.data.DummyMapData;
+import colosseum.construction.data.FinalizedMapData;
 import colosseum.construction.test.dummies.DummySite;
 import colosseum.construction.test.dummies.DummySite1;
 import colosseum.construction.test.dummies.data.DummyMapDataRead;
@@ -12,6 +13,8 @@ import colosseum.construction.test.dummies.data.DummyMapDataWrite;
 import colosseum.utility.MapData;
 import colosseum.utility.WorldMapConstants;
 import colosseum.utility.arcade.GameType;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import org.bukkit.util.Vector;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -197,5 +200,31 @@ class TestMapData {
         Assertions.assertEquals(0, data.warps().size());
         Assertions.assertEquals(0, data.adminList().size());
         Assertions.assertTrue(data.allows(player));
+    }
+
+    @Test
+    void assertFinalized() {
+        String mapName = "TEST MAP FINALIZED";
+        String mapCreator = "TEST MAP AUTHOR FINALIZED";
+        GameType mapGameType = GameType.DragonEscape;
+        ImmutableMap<String, Vector> warps = ImmutableMap.of(
+                "a1", new Vector(0, 0, 0),
+                "a2", new Vector( 0, 1, 0),
+                "a3", new Vector( -1, 0, 1)
+        );
+        ImmutableSet<UUID> adminList = ImmutableSet.of(
+                UUID.fromString(uuid1),
+                UUID.fromString(uuid2),
+                UUID.fromString(uuid3)
+        );
+        FinalizedMapData mapData = new FinalizedMapData(
+                mapName, mapCreator, mapGameType, warps, adminList, false
+        );
+        Assertions.assertEquals(mapName, mapData.getMapName().get());
+        Assertions.assertEquals(mapCreator, mapData.getMapCreator().get());
+        Assertions.assertEquals(mapGameType, mapData.getMapGameType().get());
+        Assertions.assertEquals(warps, mapData.getWarps().get());
+        Assertions.assertEquals(adminList, mapData.getAdminList().get());
+        Assertions.assertFalse(mapData.getLive().get());
     }
 }

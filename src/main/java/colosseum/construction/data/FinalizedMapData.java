@@ -12,13 +12,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 import java.util.UUID;
 
+@Getter
 public final class FinalizedMapData {
-    @Getter private final Optional<String> mapName;
-    @Getter private final Optional<String> mapCreator;
-    @Getter private final Optional<GameType> mapGameType;
+    private final Optional<String> mapName;
+    private final Optional<String> mapCreator;
+    private final Optional<GameType> mapGameType;
     private final Optional<ImmutableMap<String, Vector>> warps;
     private final Optional<ImmutableSet<UUID>> adminList;
-    @Getter private final Optional<Boolean> live;
+    private final Optional<Boolean> live;
 
     public FinalizedMapData(@NonNull MapData mapData) {
         this(mapData.getMapName(), mapData.getMapCreator(), mapData.getMapGameType(), mapData.warps(), mapData.adminList(), mapData.isLive());
@@ -77,32 +78,5 @@ public final class FinalizedMapData {
             @Nullable Boolean live
     ) {
         this(null, null, null, null, null, live);
-    }
-
-    public FinalizedMapData(
-            @Nullable String mapName,
-            @Nullable String mapCreator,
-            @Nullable GameType mapGameType
-    ) {
-        this(mapName, mapCreator, mapGameType, null, null, null);
-    }
-
-    public FinalizedMapData(
-            @Nullable String mapName,
-            @Nullable String mapCreator,
-            @Nullable GameType mapGameType,
-            @Nullable Boolean live
-    ) {
-        this(mapName, mapCreator, mapGameType, null, null, live);
-    }
-
-    @Nullable
-    public ImmutableMap<String, Vector> warps() {
-        return warps.orElse(null);
-    }
-
-    @Nullable
-    public ImmutableSet<UUID> adminList() {
-        return adminList.orElse(null);
     }
 }
