@@ -138,7 +138,7 @@ public final class ParseManager extends ConstructionSiteManager {
                             FileUtils.deleteQuietly(file);
                         }
                     }
-                    File zip = WorldUtils.getParsedZipOutputRootPath().toPath().resolve(worldFolder.getName() + "-" + System.currentTimeMillis() + "-" + mapData.getMapName() + "-" + mapData.getMapGameType().name() + ".zip").toFile();
+                    File zip = WorldUtils.getParsedZipOutputRootPath().toPath().resolve(worldFolder.getName() + "-" + System.currentTimeMillis() + "-" + mapData.getMapName().get() + "-" + mapData.getMapGameType().get().name() + ".zip").toFile();
                     UtilZipper.zip(worldFolder, zip);
                     ConstructionSiteProvider.getSite().getPluginLogger().info("Created " + zip.getAbsolutePath());
                     this.cancel();

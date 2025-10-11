@@ -4,6 +4,7 @@ import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.WorldMock;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import colosseum.construction.ConstructionSiteProvider;
+import colosseum.construction.data.DummyMapData;
 import colosseum.construction.test.dummies.DummySite;
 import colosseum.construction.test.dummies.DummySite1;
 import colosseum.construction.test.dummies.data.DummyMapDataRead;
@@ -46,7 +47,7 @@ class TestMapData {
     void setup() {
         tearDown();
         plugin = new DummySite1(tempPluginDataDir);
-        world = MockBukkit.getMock().addSimpleWorld(WorldMapConstants.WORLD);
+        world = MockBukkit.getMock().addSimpleWorld("test_map");
         player1 = new PlayerMock("test1", UUID.fromString(uuid1));
         player1.setOp(false);
         MockBukkit.getMock().addPlayer(player1);
@@ -185,5 +186,16 @@ class TestMapData {
             Assertions.assertTrue(data.allows(player2));
             Assertions.assertTrue(data.allows(player3));
         });
+    }
+
+    @Test
+    void assertDummies() {
+        MapData data = new DummyMapData();
+        PlayerMock player = MockBukkit.getMock().addPlayer();
+        Assertions.assertTrue(data.isLive());
+        Assertions.assertEquals(GameType.None, data.getMapGameType());
+        Assertions.assertEquals(0, data.warps().size());
+        Assertions.assertEquals(0, data.adminList().size());
+        Assertions.assertTrue(data.allows(player));
     }
 }

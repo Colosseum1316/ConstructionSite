@@ -317,7 +317,7 @@ public final class MapParser implements Runnable {
                 site.getPluginLogger().info("Parsing " + parsableWorldPathString + ": Set corner B: " + UtilWorld.vecToStrClean(cornerB));
             }
 
-            offlineWorld.getLevelTag().setString(AnvilFormat.LevelTag.LEVEL_NAME, mapData.getMapName() + " - " + mapData.getMapCreator() + " (" + mapData.getMapGameType().name() + ")");
+            offlineWorld.getLevelTag().setString(AnvilFormat.LevelTag.LEVEL_NAME, mapData.getMapName().get() + " - " + mapData.getMapCreator().get() + " (" + mapData.getMapGameType().get().name() + ")");
             offlineWorld.saveLevelTag();
 
             try (
@@ -326,8 +326,8 @@ public final class MapParser implements Runnable {
             ) {
                 site.getPluginLogger().info("Parsing " + parsableWorldPathString + ": Writing " + WorldMapConstants.WORLDCONFIG_DAT);
 
-                buffer.write("MAP_NAME:" + mapData.getMapName());
-                buffer.write("\nMAP_AUTHOR:" + mapData.getMapCreator());
+                buffer.write("MAP_NAME:" + mapData.getMapName().get());
+                buffer.write("\nMAP_AUTHOR:" + mapData.getMapCreator().get());
                 buffer.write("\n\nMIN_X:" + Math.min(cornerA.getBlockX(), cornerB.getBlockX()));
                 buffer.write("\nMAX_X:" + Math.max(cornerA.getBlockX(), cornerB.getBlockX()));
                 buffer.write("\nMIN_Z:" + Math.min(cornerA.getBlockZ(), cornerB.getBlockZ()));

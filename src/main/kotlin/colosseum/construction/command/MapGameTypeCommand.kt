@@ -44,7 +44,7 @@ class MapGameTypeCommand: AbstractMapAdminCommand(
             return true
         }
         ConstructionSiteProvider.getScheduler().scheduleAsync {
-            data.update(FinalizedMapData(null, null, newGameType, data.isLive))
+            data.update(FinalizedMapData(newGameType))
             Command.broadcastCommandMessage(caller, "Map ${data.mapName}: Set GameType to ${data.mapGameType.name}", true)
             ConstructionSiteProvider.getSite().pluginLogger.info("World $path: Set GameType to ${data.mapGameType.name}")
         }

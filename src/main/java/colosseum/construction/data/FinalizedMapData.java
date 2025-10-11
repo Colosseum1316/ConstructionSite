@@ -4,71 +4,105 @@ import colosseum.utility.MapData;
 import colosseum.utility.arcade.GameType;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
-import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.UUID;
 
-@AllArgsConstructor
-public final class FinalizedMapData implements MapData {
-    @Getter @Nullable private final String mapName;
-    @Getter @Nullable private final String mapCreator;
-    @Getter @Nullable private final GameType mapGameType;
-    @Nullable private final ImmutableMap<String, Vector> warps;
-    @Nullable private final ImmutableSet<UUID> adminList;
-    @Getter private final boolean live;
+public final class FinalizedMapData {
+    @Getter private final Optional<String> mapName;
+    @Getter private final Optional<String> mapCreator;
+    @Getter private final Optional<GameType> mapGameType;
+    private final Optional<ImmutableMap<String, Vector>> warps;
+    private final Optional<ImmutableSet<UUID>> adminList;
+    @Getter private final Optional<Boolean> live;
 
     public FinalizedMapData(@NonNull MapData mapData) {
         this(mapData.getMapName(), mapData.getMapCreator(), mapData.getMapGameType(), mapData.warps(), mapData.adminList(), mapData.isLive());
     }
 
-    public FinalizedMapData(
-            @Nullable String mapName,
-            @Nullable String mapCreator,
-            @Nullable GameType mapGameType,
-            @Nullable ImmutableMap<String, Vector> warps,
-            boolean live
-    ) {
-        this(mapName, mapCreator, mapGameType, warps, null, live);
+    public FinalizedMapData(String mapName, String mapCreator, GameType mapGameType, ImmutableMap<String, Vector> warps, ImmutableSet<UUID> adminList, Boolean live) {
+        this.mapName = Optional.ofNullable(mapName);
+        this.mapCreator = Optional.ofNullable(mapCreator);
+        this.mapGameType = Optional.ofNullable(mapGameType);
+        this.warps = Optional.ofNullable(warps);
+        this.adminList = Optional.ofNullable(adminList);
+        this.live = Optional.ofNullable(live);
+    }
+
+    public FinalizedMapData(String mapName, String mapCreator) {
+        this(mapName, mapCreator, null, null, null, null);
     }
 
     public FinalizedMapData(
             @Nullable String mapName,
             @Nullable String mapCreator,
             @Nullable GameType mapGameType,
-            @Nullable ImmutableSet<UUID> adminList,
-            boolean live
+            @Nullable ImmutableMap<String, Vector> warps
     ) {
-        this(mapName, mapCreator, mapGameType, null, adminList, live);
+        this(mapName, mapCreator, mapGameType, warps, null, null);
+    }
+
+    public FinalizedMapData(
+            @Nullable ImmutableMap<String, Vector> warps
+    ) {
+        this(null, null, null, warps, null, null);
     }
 
     public FinalizedMapData(
             @Nullable String mapName,
             @Nullable String mapCreator,
             @Nullable GameType mapGameType,
-            boolean live
+            @Nullable ImmutableSet<UUID> adminList
+    ) {
+        this(mapName, mapCreator, mapGameType, null, adminList, null);
+    }
+
+    public FinalizedMapData(
+            @Nullable ImmutableSet<UUID> adminList
+    ) {
+        this(null, null, null, null, adminList, null);
+    }
+
+    public FinalizedMapData(
+            @Nullable GameType mapGameType
+    ) {
+        this(null, null, mapGameType, null, null, null);
+    }
+
+    public FinalizedMapData(
+            @Nullable Boolean live
+    ) {
+        this(null, null, null, null, null, live);
+    }
+
+    public FinalizedMapData(
+            @Nullable String mapName,
+            @Nullable String mapCreator,
+            @Nullable GameType mapGameType
+    ) {
+        this(mapName, mapCreator, mapGameType, null, null, null);
+    }
+
+    public FinalizedMapData(
+            @Nullable String mapName,
+            @Nullable String mapCreator,
+            @Nullable GameType mapGameType,
+            @Nullable Boolean live
     ) {
         this(mapName, mapCreator, mapGameType, null, null, live);
     }
 
     @Nullable
-    @Override
     public ImmutableMap<String, Vector> warps() {
-        return warps;
+        return warps.orElse(null);
     }
 
     @Nullable
-    @Override
     public ImmutableSet<UUID> adminList() {
-        return adminList;
-    }
-
-    @Override
-    public boolean allows(Player player) {
-        return player.isOp() || (adminList != null && adminList.contains(player.getUniqueId()));
+        return adminList.orElse(null);
     }
 }

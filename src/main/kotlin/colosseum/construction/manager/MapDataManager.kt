@@ -44,7 +44,7 @@ class MapDataManager: ConstructionSiteManager("MapData") {
         getMapRootDir.apply(world).also { dir ->
             return mapData.computeIfAbsent(dir.absolutePath) {
                 return@computeIfAbsent if (WorldUtils.isLevelNamePreserved(WorldUtils.getWorldRelativePath(world))) {
-                    DummyMapData(world, dir)
+                    DummyMapData()
                 } else {
                     MapDataImpl(world, dir)
                 }
