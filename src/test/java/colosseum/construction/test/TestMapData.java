@@ -226,5 +226,92 @@ class TestMapData {
         Assertions.assertEquals(warps, mapData.getWarps().get());
         Assertions.assertEquals(adminList, mapData.getAdminList().get());
         Assertions.assertFalse(mapData.getLive().get());
+
+        mapData = new FinalizedMapData(
+                mapName, mapCreator
+        );
+        Assertions.assertEquals(mapName, mapData.getMapName().get());
+        Assertions.assertEquals(mapCreator, mapData.getMapCreator().get());
+        Assertions.assertNull(mapData.getMapGameType().orElse(null));
+        Assertions.assertNull(mapData.getWarps().orElse(null));
+        Assertions.assertNull(mapData.getAdminList().orElse(null));
+        Assertions.assertNull(mapData.getLive().orElse(null));
+
+        mapData = new FinalizedMapData(
+                mapName, mapCreator, mapGameType, warps
+        );
+        Assertions.assertEquals(mapName, mapData.getMapName().get());
+        Assertions.assertEquals(mapCreator, mapData.getMapCreator().get());
+        Assertions.assertEquals(mapGameType, mapData.getMapGameType().get());
+        Assertions.assertEquals(warps, mapData.getWarps().get());
+        Assertions.assertNull(mapData.getAdminList().orElse(null));
+        Assertions.assertNull(mapData.getLive().orElse(null));
+
+        mapData = new FinalizedMapData(
+                mapName, mapCreator, mapGameType, adminList
+        );
+        Assertions.assertEquals(mapName, mapData.getMapName().get());
+        Assertions.assertEquals(mapCreator, mapData.getMapCreator().get());
+        Assertions.assertEquals(mapGameType, mapData.getMapGameType().get());
+        Assertions.assertNull(mapData.getWarps().orElse(null));
+        Assertions.assertEquals(adminList, mapData.getAdminList().get());
+        Assertions.assertNull(mapData.getLive().orElse(null));
+
+        mapData = new FinalizedMapData(true);
+        Assertions.assertNull(mapData.getMapName().orElse(null));
+        Assertions.assertNull(mapData.getMapCreator().orElse(null));
+        Assertions.assertNull(mapData.getMapGameType().orElse(null));
+        Assertions.assertNull(mapData.getWarps().orElse(null));
+        Assertions.assertNull(mapData.getAdminList().orElse(null));
+        Assertions.assertTrue(mapData.getLive().get());
+
+        mapData = new FinalizedMapData(adminList);
+        Assertions.assertNull(mapData.getMapName().orElse(null));
+        Assertions.assertNull(mapData.getMapCreator().orElse(null));
+        Assertions.assertNull(mapData.getMapGameType().orElse(null));
+        Assertions.assertNull(mapData.getWarps().orElse(null));
+        Assertions.assertEquals(adminList, mapData.getAdminList().get());
+        Assertions.assertNull(mapData.getLive().orElse(null));
+
+        mapData = new FinalizedMapData(warps);
+        Assertions.assertNull(mapData.getMapName().orElse(null));
+        Assertions.assertNull(mapData.getMapCreator().orElse(null));
+        Assertions.assertNull(mapData.getMapGameType().orElse(null));
+        Assertions.assertEquals(warps, mapData.getWarps().get());
+        Assertions.assertNull(mapData.getAdminList().orElse(null));
+        Assertions.assertNull(mapData.getLive().orElse(null));
+
+        mapData = new FinalizedMapData(mapGameType);
+        Assertions.assertNull(mapData.getMapName().orElse(null));
+        Assertions.assertNull(mapData.getMapCreator().orElse(null));
+        Assertions.assertEquals(mapGameType, mapData.getMapGameType().get());
+        Assertions.assertNull(mapData.getWarps().orElse(null));
+        Assertions.assertNull(mapData.getAdminList().orElse(null));
+        Assertions.assertNull(mapData.getLive().orElse(null));
+
+        mapData = new FinalizedMapData(testRead0(String.format("""
+                currentlyLive:true
+                warps:w1@(0,0,0);w2@(1,0,-1);w3@-1,-1,1;w4w4@0,0,0;
+                MAP_NAME:Test Map finalized 2
+                MAP_AUTHOR: Test Author finalized 2
+                GAME_TYPE:DragonEscape
+                ADMIN_LIST:%s,%s
+                """.trim(), uuid1, uuid2)));
+        Assertions.assertTrue(mapData.getLive().orElse(false));
+        Assertions.assertEquals(4, mapData.getWarps().orElse(ImmutableMap.of()).size());
+        Assertions.assertTrue(mapData.getWarps().get().containsKey("w1"));
+        Assertions.assertEquals(mapData.getWarps().get().get("w1"), new Vector(0, 0, 0));
+        Assertions.assertTrue(mapData.getWarps().get().containsKey("w2"));
+        Assertions.assertEquals(mapData.getWarps().get().get("w2"), new Vector(1, 0, -1));
+        Assertions.assertTrue(mapData.getWarps().get().containsKey("w3"));
+        Assertions.assertEquals(mapData.getWarps().get().get("w3"), new Vector(-1, -1, 1));
+        Assertions.assertTrue(mapData.getWarps().get().containsKey("w4w4"));
+        Assertions.assertEquals(mapData.getWarps().get().get("w4w4"), new Vector(0, 0, 0));
+        Assertions.assertEquals("Test Map finalized 2", mapData.getMapName().orElse(null));
+        Assertions.assertEquals(" Test Author finalized 2", mapData.getMapCreator().orElse(null));
+        Assertions.assertEquals(GameType.DragonEscape, mapData.getMapGameType().orElse(null));
+        Assertions.assertEquals(2, mapData.getAdminList().orElse(ImmutableSet.of()).size());
+        Assertions.assertTrue(mapData.getAdminList().get().stream().anyMatch(v -> v.toString().equals(uuid1)));
+        Assertions.assertTrue(mapData.getAdminList().get().stream().anyMatch(v -> v.toString().equals(uuid2)));
     }
 }
