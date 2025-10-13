@@ -61,7 +61,7 @@ class GameTypeInfoCommand: ConstructionSiteCommand(
         alias: String,
         args: Array<String>
     ): List<String>? {
-        if (args.size >= 3 || args.isEmpty()) {
+        if (args.size >= 3 || args.isNullOrEmpty()) {
             return null
         }
         val s: MutableList<String> = ArrayList()
@@ -90,7 +90,7 @@ class GameTypeInfoCommand: ConstructionSiteCommand(
                     return true
                 }
                 val info = getGameTypeInfoManager().getGameTypeInfo(gameType)
-                if (info == null || info.info.isEmpty()) {
+                if (info == null || info.info.isNullOrEmpty()) {
                     UtilPlayerBase.sendMessage(caller, "&cNo info found for &e${gameType.name}")
                     return true
                 }

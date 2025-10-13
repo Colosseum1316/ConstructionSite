@@ -9,7 +9,7 @@ class ItemAddLoreCommand: ItemCommand(
     "/addlore <text>"
 ) {
     override fun runConstruction(caller: Player, label: String, args: Array<String>): Boolean {
-        if (args.isEmpty()) {
+        if (args.isNullOrEmpty()) {
             return false
         }
 

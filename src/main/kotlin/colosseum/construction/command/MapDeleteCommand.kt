@@ -21,7 +21,7 @@ class MapDeleteCommand: AbstractMapAdminCommand(
 ) {
     override fun runConstruction(caller: Player, label: String, args: Array<String>): Boolean {
         val world = caller.world
-        if (args.isEmpty()) {
+        if (args.isNullOrEmpty()) {
             val message = TextComponent(world.uid.toString())
             message.color = net.md_5.bungee.api.ChatColor.YELLOW
             message.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, arrayOf(TextComponent("Click to run the command!")))

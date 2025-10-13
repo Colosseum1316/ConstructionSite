@@ -21,7 +21,7 @@ abstract class AbstractMapCreditCommand protected constructor(
     protected abstract fun setField(caller: Player, alias: String, args: Array<String>, contentSupplier: Supplier<String>, mapDataSupplier: Supplier<MutableMapData>): Boolean
 
     final override fun runConstruction(caller: Player, label: String, args: Array<String>): Boolean {
-        if (args.isEmpty()) {
+        if (args.isNullOrEmpty()) {
             return false
         }
         val content = determineContent(caller, label, args)

@@ -33,7 +33,7 @@ class TeleportMapCommand: AbstractTeleportCommand(
             }
         }
 
-        if (args.isEmpty()) {
+        if (args.isNullOrEmpty()) {
             for (entry in available) {
                 val message = TextComponent(entry.value + ": ")
                 message.color = ChatColor.GRAY

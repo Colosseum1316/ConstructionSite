@@ -20,7 +20,7 @@ class OpAddSplashTextCommand: AbstractOpCommand(
     }
 
     override fun runConstruction(caller: CommandSender, label: String, args: Array<String>): Boolean {
-        if (args.isEmpty()) {
+        if (args.isNullOrEmpty()) {
             return false
         }
         val content = args.joinToString(" ").trim { it <= ' ' }

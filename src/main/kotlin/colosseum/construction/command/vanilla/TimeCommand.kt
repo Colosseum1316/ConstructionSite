@@ -2,7 +2,6 @@ package colosseum.construction.command.vanilla
 
 import colosseum.construction.command.AbstractMapAdminCommand
 import colosseum.utility.UtilPlayerBase
-import org.bukkit.command.Command
 import org.bukkit.entity.Player
 
 class TimeCommand: AbstractMapAdminCommand(
