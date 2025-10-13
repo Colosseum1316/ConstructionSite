@@ -93,7 +93,7 @@ class MapParseCommand: AbstractMapAdminCommand(
             ConstructionSiteProvider.getSite().getManager(TeleportManager::class.java).teleportToServerSpawn(other)
         }
         Command.broadcastCommandMessage(caller, "Parse ${data.mapName} (${data.mapGameType.name})", true)
-        ConstructionSiteProvider.getSite().pluginLogger.info("${caller.name} requested parsing $path")
+        ConstructionSiteProvider.getSite().pluginLogger.info("${caller.name} requests a scheduled parse task on $path")
         if (radius >= 1000) {
             UtilPlayerBase.sendMessage(caller, String.format("&cRadius %d can be quite expensive.", radius))
         }
