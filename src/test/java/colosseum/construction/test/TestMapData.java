@@ -6,6 +6,7 @@ import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import colosseum.construction.ConstructionSiteProvider;
 import colosseum.construction.data.DummyMapData;
 import colosseum.construction.data.FinalizedMapData;
+import colosseum.construction.data.MapDataImpl;
 import colosseum.construction.test.dummies.DummySite;
 import colosseum.construction.test.dummies.DummySite1;
 import colosseum.construction.test.dummies.data.DummyMapDataRead;
@@ -79,6 +80,25 @@ class TestMapData {
         return Utils.readMapData(world, tempWorldDir, testCase);
     }
 
+    @FunctionalInterface
+    private interface DummyMapWriteAssertionCallback {
+        void assertion(MapData data, String mapName, String mapCreator, GameType mapGameType, Map<String, Vector> warps, Set<UUID> adminList, boolean currentlyLive);
+    }
+
+    private void testWrite0(
+            String mapName,
+            String mapCreator,
+            GameType mapGameType,
+            Map<String, Vector> warps,
+            Set<UUID> adminList,
+            boolean currentlyLive,
+            DummyMapWriteAssertionCallback assertion
+    ) {
+        new DummyMapDataWrite(world, tempWorldDir, mapName, mapCreator, mapGameType, warps, adminList, currentlyLive).write();
+        MapData data = Utils.readMapData(world, tempWorldDir);
+        assertion.assertion(data, mapName, mapCreator, mapGameType, warps, adminList, currentlyLive);
+    }
+
     @Order(1)
     @Test
     void testRead() {
@@ -133,25 +153,6 @@ class TestMapData {
         Assertions.assertTrue(data.allows(player3));
     }
 
-    @FunctionalInterface
-    private interface DummyMapWriteAssertionCallback {
-        void assertion(MapData data, String mapName, String mapCreator, GameType mapGameType, Map<String, Vector> warps, Set<UUID> adminList, boolean currentlyLive);
-    }
-
-    private void testWrite0(
-            String mapName,
-            String mapCreator,
-            GameType mapGameType,
-            Map<String, Vector> warps,
-            Set<UUID> adminList,
-            boolean currentlyLive,
-            DummyMapWriteAssertionCallback assertion
-    ) {
-        new DummyMapDataWrite(world, tempWorldDir, mapName, mapCreator, mapGameType, warps, adminList, currentlyLive).write();
-        MapData data = Utils.readMapData(world, tempWorldDir);
-        assertion.assertion(data, mapName, mapCreator, mapGameType, warps, adminList, currentlyLive);
-    }
-
     @Order(2)
     @Test
     void testWrite() {
@@ -200,6 +201,19 @@ class TestMapData {
         Assertions.assertEquals(0, data.warps().size());
         Assertions.assertEquals(0, data.adminList().size());
         Assertions.assertTrue(data.allows(player));
+    }
+
+    @Test
+    void assertInitialization() {
+        Assertions.assertFalse(tempWorldDir.toPath().resolve(WorldMapConstants.MAP_DAT).toFile().exists());
+        MapData data = new MapDataImpl(null, tempWorldDir);
+        Assertions.assertTrue(tempWorldDir.toPath().resolve(WorldMapConstants.MAP_DAT).toFile().exists());
+        Assertions.assertEquals("MapName", data.getMapName());
+        Assertions.assertEquals("MapCreator", data.getMapCreator());
+        Assertions.assertEquals(GameType.None, data.getMapGameType());
+        Assertions.assertEquals(0, data.warps().size());
+        Assertions.assertEquals(0, data.adminList().size());
+        Assertions.assertTrue(data.isLive());
     }
 
     @Test
