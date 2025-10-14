@@ -5,7 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 
 @NoArgsConstructor
-final class ConstructionSiteSchedulesImpl implements ConstructionSiteSchedules {
+public class ConstructionSiteSchedulesImpl implements ConstructionSiteSchedules {
     @Override
     public <T> T schedule(Runnable runnable, Class<T> clazz) {
         if (!clazz.equals(BukkitTask.class) && !clazz.equals(Void.class)) {
