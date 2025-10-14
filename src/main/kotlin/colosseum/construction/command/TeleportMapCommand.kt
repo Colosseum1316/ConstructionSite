@@ -18,7 +18,7 @@ class TeleportMapCommand: AbstractTeleportCommand(
     "/tpmap <world uuid>"
 ) {
     override fun runConstruction(caller: Player, label: String, args: Array<String>): Boolean {
-        if (args.size > 1) {
+        if (args.isNullOrEmpty() || args.size > 1) {
             return false
         }
 
@@ -33,7 +33,7 @@ class TeleportMapCommand: AbstractTeleportCommand(
             }
         }
 
-        if (args.isNullOrEmpty()) {
+        if (args.isEmpty()) {
             for (entry in available) {
                 val message = TextComponent(entry.value + ": ")
                 message.color = ChatColor.GRAY
