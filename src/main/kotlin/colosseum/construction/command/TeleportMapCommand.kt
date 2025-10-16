@@ -18,7 +18,7 @@ class TeleportMapCommand: AbstractTeleportCommand(
     "/tpmap <world uuid>"
 ) {
     override fun runConstruction(caller: Player, label: String, args: Array<String>): Boolean {
-        if (args.isNullOrEmpty() || args.size > 1) {
+        if (args.size > 1) {
             return false
         }
 
