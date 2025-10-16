@@ -10,7 +10,7 @@ import com.google.common.collect.Maps
 import org.bukkit.World
 import java.io.File
 import java.util.concurrent.*
-import java.util.function.*
+import java.util.function.Function
 
 @ManagerDependency(WorldManager::class)
 class MapDataManager: ConstructionSiteManager("MapData") {

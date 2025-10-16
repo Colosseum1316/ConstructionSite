@@ -1,4 +1,5 @@
 colosseum.construction.manager.CommandManager
+colosseum.construction.manager.ConfigManager
 colosseum.construction.manager.ParseManager
 colosseum.construction.manager.EventListenerManager
 colosseum.construction.manager.GameTypeInfoManager
