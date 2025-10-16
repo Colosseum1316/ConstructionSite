@@ -2,7 +2,6 @@ package colosseum.construction;
 
 import colosseum.construction.manager.ConstructionSiteManager;
 import colosseum.construction.manager.ManagerDependency;
-import colosseum.utility.UtilPlayerBase;
 import colosseum.utility.UtilZipper;
 import colosseum.utility.WorldMapConstants;
 import com.google.common.hash.Hashing;
@@ -11,7 +10,6 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.Validate;
-import org.bukkit.command.CommandSender;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -104,7 +102,7 @@ public final class PluginUtils {
 
     public static void unzip() {
         ConstructionSite site = ConstructionSiteProvider.getSite();
-        File destination = site.getWorldContainer().toPath().resolve(WorldMapConstants.WORLD_LOBBY).toFile();
+        File destination = site.getWorldContainer().toPath().resolve(WorldMapConstants.WORLD).toFile();
         if (destination.exists() && !destination.isDirectory()) {
             try {
                 FileUtils.delete(destination);
@@ -132,10 +130,6 @@ public final class PluginUtils {
                 FileUtils.deleteQuietly(zip);
             }
         }
-    }
-
-    public static void printValidGameTypes(CommandSender caller) {
-        UtilPlayerBase.sendMessage(caller, String.format("&cValid game types: &e%s&r", String.join("&r, &e", BaseUtils.getGameTypes().stream().map(Enum::toString).toArray(String[]::new))));
     }
 
     /**

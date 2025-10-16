@@ -1,9 +1,7 @@
 package colosseum.construction.command
 
-import colosseum.construction.BaseUtils
-import colosseum.construction.BaseUtils.getGameTypes
 import colosseum.construction.ConstructionSiteProvider
-import colosseum.construction.PluginUtils
+import colosseum.construction.GameTypeUtils
 import colosseum.construction.manager.GameTypeInfoManager
 import colosseum.utility.GameTypeInfo
 import colosseum.utility.UtilPlayerBase
@@ -63,11 +61,11 @@ class GameTypeInfoCommand: ConstructionSiteCommand(
         alias: String,
         args: Array<String>
     ): List<String>? {
-        if (args.size >= 3 || args.isEmpty()) {
+        if (args.isNullOrEmpty() || args.size >= 3) {
             return null
         }
         val s: MutableList<String> = ArrayList()
-        s.addAll(getGameTypes().map { v -> v.name })
+        s.addAll(GameTypeUtils.getGameTypes().map { v -> v.name })
         if (args.size == 1) {
             s.addAll(listOf("add", "delete", "clear"))
         }
@@ -75,7 +73,7 @@ class GameTypeInfoCommand: ConstructionSiteCommand(
     }
 
     override fun canRun(console: CommandSender): Boolean {
-        return true
+        return ConstructionSiteProvider.isLive()
     }
 
     override fun runConstruction(caller: Player, label: String, args: Array<String>): Boolean {
@@ -86,9 +84,9 @@ class GameTypeInfoCommand: ConstructionSiteCommand(
         when (args.size) {
             1 -> {
                 val gameRaw = args[0]
-                val gameType = BaseUtils.determineGameType(gameRaw, true)
+                val gameType = GameTypeUtils.determineGameType(gameRaw, true)
                 if (gameType == GameType.None) {
-                    PluginUtils.printValidGameTypes(caller)
+                    GameTypeUtils.printValidGameTypes(caller)
                     return true
                 }
                 val info = getGameTypeInfoManager().getGameTypeInfo(gameType)
@@ -107,9 +105,9 @@ class GameTypeInfoCommand: ConstructionSiteCommand(
                     return false
                 }
                 val gameRaw = args[1]
-                val gameType = BaseUtils.determineGameType(gameRaw, true)
+                val gameType = GameTypeUtils.determineGameType(gameRaw, true)
                 if (gameType == GameType.None) {
-                    PluginUtils.printValidGameTypes(caller)
+                    GameTypeUtils.printValidGameTypes(caller)
                     return true
                 }
                 clearGameTypeInfo(gameType)
@@ -122,9 +120,9 @@ class GameTypeInfoCommand: ConstructionSiteCommand(
             when (op) {
                 "add" -> {
                     val gameRaw = args[1]
-                    val gameType = BaseUtils.determineGameType(gameRaw, true)
+                    val gameType = GameTypeUtils.determineGameType(gameRaw, true)
                     if (gameType == GameType.None) {
-                        PluginUtils.printValidGameTypes(caller)
+                        GameTypeUtils.printValidGameTypes(caller)
                         return true
                     }
                     val content = content(args).toString()
@@ -139,9 +137,9 @@ class GameTypeInfoCommand: ConstructionSiteCommand(
                             throw ArrayIndexOutOfBoundsException()
                         }
                         val gameRaw = args[1]
-                        val gameType = BaseUtils.determineGameType(gameRaw, true)
+                        val gameType = GameTypeUtils.determineGameType(gameRaw, true)
                         if (gameType == GameType.None) {
-                            PluginUtils.printValidGameTypes(caller)
+                            GameTypeUtils.printValidGameTypes(caller)
                             return true
                         }
                         val lineNumber = args[2].toInt()

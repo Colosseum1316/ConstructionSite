@@ -18,17 +18,15 @@ abstract class AbstractMapCreditCommand protected constructor(
     }
 
     protected abstract fun determineContent(caller: Player, alias: String, args: Array<String>): String
-    protected abstract fun setField(caller: Player, alias: String, args: Array<String>, contentSupplier: Supplier<String>, mapDataSupplier: Supplier<MutableMapData>)
-    protected abstract fun postAction(caller: Player, alias: String, args: Array<String>, contentSupplier: Supplier<String>, mapDataSupplier: Supplier<MutableMapData>): Boolean
+    protected abstract fun setField(caller: Player, alias: String, args: Array<String>, contentSupplier: Supplier<String>, mapDataSupplier: Supplier<MutableMapData>): Boolean
 
     final override fun runConstruction(caller: Player, label: String, args: Array<String>): Boolean {
-        if (args.isEmpty()) {
+        if (args.isNullOrEmpty()) {
             return false
         }
         val content = determineContent(caller, label, args)
         val world = caller.world
         val data = getMapDataManager().get(world)
-        setField(caller, label, args, { content }, { data as MutableMapData })
-        return postAction(caller, label, args, { content }, { data as MutableMapData })
+        return setField(caller, label, args, { content }, { data as MutableMapData })
     }
 }

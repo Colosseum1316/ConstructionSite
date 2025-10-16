@@ -9,7 +9,7 @@ import java.io.File;
 import java.util.logging.Logger;
 
 @SuppressWarnings("ClassCanBeRecord")
-public class DummySite2 implements DummySite {
+public final class DummySite2 implements DummySite {
 
     private final File worldContainer;
 
@@ -23,12 +23,14 @@ public class DummySite2 implements DummySite {
     }
 
     @Override
-    public void setup() {
+    public void enable() {
         ConstructionSiteProvider.setSite(this);
+        ConstructionSiteProvider.setLive(true);
     }
 
     @Override
-    public void teardown() {
+    public void disable() {
+        ConstructionSiteProvider.setLive(false);
         ConstructionSiteProvider.setSite(null);
     }
 

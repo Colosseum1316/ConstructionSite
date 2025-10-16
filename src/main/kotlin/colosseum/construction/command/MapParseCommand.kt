@@ -1,6 +1,7 @@
 package colosseum.construction.command
 
 import colosseum.construction.ConstructionSiteProvider
+import colosseum.construction.WorldUtils
 import colosseum.construction.manager.ParseManager
 import colosseum.construction.manager.TeleportManager
 import colosseum.utility.UtilPlayerBase
@@ -20,7 +21,7 @@ class MapParseCommand: AbstractMapAdminCommand(
     }
 
     override fun canRun(console: CommandSender): Boolean {
-        return true
+        return ConstructionSiteProvider.isLive()
     }
 
     override fun canRun(caller: Player): Boolean {
@@ -55,8 +56,12 @@ class MapParseCommand: AbstractMapAdminCommand(
         if (args0.isNotEmpty()) {
             try {
                 radius = args0[0].toInt()
-                if (radius < 1) {
-                    UtilPlayerBase.sendMessage(caller, "&cRadius must be no less than 1")
+                if (radius < 10) {
+                    UtilPlayerBase.sendMessage(caller, "&cRadius must be no less than 10")
+                    return true
+                }
+                if (radius > 2000) {
+                    UtilPlayerBase.sendMessage(caller, "&cAre you sure you wanna build a map this large-scale?")
                     return true
                 }
             } catch (ex: NumberFormatException) {
@@ -82,14 +87,16 @@ class MapParseCommand: AbstractMapAdminCommand(
             return true
         }
 
-        val worldManager = getWorldManager()
-        val path = worldManager.getWorldRelativePath(world)
+        val path = WorldUtils.getWorldRelativePath(world)
         // Teleport players out
         for (other in world.players) {
             ConstructionSiteProvider.getSite().getManager(TeleportManager::class.java).teleportToServerSpawn(other)
         }
         Command.broadcastCommandMessage(caller, "Parse ${data.mapName} (${data.mapGameType.name})", true)
-        ConstructionSiteProvider.getSite().pluginLogger.info("${caller.name} requested parsing $path")
+        ConstructionSiteProvider.getSite().pluginLogger.info("${caller.name} requests a scheduled parse task on $path")
+        if (radius >= 1000) {
+            UtilPlayerBase.sendMessage(caller, String.format("&cRadius %d can be quite expensive.", radius))
+        }
         getParseManager().schedule(world, args0.asList(), parseLoc, radius)
         return true
     }

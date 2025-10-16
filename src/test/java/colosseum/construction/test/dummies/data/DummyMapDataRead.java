@@ -16,9 +16,4 @@ public final class DummyMapDataRead extends MapDataImpl {
         this.datFile = worldFolder.toPath().resolve(WorldMapConstants.MAP_DAT).toFile();
         super.read();
     }
-
-    @Override
-    public void write() {
-        // no op
-    }
 }

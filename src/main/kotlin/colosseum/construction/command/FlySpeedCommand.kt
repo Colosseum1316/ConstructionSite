@@ -29,7 +29,7 @@ class FlySpeedCommand: ConstructionSiteCommand(
             return false
         }
 
-        caller.flySpeed = (newSpeed / 10).toFloat()
+        caller.flySpeed = (newSpeed / 10.0).toFloat()
         UtilPlayerBase.sendMessage(caller, "Set your flight speed to &e${caller.flySpeed}")
         ConstructionSiteProvider.getSite().pluginLogger.info("Set flight speed to ${caller.flySpeed} for ${caller.name}")
         return true

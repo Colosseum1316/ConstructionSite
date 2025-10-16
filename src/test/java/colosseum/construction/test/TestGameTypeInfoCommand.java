@@ -2,8 +2,8 @@ package colosseum.construction.test;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
-import colosseum.construction.BaseUtils;
 import colosseum.construction.ConstructionSiteProvider;
+import colosseum.construction.GameTypeUtils;
 import colosseum.construction.command.GameTypeInfoCommand;
 import colosseum.construction.manager.GameTypeInfoManager;
 import colosseum.construction.test.dummies.DummySite;
@@ -12,6 +12,7 @@ import colosseum.utility.arcade.GameType;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -19,25 +20,26 @@ import java.io.File;
 import java.util.function.BiConsumer;
 
 class TestGameTypeInfoCommand {
-    private static DummySite plugin;
-    private static PlayerMock player;
+    private DummySite plugin;
+    private PlayerMock player;
 
     @TempDir
     static File tempPluginDataDir;
 
     @BeforeAll
-    static void setup() {
+    void setup() {
+        tearDown();
         plugin = new DummySite1(tempPluginDataDir);
         player = MockBukkit.getMock().addPlayer();
-        plugin.setup();
+        plugin.enable();
     }
 
     @AfterAll
-    static void tearDown() {
-        plugin.teardown();
-        MockBukkit.unload();
+    void tearDown() {
+        Utils.tearDown(plugin);
     }
 
+    @Order(1)
     @Test
     void testPermission() {
         GameTypeInfoCommand command = new GameTypeInfoCommand();
@@ -45,6 +47,7 @@ class TestGameTypeInfoCommand {
         Assertions.assertTrue(command.canRun(player));
     }
 
+    @Order(2)
     @Test
     void testInvalidCases() {
         GameTypeInfoCommand command = new GameTypeInfoCommand();
@@ -67,9 +70,9 @@ class TestGameTypeInfoCommand {
         assertSaidValidGameTypes.accept(new String[]{"invalid", "invalid", "invalid", "invalid"}, false);
         assertSaidValidGameTypes.accept(new String[]{"add", "invalid", "invalid", "invalid"}, true);
         assertSaidValidGameTypes.accept(new String[]{"clear", "invalid", "invalid", "invalid"}, false);
-        assertSaidValidGameTypes.accept(new String[]{"clear", BaseUtils.getGameTypes().get(0).name(), "invalid", "invalid"}, false);
+        assertSaidValidGameTypes.accept(new String[]{"clear", GameTypeUtils.getGameTypes().get(0).name(), "invalid", "invalid"}, false);
         assertSaidValidGameTypes.accept(new String[]{"delete", "invalid", "invalid", "invalid"}, false);
-        assertSaidValidGameTypes.accept(new String[]{"delete", BaseUtils.getGameTypes().get(0).name(), "invalid", "invalid"}, false);
+        assertSaidValidGameTypes.accept(new String[]{"delete", GameTypeUtils.getGameTypes().get(0).name(), "invalid", "invalid"}, false);
 
         assertSaidValidGameTypes.accept(new String[]{GameType.None.name()}, true);
         assertSaidValidGameTypes.accept(new String[]{"invalid"}, true);
@@ -90,16 +93,17 @@ class TestGameTypeInfoCommand {
         assertSaidValidGameTypes.accept(new String[]{"add", "invalid", "line", "1"}, true);
         assertSaidValidGameTypes.accept(new String[]{"delete", GameType.None.name(), "1"}, true);
         assertSaidValidGameTypes.accept(new String[]{"delete", "invalid", "1"}, true);
-        assertSaidValidGameTypes.accept(new String[]{"delete", BaseUtils.getGameTypes().get(0).name(), "nan"}, false);
-        assertSaidValidGameTypes.accept(new String[]{"delete", BaseUtils.getGameTypes().get(0).name(), "a"}, false);
+        assertSaidValidGameTypes.accept(new String[]{"delete", GameTypeUtils.getGameTypes().get(0).name(), "nan"}, false);
+        assertSaidValidGameTypes.accept(new String[]{"delete", GameTypeUtils.getGameTypes().get(0).name(), "a"}, false);
     }
 
+    @Order(3)
     @Test
     void testValidCases() {
         GameTypeInfoCommand command = new GameTypeInfoCommand();
         String label = command.getAliases().get(0);
 
-        for (GameType gameType : BaseUtils.getGameTypes()) {
+        for (GameType gameType : GameTypeUtils.getGameTypes()) {
             command.runConstruction(player, label, new String[]{gameType.name()});
             player.assertSaid("§cNo info found for §e" + gameType.name());
 

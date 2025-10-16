@@ -1,6 +1,7 @@
 package colosseum.construction.command
 
 import colosseum.construction.ConstructionSiteProvider
+import colosseum.construction.WorldUtils
 import colosseum.utility.UtilPlayerBase
 import colosseum.utility.UtilWorld
 import net.md_5.bungee.api.ChatColor
@@ -17,16 +18,15 @@ class TeleportMapCommand: AbstractTeleportCommand(
     "/tpmap <world uuid>"
 ) {
     override fun runConstruction(caller: Player, label: String, args: Array<String>): Boolean {
-        if (args.size > 1) {
+        if (args.isNullOrEmpty() || args.size > 1) {
             return false
         }
 
         val available = HashMap<UUID, String>()
-        val worldManager = getWorldManager()
         val mapDataManager = getMapDataManager()
-        worldManager.getMapsRootPath().listFiles()?.forEach { f ->
+        WorldUtils.getMapsRootPath().listFiles()?.forEach { f ->
             if (f.isDirectory) {
-                UtilWorld.getWorld(worldManager.getWorldRelativePath(f))?.let { world ->
+                UtilWorld.getWorld(WorldUtils.getWorldRelativePath(f))?.let { world ->
                     val data = mapDataManager.get(world)
                     available[world.uid] = "${data.mapName} - ${data.mapCreator} (${data.mapGameType.name})"
                 }
@@ -55,16 +55,16 @@ class TeleportMapCommand: AbstractTeleportCommand(
                 val key = UUID.fromString(args[0])
                 if (!available.contains(key)) {
                     UtilPlayerBase.sendMessage(caller, "&cUnknown world!")
-                    return true
+                    return false
                 }
-                val world = worldManager.getWorldByUUID(key) ?: run {
+                val world = WorldUtils.getWorldByUUID(key) ?: run {
                     UtilPlayerBase.sendMessage(caller, "&cThere's no world with that UUID!")
-                    return true
+                    return false
                 }
                 if (getTeleportManager().teleportPlayer(caller, world.spawnLocation)) {
                     caller.gameMode = GameMode.CREATIVE
                     caller.isFlying = true
-                    ConstructionSiteProvider.getSite().pluginLogger.info("Teleported ${caller.name} to ${worldManager.getWorldRelativePath(world)}")
+                    ConstructionSiteProvider.getSite().pluginLogger.info("Teleported ${caller.name} to ${WorldUtils.getWorldRelativePath(world)}")
                 } else {
                     sayTeleportFail(caller)
                 }

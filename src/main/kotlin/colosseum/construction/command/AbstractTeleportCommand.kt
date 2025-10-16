@@ -3,7 +3,6 @@ package colosseum.construction.command
 import colosseum.construction.ConstructionSiteProvider
 import colosseum.construction.manager.MapDataManager
 import colosseum.construction.manager.TeleportManager
-import colosseum.construction.manager.WorldManager
 import colosseum.utility.UtilPlayerBase
 import org.bukkit.entity.Player
 
@@ -20,10 +19,6 @@ abstract class AbstractTeleportCommand protected constructor(
 
     protected fun getMapDataManager(): MapDataManager {
         return ConstructionSiteProvider.getSite().getManager(MapDataManager::class.java)
-    }
-
-    protected fun getWorldManager(): WorldManager {
-        return ConstructionSiteProvider.getSite().getManager(WorldManager::class.java)
     }
 
     protected fun sayTeleportFail(player: Player) {

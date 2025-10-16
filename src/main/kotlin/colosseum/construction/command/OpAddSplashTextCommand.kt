@@ -12,7 +12,7 @@ class OpAddSplashTextCommand: AbstractOpCommand(
     "/addtext <text>"
 ) {
     override fun canRun(console: CommandSender): Boolean {
-        return true
+        return ConstructionSiteProvider.isLive()
     }
 
     override fun runConstruction(caller: Player, label: String, args: Array<String>): Boolean {
@@ -20,7 +20,7 @@ class OpAddSplashTextCommand: AbstractOpCommand(
     }
 
     override fun runConstruction(caller: CommandSender, label: String, args: Array<String>): Boolean {
-        if (args.isEmpty()) {
+        if (args.isNullOrEmpty()) {
             return false
         }
         val content = args.joinToString(" ").trim { it <= ' ' }

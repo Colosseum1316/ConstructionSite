@@ -1,7 +1,7 @@
 package colosseum.construction.manager
 
-import colosseum.construction.BaseUtils
 import colosseum.construction.ConstructionSiteProvider
+import colosseum.construction.GameTypeUtils
 import colosseum.construction.PluginUtils
 import colosseum.utility.GameTypeInfo
 import colosseum.utility.arcade.GameType
@@ -28,7 +28,7 @@ class GameTypeInfoManager: ConstructionSiteManager("GameType Info") {
         val config: FileConfiguration = YamlConfiguration.loadConfiguration(file)
 
         for (s in config.getKeys(false)) {
-            val gameType: GameType = BaseUtils.determineGameType(s, false)
+            val gameType: GameType = GameTypeUtils.determineGameType(s, false)
             val info = config.getStringList(s)
             gameTypeInfoMap[gameType] = GameTypeInfo(gameType, info)
         }

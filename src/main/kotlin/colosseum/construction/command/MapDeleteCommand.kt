@@ -1,6 +1,7 @@
 package colosseum.construction.command
 
 import colosseum.construction.ConstructionSiteProvider
+import colosseum.construction.WorldUtils
 import colosseum.construction.manager.MapDataManager
 import colosseum.construction.manager.TeleportManager
 import colosseum.utility.UtilPlayerBase
@@ -8,7 +9,6 @@ import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
 import org.apache.commons.io.FileUtils
-import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
@@ -21,7 +21,7 @@ class MapDeleteCommand: AbstractMapAdminCommand(
 ) {
     override fun runConstruction(caller: Player, label: String, args: Array<String>): Boolean {
         val world = caller.world
-        if (args.isEmpty()) {
+        if (args.isNullOrEmpty()) {
             val message = TextComponent(world.uid.toString())
             message.color = net.md_5.bungee.api.ChatColor.YELLOW
             message.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, arrayOf(TextComponent("Click to run the command!")))
@@ -39,16 +39,15 @@ class MapDeleteCommand: AbstractMapAdminCommand(
                 UtilPlayerBase.sendMessage(caller, "&cUUID mismatch!")
                 return true
             }
-            val worldManager = getWorldManager()
-            val f = worldManager.getWorldFolder(world)
+            val f = WorldUtils.getWorldFolder(world)
             val site = ConstructionSiteProvider.getSite()
             for (other in world.players) {
                 site.getManager(TeleportManager::class.java).teleportToServerSpawn(other)
             }
-            worldManager.unloadWorld(world, false)
+            WorldUtils.unloadWorld(world, false)
             site.getManager(MapDataManager::class.java).discard(world)
-            Command.broadcastCommandMessage(caller, "Deleting world ${worldManager.getWorldRelativePath(f)}", true)
-            Bukkit.getScheduler().runTaskAsynchronously(ConstructionSiteProvider.getPlugin()) {
+            Command.broadcastCommandMessage(caller, "Deleting world ${WorldUtils.getWorldRelativePath(f)}", true)
+            ConstructionSiteProvider.getScheduler().scheduleAsync {
                 FileUtils.deleteQuietly(f)
             }
             return true

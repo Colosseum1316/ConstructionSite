@@ -1,12 +1,11 @@
 package colosseum.construction;
 
 import colosseum.construction.data.FinalizedMapData;
-import colosseum.construction.manager.MapDataManager;
 import colosseum.utility.UtilWorld;
 import colosseum.utility.WorldMapConstants;
-import colosseum.utility.arcade.GameType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NonNull;
 import nl.rutgerkok.hammer.Chunk;
 import nl.rutgerkok.hammer.ChunkAccess;
 import nl.rutgerkok.hammer.World;
@@ -44,25 +43,29 @@ public final class MapParser implements Runnable {
     public final File parsableWorldFolder;
     private final String parsableWorldPathString;
     public final FinalizedMapData mapData;
-    private final List<String> args;
     private final Vector startPoint;
 
     private final HashSet<Short> dataId = new HashSet<>();
     private final HashMap<String, ArrayList<Vector>> teamLocations = new HashMap<>();
     private final HashMap<String, ArrayList<Vector>> dataLocations = new HashMap<>();
     private final HashMap<String, ArrayList<Vector>> customLocations = new HashMap<>();
-    private final int size;
-    private final int wholeCubeSize;
+    private final int radius;
+    private final long wholeCubeSize;
 
     private long processed = 0;
 
     public enum Status {
         SUCCESS,
         FAIL,
+        CANCELLED,
         RUNNING;
 
-        public boolean isDone() {
-            return this != RUNNING;
+        public boolean isRunning() {
+            return this == RUNNING;
+        }
+
+        public boolean isCancelled() {
+            return this == CANCELLED;
         }
 
         public boolean isSuccess() {
@@ -70,7 +73,7 @@ public final class MapParser implements Runnable {
         }
 
         public boolean isFail() {
-            return this == FAIL;
+            return this == FAIL || this == CANCELLED;
         }
     }
 
@@ -78,20 +81,15 @@ public final class MapParser implements Runnable {
     @SuppressWarnings("WriteOnlyObject")
     private final AtomicReference<Status> status = new AtomicReference<>(Status.RUNNING);
 
-    public MapParser(File parsableWorldFolder, List<String> args, Location startPoint) {
-        this(parsableWorldFolder, args, startPoint, 600);
-    }
-
-    public MapParser(@NotNull File parsableWorldFolder, List<String> args, Location startPoint, int size) {
+    public MapParser(@NonNull File parsableWorldFolder, @NonNull FinalizedMapData mapData, List<String> args, Location startPoint, int radius) {
         this.parsableWorldFolder = parsableWorldFolder;
         this.parsableWorldPathString = parsableWorldFolder.getAbsolutePath();
-        this.args = List.copyOf(args);
         this.startPoint = new Vector(startPoint.getX(), startPoint.getY(), startPoint.getZ());
-        this.size = size;
-        this.wholeCubeSize = ((size * 2) * (size * 2) * 256);
-        Validate.isTrue(size > 0, "size must be greater than 0");
+        this.radius = radius;
+        Validate.isTrue(radius > 0, "Radius must be greater than 0");
+        this.wholeCubeSize = (long) (Math.pow(radius * 2 + 1, 2) * 256);
         ConstructionSite site = ConstructionSiteProvider.getSite();
-        this.mapData = site.getManager(MapDataManager.class).getFinalized(parsableWorldFolder);
+        this.mapData = mapData;
         for (String arg : args) {
             try {
                 dataId.add(Short.parseShort(arg));
@@ -184,16 +182,16 @@ public final class MapParser implements Runnable {
         Vector cornerB = null;
 
         try (ChunkAccess<AnvilChunk> chunkAccess = (ChunkAccess<AnvilChunk>) offlineWorld.getChunkAccess()) {
-            int offsetX;
-            for (offsetX = -size; offsetX <= size; offsetX++) {
-                int offsetZ;
-                for (offsetZ = -size; offsetZ <= size; offsetZ++) {
+            for (int offsetX = -radius; offsetX <= radius; offsetX++) {
+                for (int offsetZ = -radius; offsetZ <= radius; offsetZ++) {
                     final int blockX = startPoint.getBlockX() + offsetX;
                     final int blockZ = startPoint.getBlockZ() + offsetZ;
                     final Chunk chunk = getChunk(chunkAccess, blockX, blockZ);
+                    boolean updated = false;
 
-                    int offsetY;
-                    for (offsetY = 0; offsetY <= 255; offsetY++) {
+                    for (int offsetY = 0; offsetY <= 255; offsetY++) {
+                        Validate.isTrue(processed <= wholeCubeSize, String.format("Overflowing: radius %d, offsetX %d, offsetY %d, offsetZ %d, processed %d, wholeCubeSize %d", radius, offsetX, offsetY, offsetZ, processed, wholeCubeSize));
+                        Validate.isTrue(!status.get().isCancelled(), "Task is cancelled.");
                         if (processed % 10000000 == 0) {
                             site.getPluginLogger().info("Parsing " + parsableWorldPathString + ": Scanning: " + processed / 1000000 + "M of " + wholeCubeSize / 1000000 + "M");
                         }
@@ -209,15 +207,6 @@ public final class MapParser implements Runnable {
                             customLocations.computeIfAbsent(key, k -> new ArrayList<>()).add(wrappedObject.getLocation());
                             site.getPluginLogger().info("Parsing " + parsableWorldPathString + ": Found data id " + key + " at " + UtilWorld.vecToStrClean(wrappedObject.getLocation()));
                             continue;
-                        }
-
-                        if (wrappedObject.isMaterial(Material.GLASS)) {
-                            if (mapData.getMapGameType().equals(GameType.MicroBattle)) {
-                                String name = "20"; // Set auto glass
-                                customLocations.computeIfAbsent(name, k -> new ArrayList<>()).add(wrappedObject.getLocation());
-                                site.getPluginLogger().info("Parsing " + parsableWorldPathString + ": Set Auto glass at " + UtilWorld.vecToStrClean(wrappedObject.getLocation()));
-                                setAir(offlineWorld, chunk, wrappedObject);
-                            }
                         }
 
                         // Signs
@@ -243,6 +232,8 @@ public final class MapParser implements Runnable {
                                 customLocations.computeIfAbsent(name.toString(), k -> new ArrayList<>()).add(wrappedBlockSponge.getLocation());
                                 setAir(offlineWorld, chunk, wrappedBlockSponge);
                                 setAir(offlineWorld, chunk, wrappedObject);
+                                updated = true;
+                                continue;
                             }
                         }
                         if (wrappedObject.isMaterial(Material.LEAVES) || wrappedObject.isMaterial(Material.LEAVES_2)) {
@@ -250,6 +241,8 @@ public final class MapParser implements Runnable {
                                 // https://minecraft.fandom.com/wiki/Java_Edition_data_values/Pre-flattening#Leaves
                                 // For tree leaves, you add 4 to get the no decay version.
                                 setBlock(offlineWorld, chunk, wrappedObject.x, wrappedObject.y, wrappedObject.z, wrappedObject.typeId, (byte) (wrappedObject.data + 4));
+                                updated = true;
+                                continue;
                             }
                         }
 
@@ -286,25 +279,28 @@ public final class MapParser implements Runnable {
                                     case 13 -> setTeamLocations("Green", wrappedObject, wrappedBlockWool, offlineWorld, chunk);
                                     case 14 -> setTeamLocations("Red", wrappedObject, wrappedBlockWool, offlineWorld, chunk);
                                     case 15 -> setTeamLocations("Black", wrappedObject, wrappedBlockWool, offlineWorld, chunk);
+                                    default -> throw new IllegalStateException("Unexpected wool data: " + wrappedBlockWool.data);
                                 }
+                                updated = true;
+                                continue;
                             }
                         }
 
-                        if (!wrappedObject.isMaterial(Material.IRON_PLATE)) {
-                            continue;
+                        if (wrappedObject.isMaterial(Material.IRON_PLATE)) {
+                            WrappedBaseBlock wrappedBlockWool = getBlockBare(offlineWorld, chunk, blockX, blockY - 1, blockZ);
+                            if (wrappedBlockWool.isMaterial(Material.WOOL)) {
+                                Wool woolData = new Wool(wrappedBlockWool.typeId, wrappedBlockWool.data);
+                                dataLocations.computeIfAbsent(woolData.getColor().name(), k -> new ArrayList<>()).add(wrappedBlockWool.getLocation());
+                                site.getPluginLogger().info("Parsing " + parsableWorldPathString + ": Found data location at " + UtilWorld.vecToStrClean(wrappedBlockWool.getLocation()));
+                                setAir(offlineWorld, chunk, wrappedObject);
+                                setAir(offlineWorld, chunk, wrappedBlockWool);
+                                updated = true;
+                            }
                         }
-
-                        WrappedBaseBlock wrappedBlockWool = getBlockBare(offlineWorld, chunk, blockX, blockY - 1, blockZ);
-                        if (!wrappedBlockWool.isMaterial(Material.WOOL)) {
-                            continue;
-                        }
-                        Wool woolData = new Wool(wrappedBlockWool.typeId, wrappedBlockWool.data);
-                        dataLocations.computeIfAbsent(woolData.getColor().name(), k -> new ArrayList<>()).add(wrappedBlockWool.getLocation());
-                        site.getPluginLogger().info("Parsing " + parsableWorldPathString + ": Found data location at " + UtilWorld.vecToStrClean(wrappedBlockWool.getLocation()));
-                        setAir(offlineWorld, chunk, wrappedObject);
-                        setAir(offlineWorld, chunk, wrappedBlockWool);
                     }
-                    chunkAccess.saveChunk((AnvilChunk) chunk);
+                    if (updated) {
+                        chunkAccess.saveChunk((AnvilChunk) chunk);
+                    }
                 }
             }
 
@@ -317,7 +313,7 @@ public final class MapParser implements Runnable {
                 site.getPluginLogger().info("Parsing " + parsableWorldPathString + ": Set corner B: " + UtilWorld.vecToStrClean(cornerB));
             }
 
-            offlineWorld.getLevelTag().setString(AnvilFormat.LevelTag.LEVEL_NAME, mapData.getMapName() + " - " + mapData.getMapCreator() + " (" + mapData.getMapGameType().name() + ")");
+            offlineWorld.getLevelTag().setString(AnvilFormat.LevelTag.LEVEL_NAME, mapData.getMapName().get() + " - " + mapData.getMapCreator().get() + " (" + mapData.getMapGameType().get().name() + ")");
             offlineWorld.saveLevelTag();
 
             try (
@@ -326,8 +322,8 @@ public final class MapParser implements Runnable {
             ) {
                 site.getPluginLogger().info("Parsing " + parsableWorldPathString + ": Writing " + WorldMapConstants.WORLDCONFIG_DAT);
 
-                buffer.write("MAP_NAME:" + mapData.getMapName());
-                buffer.write("\nMAP_AUTHOR:" + mapData.getMapCreator());
+                buffer.write("MAP_NAME:" + mapData.getMapName().get());
+                buffer.write("\nMAP_AUTHOR:" + mapData.getMapCreator().get());
                 buffer.write("\n\nMIN_X:" + Math.min(cornerA.getBlockX(), cornerB.getBlockX()));
                 buffer.write("\nMAX_X:" + Math.max(cornerA.getBlockX(), cornerB.getBlockX()));
                 buffer.write("\nMIN_Z:" + Math.min(cornerA.getBlockZ(), cornerB.getBlockZ()));
@@ -359,14 +355,19 @@ public final class MapParser implements Runnable {
             }
         } catch (Exception e) {
             site.getPluginLogger().log(Level.SEVERE, "Error while parsing " + parsableWorldPathString, e);
-            status.set(Status.FAIL);
+            status.getAndUpdate((v) -> {
+                if (!v.isCancelled()) {
+                    return Status.FAIL;
+                }
+                return v;
+            });
             return;
         }
         status.set(Status.SUCCESS);
     }
 
     private String locationsToString(List<Vector> locs) {
-        return String.join(";", locs.stream().map(loc -> String.format("%d,%d,%d", (int) loc.getX(), (int) loc.getY(), (int) loc.getZ())).toArray(String[]::new));
+        return String.join(Constants.LOCATIONS_DELIMITER, locs.stream().map(loc -> String.format("%d,%d,%d", (int) loc.getX(), (int) loc.getY(), (int) loc.getZ())).toArray(String[]::new));
     }
 
     private void setTeamLocations(String key, WrappedBaseBlock block, WrappedBaseBlock wool, World offlineWorld, Chunk chunk) {

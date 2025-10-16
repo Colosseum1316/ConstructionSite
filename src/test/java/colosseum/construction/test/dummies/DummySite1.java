@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-public class DummySite1 implements DummySite {
+public final class DummySite1 implements DummySite {
 
     private final Logger logger;
 
@@ -44,13 +44,15 @@ public class DummySite1 implements DummySite {
     }
 
     @Override
-    public void setup() {
+    public void enable() {
         ConstructionSiteProvider.setSite(this);
         PluginUtils.registerManagers(managersReference, managers);
+        ConstructionSiteProvider.setLive(true);
     }
 
     @Override
-    public void teardown() {
+    public void disable() {
+        ConstructionSiteProvider.setLive(false);
         PluginUtils.unregisterManagers(managersReference, managers);
         managers.clear();
         managersReference.clear();

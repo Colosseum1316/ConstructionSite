@@ -15,32 +15,34 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.util.List;
 
-class TestSplashTextCommand {
-    private static DummySite plugin;
-    private static PlayerMock player;
+class TestSplashTextCommands {
+    private DummySite plugin;
+    private PlayerMock player;
 
     @TempDir
     static File tempPluginDataDir;
 
     @BeforeAll
-    static void setup() {
+    void setup() {
+        tearDown();
         plugin = new DummySite1(tempPluginDataDir);
         player = MockBukkit.getMock().addPlayer();
-        plugin.setup();
+        plugin.enable();
     }
 
     @AfterAll
-    static void tearDown() {
-        plugin.teardown();
-        MockBukkit.unload();
+    void tearDown() {
+        Utils.tearDown(plugin);
     }
 
+    @Order(1)
     @Test
     void testPermission() {
         AbstractOpCommand[] commands = new AbstractOpCommand[] {
@@ -50,12 +52,14 @@ class TestSplashTextCommand {
         for (AbstractOpCommand command : commands) {
             player.setOp(false);
             Assertions.assertFalse(command.canRun(player));
+            Assertions.assertTrue(command.canRun(MockBukkit.getMock().getConsoleSender()));
             player.setOp(true);
             Assertions.assertTrue(command.canRun(player));
             Assertions.assertTrue(command.canRun(MockBukkit.getMock().getConsoleSender()));
         }
     }
 
+    @Order(2)
     @Test
     void testAddAndClearSplashText() {
         player.assertNoMoreSaid();
