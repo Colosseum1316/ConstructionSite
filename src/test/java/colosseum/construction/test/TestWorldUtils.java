@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 class TestWorldUtils {
     @Test
     void testPreservedLevelName() {
+        Assertions.assertDoesNotThrow(() -> WorldUtils.unloadWorld(null, true));
         Assertions.assertTrue(WorldUtils.isLevelNamePreserved(WorldMapConstants.WORLD));
         Assertions.assertTrue(WorldUtils.isLevelNamePreserved(WorldMapConstants.WORLD_LOBBY));
         Assertions.assertTrue(WorldUtils.isLevelNamePreserved("World_Lobby"));
