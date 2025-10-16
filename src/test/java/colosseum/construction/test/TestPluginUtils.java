@@ -13,7 +13,7 @@ import org.junit.jupiter.api.io.TempDir;
 import java.io.File;
 
 class TestPluginUtils {
-    static DummySite plugin;
+    private DummySite plugin;
     @TempDir
     static File tempWorldContainer;
 

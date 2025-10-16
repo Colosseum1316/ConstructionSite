@@ -1,5 +1,6 @@
 package colosseum.construction.test.dummies;
 
+import be.seeseemelk.mockbukkit.MockBukkit;
 import colosseum.construction.ConstructionSiteProvider;
 import colosseum.construction.manager.ConstructionSiteManager;
 import org.bukkit.Server;
@@ -15,6 +16,7 @@ public final class DummySite2 implements DummySite {
 
     public DummySite2(File worldContainer) {
         this.worldContainer = worldContainer;
+        MockBukkit.mock();
     }
 
     @Override
