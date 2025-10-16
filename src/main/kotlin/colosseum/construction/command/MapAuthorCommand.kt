@@ -4,7 +4,7 @@ import colosseum.construction.ConstructionSiteProvider
 import colosseum.construction.WorldUtils
 import colosseum.construction.data.FinalizedMapData
 import colosseum.construction.data.MutableMapData
-import org.bukkit.command.Command
+import colosseum.utility.UtilPlayerBase
 import org.bukkit.entity.Player
 import java.util.function.*
 
@@ -30,8 +30,8 @@ class MapAuthorCommand: AbstractMapCreditCommand(
         val newMapCreator = contentSupplier.get()
         ConstructionSiteProvider.getScheduler().scheduleAsync {
             data.update(FinalizedMapData(null, newMapCreator))
-            Command.broadcastCommandMessage(caller, "Map ${mapDataSupplier.get().mapName} set author: ${mapDataSupplier.get().mapCreator}")
-            ConstructionSiteProvider.getSite().pluginLogger.info("World $path set author: ${mapDataSupplier.get().mapCreator}")
+            UtilPlayerBase.sendMessage(caller, "Set author: $newMapCreator")
+            ConstructionSiteProvider.getSite().pluginLogger.info("World $path set author: $newMapCreator")
         }
         return true
     }

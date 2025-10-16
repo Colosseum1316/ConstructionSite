@@ -1,5 +1,7 @@
 package colosseum.construction
 
+import colosseum.construction.WorldUtils.getWorldFolder
+import colosseum.construction.WorldUtils.getWorldRelativePath
 import colosseum.utility.WorldMapConstants
 import org.bukkit.Bukkit
 import org.bukkit.World

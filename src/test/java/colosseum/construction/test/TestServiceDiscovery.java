@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.ServiceLoader;
 
-class TestServiceLoader {
+class TestServiceDiscovery {
     @Test
     void testServiceLoader() {
         ServiceLoader<ConstructionSiteCommand> loader = ServiceLoader.load(ConstructionSiteCommand.class, ConstructionSiteCommand.class.getClassLoader());
@@ -30,7 +30,7 @@ class TestServiceLoader {
         }
 
         Assertions.assertDoesNotThrow(() -> {
-            Assertions.assertEquals(8, PluginUtils.discoverManagers().size());
+            Assertions.assertEquals(9, PluginUtils.discoverManagers().size());
         });
     }
 

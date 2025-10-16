@@ -19,7 +19,7 @@ class FlySpeedCommand: ConstructionSiteCommand(
         if (args.size == 1) {
             try {
                 newSpeed = args[0].toDouble()
-                if (newSpeed > 10.0 || newSpeed < 1.0) {
+                if (newSpeed !in 1.0..10.0) {
                     return false
                 }
             } catch (ex: NumberFormatException) {
