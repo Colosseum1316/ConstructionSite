@@ -4,7 +4,7 @@ import colosseum.construction.ConstructionSiteProvider
 import colosseum.construction.WorldUtils
 import colosseum.construction.data.FinalizedMapData
 import colosseum.construction.data.MutableMapData
-import org.bukkit.command.Command
+import colosseum.utility.UtilPlayerBase
 import org.bukkit.entity.Player
 import java.util.function.*
 
@@ -30,7 +30,8 @@ class MapNameCommand: AbstractMapCreditCommand(
         val newMapName = contentSupplier.get()
         ConstructionSiteProvider.getScheduler().scheduleAsync {
             data.update(FinalizedMapData(newMapName, null))
-            Command.broadcastCommandMessage(caller, "World $path set map name: ${mapDataSupplier.get().mapName}", true)
+            UtilPlayerBase.sendMessage(caller, "Set map name: $newMapName")
+            ConstructionSiteProvider.getSite().pluginLogger.info("World $path set map name: $newMapName")
         }
         return true
     }
