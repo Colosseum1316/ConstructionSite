@@ -3,13 +3,16 @@ package colosseum.construction.test;
 import be.seeseemelk.mockbukkit.MockBukkit;
 import colosseum.construction.ConstructionSiteProvider;
 import colosseum.construction.WorldUtils;
-import colosseum.construction.command.MapInfoCommand;
+import colosseum.construction.command.MapCurrentlyLiveCommand;
+import colosseum.construction.data.MutableMapData;
+import colosseum.construction.manager.MapDataManager;
 import colosseum.construction.manager.TeleportManager;
 import colosseum.construction.test.dummies.ConstructionSitePlayerMock;
 import colosseum.construction.test.dummies.ConstructionSiteServerMock;
 import colosseum.construction.test.dummies.ConstructionSiteWorldMock;
 import colosseum.construction.test.dummies.DummySite;
 import colosseum.construction.test.dummies.DummySite3;
+import colosseum.utility.MapData;
 import colosseum.utility.WorldMapConstants;
 import org.bukkit.Location;
 import org.junit.jupiter.api.AfterAll;
@@ -22,7 +25,7 @@ import org.junit.jupiter.api.io.TempDir;
 import java.io.File;
 import java.util.UUID;
 
-class TestMapInfoCommand {
+class TestMapCurrentlyLiveCommand {
     private DummySite plugin;
     private static final String uuid1 = "5da001d1-f9a4-4c95-9736-9a98327848bf";
     private ConstructionSitePlayerMock player1;
@@ -60,8 +63,8 @@ class TestMapInfoCommand {
         Utils.writeMapData(WorldUtils.getWorldFolder(worldMap), String.format("""
                 currentlyLive:true
                 warps:
-                MAP_NAME:MAPINFO 123456789
-                MAP_AUTHOR:MAPAUTHOR 101112131415
+                MAP_NAME:MAPINFO 123456
+                MAP_AUTHOR:MAPAUTHOR 10111213
                 GAME_TYPE:DragonEscape
                 ADMIN_LIST:%s
                 """.trim(), uuid1));
@@ -76,7 +79,7 @@ class TestMapInfoCommand {
     @Order(1)
     @Test
     void testPermission() {
-        MapInfoCommand command = new MapInfoCommand();
+        MapCurrentlyLiveCommand command = new MapCurrentlyLiveCommand();
         TeleportManager manager = ConstructionSiteProvider.getSite().getManager(TeleportManager.class);
         Assertions.assertTrue(manager.teleportToServerSpawn(player1));
         Assertions.assertFalse(command.canRun(MockBukkit.getMock().getConsoleSender()));
@@ -97,14 +100,48 @@ class TestMapInfoCommand {
     @Order(2)
     @Test
     void test() {
-        MapInfoCommand command = new MapInfoCommand();
-        String label = command.getAliases().get(0);
-        TeleportManager manager = ConstructionSiteProvider.getSite().getManager(TeleportManager.class);
-        Assertions.assertTrue(manager.teleportPlayer(player1, new Location(worldMap, 0, 0, 0)));
-        Assertions.assertTrue(command.runConstruction(player1, label, new String[]{}));
-        player1.assertSaid("Map name: §eMAPINFO 123456789");
-        player1.assertSaid("Author: §eMAPAUTHOR 101112131415");
-        player1.assertSaid("GameType: §eDragonEscape§r (§eDragon Escape§r)");
+        MapCurrentlyLiveCommand command = new MapCurrentlyLiveCommand();
+        TeleportManager teleportManager = ConstructionSiteProvider.getSite().getManager(TeleportManager.class);
+        MapDataManager mapDataManager = ConstructionSiteProvider.getSite().getManager(MapDataManager.class);
+        String labelIsLive = command.getAliases().get(0);
+        String labelSetLive = command.getAliases().get(1);
+
+        Assertions.assertTrue(teleportManager.teleportPlayer(player1, new Location(worldMap, 0, 0, 0)));
+        Assertions.assertTrue(command.runConstruction(player1, labelIsLive, new String[]{}));
+        player1.assertSaid("§eMAPINFO 123456§r is §alive");
         player1.assertNoMoreSaid();
+        Assertions.assertTrue(mapDataManager.get(worldMap).isLive());
+        MapData data = Utils.readMapData(worldMap, WorldUtils.getWorldFolder(worldMap));
+        Assertions.assertTrue(data.isLive());
+
+        Assertions.assertTrue(command.runConstruction(player1, labelSetLive, new String[]{}));
+        player1.assertSaid("MAPINFO 123456 is no longer live");
+        player1.assertNoMoreSaid();
+        Assertions.assertFalse(mapDataManager.get(worldMap).isLive());
+        Assertions.assertTrue(((MutableMapData) mapDataManager.get(worldMap)).write());
+        data = Utils.readMapData(worldMap, WorldUtils.getWorldFolder(worldMap));
+        Assertions.assertFalse(data.isLive());
+
+        Assertions.assertTrue(command.runConstruction(player1, labelIsLive, new String[]{}));
+        player1.assertSaid("§eMAPINFO 123456§r is §cnot live");
+        player1.assertNoMoreSaid();
+        Assertions.assertFalse(mapDataManager.get(worldMap).isLive());
+        data = Utils.readMapData(worldMap, WorldUtils.getWorldFolder(worldMap));
+        Assertions.assertFalse(data.isLive());
+
+        Assertions.assertTrue(command.runConstruction(player1, labelSetLive, new String[]{}));
+        player1.assertSaid("MAPINFO 123456 is now live");
+        player1.assertNoMoreSaid();
+        Assertions.assertTrue(mapDataManager.get(worldMap).isLive());
+        Assertions.assertTrue(((MutableMapData) mapDataManager.get(worldMap)).write());
+        data = Utils.readMapData(worldMap, WorldUtils.getWorldFolder(worldMap));
+        Assertions.assertTrue(data.isLive());
+
+        Assertions.assertTrue(command.runConstruction(player1, labelIsLive, new String[]{}));
+        player1.assertSaid("§eMAPINFO 123456§r is §alive");
+        player1.assertNoMoreSaid();
+        Assertions.assertTrue(mapDataManager.get(worldMap).isLive());
+        data = Utils.readMapData(worldMap, WorldUtils.getWorldFolder(worldMap));
+        Assertions.assertTrue(data.isLive());
     }
 }

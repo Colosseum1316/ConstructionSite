@@ -155,10 +155,10 @@ class TestMapCreditCommands {
     void testMapAuthorCommand() {
         AbstractMapCreditCommand command = new MapAuthorCommand();
         String label = command.getAliases().get(0);
-        TeleportManager manager = ConstructionSiteProvider.getSite().getManager(TeleportManager.class);
+        TeleportManager teleportManager = ConstructionSiteProvider.getSite().getManager(TeleportManager.class);
         MapDataManager mapDataManager = ConstructionSiteProvider.getSite().getManager(MapDataManager.class);
-        Assertions.assertTrue(manager.teleportPlayer(player1, new Location(worldMap, 0, 0, 0)));
-        Assertions.assertTrue(manager.teleportPlayer(player2, new Location(worldMap, 0, 0, 0)));
+        Assertions.assertTrue(teleportManager.teleportPlayer(player1, new Location(worldMap, 0, 0, 0)));
+        Assertions.assertTrue(teleportManager.teleportPlayer(player2, new Location(worldMap, 0, 0, 0)));
         player1.assertLocation(new Location(worldMap, 0, 0, 0), 1);
         player2.assertLocation(new Location(worldMap, 0, 0, 0), 1);
         player1.assertNoMoreSaid();
@@ -191,10 +191,10 @@ class TestMapCreditCommands {
     void testMapNameCommand() {
         AbstractMapCreditCommand command = new MapNameCommand();
         String label = command.getAliases().get(0);
-        TeleportManager manager = ConstructionSiteProvider.getSite().getManager(TeleportManager.class);
+        TeleportManager teleportManager = ConstructionSiteProvider.getSite().getManager(TeleportManager.class);
         MapDataManager mapDataManager = ConstructionSiteProvider.getSite().getManager(MapDataManager.class);
-        Assertions.assertTrue(manager.teleportPlayer(player1, new Location(worldMap, 0, 0, 0)));
-        Assertions.assertTrue(manager.teleportPlayer(player2, new Location(worldMap, 0, 0, 0)));
+        Assertions.assertTrue(teleportManager.teleportPlayer(player1, new Location(worldMap, 0, 0, 0)));
+        Assertions.assertTrue(teleportManager.teleportPlayer(player2, new Location(worldMap, 0, 0, 0)));
         player1.assertLocation(new Location(worldMap, 0, 0, 0), 1);
         player2.assertLocation(new Location(worldMap, 0, 0, 0), 1);
         player1.assertNoMoreSaid();
