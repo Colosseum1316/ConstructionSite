@@ -63,7 +63,6 @@ class TestDifficultyCommand {
         plugin.load();
         ((ConstructionSiteServerMock) MockBukkit.getMock()).addWorld(worldMap);
         Assertions.assertEquals(worldMap, MockBukkit.getMock().getWorld(WorldUtils.getWorldRelativePath(worldMap)));
-        worldMap.setSpawnLocation(8, 9, -10);
         Assertions.assertTrue(WorldUtils.getWorldFolder(worldMap).mkdirs());
         Utils.writeMapData(WorldUtils.getWorldFolder(worldMap), String.format("""
                 currentlyLive:true
@@ -91,8 +90,8 @@ class TestDifficultyCommand {
         DifficultyCommand command = new DifficultyCommand();
         TeleportManager manager = ConstructionSiteProvider.getSite().getManager(TeleportManager.class);
 
-        manager.teleportToServerSpawn(player1);
-        manager.teleportToServerSpawn(player2);
+        Assertions.assertTrue(manager.teleportToServerSpawn(player1));
+        Assertions.assertTrue(manager.teleportToServerSpawn(player2));
         Assertions.assertFalse(command.canRun(MockBukkit.getMock().getConsoleSender()));
         Assertions.assertFalse(command.canRun(player1));
         player1.assertSaid("§cYou are in \"world\"!");
@@ -101,8 +100,8 @@ class TestDifficultyCommand {
         player2.assertSaid("§cYou are in \"world\"!");
         player2.assertNoMoreSaid();
 
-        manager.teleportPlayer(player1, new Location(worldLobby, 0, 0, 0));
-        manager.teleportPlayer(player2, new Location(worldLobby, 0, 0, 0));
+        Assertions.assertTrue(manager.teleportPlayer(player1, new Location(worldLobby, 0, 0, 0)));
+        Assertions.assertTrue(manager.teleportPlayer(player2, new Location(worldLobby, 0, 0, 0)));
         Assertions.assertFalse(command.canRun(MockBukkit.getMock().getConsoleSender()));
         Assertions.assertFalse(command.canRun(player1));
         player1.assertSaid("§cYou are in \"world_lobby\"!");

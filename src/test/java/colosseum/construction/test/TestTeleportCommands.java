@@ -110,9 +110,9 @@ class TestTeleportCommands {
         AbstractTeleportCommand warpCommand = new TeleportWarpCommand();
         TeleportManager manager = ConstructionSiteProvider.getSite().getManager(TeleportManager.class);
 
-        manager.teleportToServerSpawn(player1);
-        manager.teleportToServerSpawn(player2);
-        manager.teleportToServerSpawn(player3);
+        Assertions.assertTrue(manager.teleportToServerSpawn(player1));
+        Assertions.assertTrue(manager.teleportToServerSpawn(player2));
+        Assertions.assertTrue(manager.teleportToServerSpawn(player3));
         Assertions.assertFalse(warpCommand.canRun(MockBukkit.getMock().getConsoleSender()));
         Assertions.assertFalse(warpCommand.canRun(player1));
         Assertions.assertFalse(warpCommand.canRun(player2));
@@ -130,9 +130,9 @@ class TestTeleportCommands {
         Assertions.assertFalse(player2.isFlying());
         Assertions.assertFalse(player3.isFlying());
 
-        manager.teleportPlayer(player1, new Location(worldLobby, 0, 0, 0));
-        manager.teleportPlayer(player2, new Location(worldLobby, 0, 0, 0));
-        manager.teleportPlayer(player3, new Location(worldLobby, 0, 0, 0));
+        Assertions.assertTrue(manager.teleportPlayer(player1, new Location(worldLobby, 0, 0, 0)));
+        Assertions.assertTrue(manager.teleportPlayer(player2, new Location(worldLobby, 0, 0, 0)));
+        Assertions.assertTrue(manager.teleportPlayer(player3, new Location(worldLobby, 0, 0, 0)));
         Assertions.assertFalse(warpCommand.canRun(MockBukkit.getMock().getConsoleSender()));
         Assertions.assertFalse(warpCommand.canRun(player1));
         Assertions.assertFalse(warpCommand.canRun(player2));
