@@ -56,12 +56,12 @@ class GameTypeInfoCommand: ConstructionSiteCommand(
     }
 
     override fun onTabComplete(
-        sender: CommandSender,
-        command: Command,
+        sender: CommandSender?,
+        command: Command?,
         alias: String,
         args: Array<String>
     ): List<String>? {
-        if (args.isNullOrEmpty() || args.size >= 3) {
+        if (args.isEmpty() || args.size >= 3) {
             return null
         }
         val s: MutableList<String> = ArrayList()

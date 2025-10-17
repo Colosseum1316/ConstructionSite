@@ -58,8 +58,8 @@ class NewMapCommand: AbstractOpCommand(
     }
 
     override fun onTabComplete(
-        sender: CommandSender,
-        command: Command,
+        sender: CommandSender?,
+        command: Command?,
         alias: String,
         args: Array<String>
     ): List<String>? {
@@ -73,7 +73,7 @@ class NewMapCommand: AbstractOpCommand(
     }
 
     override fun runConstruction(caller: Player, label: String, args: Array<String>): Boolean {
-        if (args.isNullOrEmpty() || args.size > 2) {
+        if (args.isEmpty() || args.size > 2) {
             return false
         }
         val gameType = GameTypeUtils.determineGameType(args[0], true)

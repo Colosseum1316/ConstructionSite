@@ -9,7 +9,7 @@ class ItemNameCommand: ItemCommand(
     "/itemname <Display name>"
 ) {
     override fun runConstruction(caller: Player, label: String, args: Array<String>): Boolean {
-        if (args.isNullOrEmpty()) {
+        if (args.isEmpty()) {
             return false
         }
 
