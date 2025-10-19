@@ -61,9 +61,9 @@ dependencies {
     shadow(implementation("colosseum.minecraft:ColosseumUtility:0.1-SNAPSHOT") {
         exclude("colosseum.minecraft", "colosseumspigot-api")
     })
-
-    implementation("commons-io:commons-io:${project.findProperty("commons_io_version")}")
-    shadow("commons-io:commons-io:${project.findProperty("commons_io_version")}")
+    shadow(implementation("commons-io:commons-io:${project.findProperty("commons_io_version")}") {
+        isTransitive = false
+    })
 
     compileOnly("org.projectlombok:lombok:${project.findProperty("lombok_version")}")
     annotationProcessor("org.projectlombok:lombok:${project.findProperty("lombok_version")}")
