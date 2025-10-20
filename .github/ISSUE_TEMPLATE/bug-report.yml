@@ -1,0 +1,62 @@
+name: Bug report
+description: Report somewhere not working as intended.
+labels:
+  - "bug"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        1. Use English.
+        2. Use latest version of the plugin, likely issue resolved already.
+        3. Do research before opening issue.
+        4. Details are important!
+        5. Only open issue when you believe that you've found a bug. Otherwise, please go to Discussions instead.
+        6. If you find your issue magically disappear, DO NOT ask why.
+
+  - type: dropdown
+    id: spigot-brand
+    attributes:
+      label: Spigot server brand name
+      description: Your Spigot server brand name
+      options:
+        - Colosseum
+        - Spigot
+        - Paper
+        - PandaSpigot
+        - Other (Elaborate in description)
+    validations:
+      required: true
+
+  - type: input
+    id: java-version
+    attributes:
+      label: Java version
+      description: The Java version the Spigot server runs on. Sometimes Java 17+ running Java 8 application is troublesome.
+    validations:
+      required: true
+
+  - type: input
+    id: operating-system-version
+    attributes:
+      label: Operating system
+      description: The OS the Spigot server runs on.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug description
+      description: |
+        Describe what's not working as intended/correctly.
+        Steps to reproduce preferred.
+    validations:
+      required: true
+
+  - type: textarea
+    id: attachments
+    attributes:
+      label: Attachments
+      description: |
+        Server logs, ingame screenshots, etc.
+        Don't forget to remove any sensitive information.
+    validations:
+      required: false
