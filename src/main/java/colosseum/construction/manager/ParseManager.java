@@ -11,7 +11,6 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.io.FileUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -115,7 +114,7 @@ public final class ParseManager extends ConstructionSiteManager {
     private void query() {
         if (parser != null) {
             final AtomicReference<MapParser.Status> status = parser.getStatus();
-            for (Player player : Bukkit.getOnlinePlayers()) {
+            for (Player player : ConstructionSiteProvider.getSite().getServer().getOnlinePlayers()) {
                 TextComponent message = new TextComponent(String.format("A map parse task running. (%.2f%%)", getProgress() * 100.0));
                 message.setColor(ChatColor.RED);
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR, message);
@@ -148,7 +147,7 @@ public final class ParseManager extends ConstructionSiteManager {
                 }
             });
         } else {
-            for (Player player : Bukkit.getOnlinePlayers()) {
+            for (Player player : ConstructionSiteProvider.getSite().getServer().getOnlinePlayers()) {
                 TextComponent message = new TextComponent("No parse task running.");
                 message.setColor(ChatColor.GRAY);
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR, message);

@@ -60,8 +60,8 @@ class TestMapInfoCommand {
         Utils.writeMapData(WorldUtils.getWorldFolder(worldMap), String.format("""
                 currentlyLive:true
                 warps:
-                MAP_NAME:MAPINFO 123456789
-                MAP_AUTHOR:MAPAUTHOR 101112131415
+                MAP_NAME:MAPINFO 123456789MAPINFO
+                MAP_AUTHOR:MAPAUTHOR 101112131415MAPINFO
                 GAME_TYPE:DragonEscape
                 ADMIN_LIST:%s
                 """.trim(), uuid1));
@@ -102,8 +102,8 @@ class TestMapInfoCommand {
         TeleportManager manager = ConstructionSiteProvider.getSite().getManager(TeleportManager.class);
         Assertions.assertTrue(manager.teleportPlayer(player1, new Location(worldMap, 0, 0, 0)));
         Assertions.assertTrue(command.runConstruction(player1, label, new String[]{}));
-        player1.assertSaid("Map name: §eMAPINFO 123456789");
-        player1.assertSaid("Author: §eMAPAUTHOR 101112131415");
+        player1.assertSaid("Map name: §eMAPINFO 123456789MAPINFO");
+        player1.assertSaid("Author: §eMAPAUTHOR 101112131415MAPINFO");
         player1.assertSaid("GameType: §eDragonEscape§r (§eDragon Escape§r)");
         player1.assertNoMoreSaid();
     }

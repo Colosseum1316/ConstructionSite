@@ -64,6 +64,6 @@ public final class ConstructionSiteImpl extends JavaPlugin implements Constructi
 
     @Override
     public File getWorldContainer() {
-        return Bukkit.getWorldContainer();
+        return Bukkit.getServer().getWorldContainer();
     }
 }

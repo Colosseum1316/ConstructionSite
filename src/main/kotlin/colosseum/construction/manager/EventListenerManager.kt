@@ -3,7 +3,6 @@ package colosseum.construction.manager
 import colosseum.construction.ConstructionSiteProvider
 import colosseum.construction.event.InteractionEvents
 import colosseum.construction.event.TreeEvents
-import org.bukkit.Bukkit
 import org.bukkit.event.HandlerList
 
 @ManagerDependency(MapDataManager::class, WorldManager::class, TeleportManager::class, SplashTextManager::class)
@@ -23,8 +22,8 @@ class EventListenerManager: ConstructionSiteManager("Events") {
 
     private fun registerEvents() {
         val plugin = ConstructionSiteProvider.getPlugin()
-        Bukkit.getPluginManager().registerEvents(interactionEvents, plugin)
-        Bukkit.getPluginManager().registerEvents(treeEvents, plugin)
+        ConstructionSiteProvider.getSite().getServer().pluginManager.registerEvents(interactionEvents, plugin)
+        ConstructionSiteProvider.getSite().getServer().pluginManager.registerEvents(treeEvents, plugin)
     }
 
     private fun unregisterEvents() {

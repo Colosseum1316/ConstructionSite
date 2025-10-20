@@ -74,7 +74,7 @@ class TestMapCreditCommands {
         Assertions.assertTrue(WorldUtils.getWorldFolder(worldMap).mkdirs());
         Utils.writeMapData(WorldUtils.getWorldFolder(worldMap), String.format("""
                 currentlyLive:true
-                warps:k1@-1,2,-3;k2@-5,6,-7;
+                warps:
                 MAP_NAME:map none
                 MAP_AUTHOR:author none
                 GAME_TYPE:None

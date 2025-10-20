@@ -64,7 +64,7 @@ class TestMapGameTypeCommand {
         Utils.writeMapData(WorldUtils.getWorldFolder(worldMap), String.format("""
                 currentlyLive:true
                 warps:
-                MAP_NAME:MAPINFO 1234999
+                MAP_NAME:MAPINFO 1234999GAMETYPE
                 MAP_AUTHOR:MAPAUTHOR
                 GAME_TYPE:DragonEscape
                 ADMIN_LIST:%s
@@ -122,7 +122,7 @@ class TestMapGameTypeCommand {
 
         Assertions.assertEquals(GameType.DragonEscape, mapDataManager.get(worldMap).getMapGameType());
         Assertions.assertTrue(command.runConstruction(player1, label, new String[]{GameType.NanoGames.name()}));
-        player1.assertSaid("Map MAPINFO 1234999: Set GameType to " + GameType.NanoGames.name());
+        player1.assertSaid("Map MAPINFO 1234999GAMETYPE: Set GameType to " + GameType.NanoGames.name());
         player1.assertNoMoreSaid();
         Assertions.assertEquals(GameType.NanoGames, mapDataManager.get(worldMap).getMapGameType());
         Assertions.assertTrue(((MutableMapData) mapDataManager.get(worldMap)).write());

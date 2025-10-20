@@ -1,6 +1,5 @@
 package colosseum.construction.test.dummies;
 
-import be.seeseemelk.mockbukkit.MockBukkit;
 import colosseum.construction.ConstructionSiteProvider;
 import colosseum.construction.PluginUtils;
 import colosseum.construction.manager.ConstructionSiteManager;
@@ -27,6 +26,8 @@ public final class DummySite3 implements DummySite {
     private final File worldContainer;
     private final File pluginDataFolder;
 
+    private final ConstructionSiteServerMock serverMock;
+
     public DummySite3(File worldContainer, File pluginDataFolder) {
         this.worldContainer = worldContainer;
         this.pluginDataFolder = pluginDataFolder;
@@ -37,7 +38,7 @@ public final class DummySite3 implements DummySite {
         managersReference.clear();
         managersReference.addAll(PluginUtils.discoverManagers(List.of(WorldManager.class, MapDataManager.class, TeleportManager.class)));
 
-        ConstructionSiteServerMock.mock();
+        serverMock = ConstructionSiteServerMock.mock();
     }
 
     @Override
@@ -84,7 +85,7 @@ public final class DummySite3 implements DummySite {
 
     @Override
     public Server getServer() {
-        return MockBukkit.getMock();
+        return serverMock;
     }
 
     @Override

@@ -63,7 +63,7 @@ class TestMapCurrentlyLiveCommand {
         Utils.writeMapData(WorldUtils.getWorldFolder(worldMap), String.format("""
                 currentlyLive:true
                 warps:
-                MAP_NAME:MAPINFO 123456
+                MAP_NAME:MAPINFO 123456LIVE
                 MAP_AUTHOR:MAPAUTHOR 10111213
                 GAME_TYPE:DragonEscape
                 ADMIN_LIST:%s
@@ -108,14 +108,14 @@ class TestMapCurrentlyLiveCommand {
 
         Assertions.assertTrue(teleportManager.teleportPlayer(player1, new Location(worldMap, 0, 0, 0)));
         Assertions.assertTrue(command.runConstruction(player1, labelIsLive, new String[]{}));
-        player1.assertSaid("§eMAPINFO 123456§r is §alive");
+        player1.assertSaid("§eMAPINFO 123456LIVE§r is §alive");
         player1.assertNoMoreSaid();
         Assertions.assertTrue(mapDataManager.get(worldMap).isLive());
         MapData data = Utils.readMapData(worldMap, WorldUtils.getWorldFolder(worldMap));
         Assertions.assertTrue(data.isLive());
 
         Assertions.assertTrue(command.runConstruction(player1, labelSetLive, new String[]{}));
-        player1.assertSaid("MAPINFO 123456 is no longer live");
+        player1.assertSaid("MAPINFO 123456LIVE is no longer live");
         player1.assertNoMoreSaid();
         Assertions.assertFalse(mapDataManager.get(worldMap).isLive());
         Assertions.assertTrue(((MutableMapData) mapDataManager.get(worldMap)).write());
@@ -123,14 +123,14 @@ class TestMapCurrentlyLiveCommand {
         Assertions.assertFalse(data.isLive());
 
         Assertions.assertTrue(command.runConstruction(player1, labelIsLive, new String[]{}));
-        player1.assertSaid("§eMAPINFO 123456§r is §cnot live");
+        player1.assertSaid("§eMAPINFO 123456LIVE§r is §cnot live");
         player1.assertNoMoreSaid();
         Assertions.assertFalse(mapDataManager.get(worldMap).isLive());
         data = Utils.readMapData(worldMap, WorldUtils.getWorldFolder(worldMap));
         Assertions.assertFalse(data.isLive());
 
         Assertions.assertTrue(command.runConstruction(player1, labelSetLive, new String[]{}));
-        player1.assertSaid("MAPINFO 123456 is now live");
+        player1.assertSaid("MAPINFO 123456LIVE is now live");
         player1.assertNoMoreSaid();
         Assertions.assertTrue(mapDataManager.get(worldMap).isLive());
         Assertions.assertTrue(((MutableMapData) mapDataManager.get(worldMap)).write());
@@ -138,7 +138,7 @@ class TestMapCurrentlyLiveCommand {
         Assertions.assertTrue(data.isLive());
 
         Assertions.assertTrue(command.runConstruction(player1, labelIsLive, new String[]{}));
-        player1.assertSaid("§eMAPINFO 123456§r is §alive");
+        player1.assertSaid("§eMAPINFO 123456LIVE§r is §alive");
         player1.assertNoMoreSaid();
         Assertions.assertTrue(mapDataManager.get(worldMap).isLive());
         data = Utils.readMapData(worldMap, WorldUtils.getWorldFolder(worldMap));

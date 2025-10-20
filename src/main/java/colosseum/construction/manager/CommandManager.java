@@ -3,7 +3,6 @@ package colosseum.construction.manager;
 import colosseum.construction.CommandUtils;
 import colosseum.construction.ConstructionSiteProvider;
 import colosseum.construction.command.ConstructionSiteCommand;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
@@ -34,7 +33,7 @@ public final class CommandManager extends ConstructionSiteManager {
                 if (c instanceof TabCompleter) {
                     command.setTabCompleter((TabCompleter) c);
                 }
-                Bukkit.getServer().getCommandMap().register(FALLBACK_PREFIX, command);
+                ConstructionSiteProvider.getSite().getServer().getCommandMap().register(FALLBACK_PREFIX, command);
                 ConstructionSiteProvider.getSite().getPluginLogger().info("Registering command " + command.getName());
             }
         } catch (Exception e) {
