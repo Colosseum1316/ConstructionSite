@@ -2,7 +2,6 @@ package colosseum.construction;
 
 import colosseum.construction.manager.ConstructionSiteManager;
 import org.apache.commons.lang.Validate;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -64,6 +63,6 @@ public final class ConstructionSiteImpl extends JavaPlugin implements Constructi
 
     @Override
     public File getWorldContainer() {
-        return Bukkit.getServer().getWorldContainer();
+        return this.getServer().getWorldContainer();
     }
 }
