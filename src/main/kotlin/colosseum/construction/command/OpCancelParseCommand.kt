@@ -2,7 +2,6 @@ package colosseum.construction.command
 
 import colosseum.construction.ConstructionSiteProvider
 import colosseum.construction.manager.ParseManager
-import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
@@ -20,9 +19,10 @@ class OpCancelParseCommand: AbstractOpCommand(
     }
 
     override fun runConstruction(caller: CommandSender, label: String, args: Array<String>): Boolean {
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mapparse")
+        val server = ConstructionSiteProvider.getSite().getServer()
+        server.dispatchCommand(server.getConsoleSender(), "mapparse")
         ConstructionSiteProvider.getSite().getManager(ParseManager::class.java).cancel()
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mapparse")
+        server.dispatchCommand(server.getConsoleSender(), "mapparse")
         return true
     }
 }
