@@ -3,7 +3,6 @@ package colosseum.construction
 import colosseum.construction.WorldUtils.getWorldFolder
 import colosseum.construction.WorldUtils.getWorldRelativePath
 import colosseum.utility.WorldMapConstants
-import org.bukkit.Bukkit
 import org.bukkit.World
 import org.bukkit.WorldCreator
 import java.io.File
@@ -103,7 +102,7 @@ object WorldUtils {
 
     @JvmStatic
     fun getWorldByUUID(uuid: UUID): World? {
-        return Bukkit.getWorld(uuid)
+        return ConstructionSiteProvider.getSite().getServer().getWorld(uuid)
     }
 
     /**
@@ -115,7 +114,7 @@ object WorldUtils {
      */
     @JvmStatic
     fun createOrLoadWorld(worldCreator: WorldCreator): World? {
-        return Bukkit.createWorld(worldCreator)
+        return ConstructionSiteProvider.getSite().getServer().createWorld(worldCreator)
     }
 
     @JvmStatic
@@ -125,7 +124,7 @@ object WorldUtils {
             return
         }
         val path = getWorldRelativePath(world)
-        if (!Bukkit.unloadWorld(world, save)) {
+        if (!ConstructionSiteProvider.getSite().getServer().unloadWorld(world, save)) {
             throw RuntimeException("Cannot unload world \"$path\"!")
         }
         ConstructionSiteProvider.getSite().pluginLogger.info("Unloaded world \"$path\". World ${(if (save) "" else "not ")}saved.")

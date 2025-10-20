@@ -63,7 +63,8 @@ class TestGameTypeInfoCommand {
             String message = player.nextMessage();
             Assertions.assertNotNull(message);
             Assertions.assertTrue(message.startsWith("§cValid game types:"));
-            Assertions.assertNull(player.nextMessage());
+            Assertions.assertFalse(message.contains("None"));
+            player.assertNoMoreSaid();
         };
 
         assertSaidValidGameTypes.accept(new String[]{}, false);

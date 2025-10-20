@@ -71,11 +71,10 @@ class TestMapCreditCommands {
         plugin.load();
         ((ConstructionSiteServerMock) MockBukkit.getMock()).addWorld(worldMap);
         Assertions.assertEquals(worldMap, MockBukkit.getMock().getWorld(WorldUtils.getWorldRelativePath(worldMap)));
-        worldMap.setSpawnLocation(8, 9, -10);
         Assertions.assertTrue(WorldUtils.getWorldFolder(worldMap).mkdirs());
         Utils.writeMapData(WorldUtils.getWorldFolder(worldMap), String.format("""
                 currentlyLive:true
-                warps:k1@-1,2,-3;k2@-5,6,-7;
+                warps:
                 MAP_NAME:map none
                 MAP_AUTHOR:author none
                 GAME_TYPE:None
@@ -93,9 +92,9 @@ class TestMapCreditCommands {
     @Test
     void testPermission() {
         TeleportManager manager = ConstructionSiteProvider.getSite().getManager(TeleportManager.class);
-        manager.teleportToServerSpawn(player1);
-        manager.teleportToServerSpawn(player2);
-        manager.teleportToServerSpawn(player3);
+        Assertions.assertTrue(manager.teleportToServerSpawn(player1));
+        Assertions.assertTrue(manager.teleportToServerSpawn(player2));
+        Assertions.assertTrue(manager.teleportToServerSpawn(player3));
 
         AbstractMapCreditCommand[] commands = new AbstractMapCreditCommand[]{
                 new MapAuthorCommand(),
@@ -115,9 +114,9 @@ class TestMapCreditCommands {
             player3.assertNoMoreSaid();
         }
 
-        manager.teleportPlayer(player1, new Location(worldLobby, 0, 0, 0));
-        manager.teleportPlayer(player2, new Location(worldLobby, 0, 0, 0));
-        manager.teleportPlayer(player3, new Location(worldLobby, 0, 0, 0));
+        Assertions.assertTrue(manager.teleportPlayer(player1, new Location(worldLobby, 0, 0, 0)));
+        Assertions.assertTrue(manager.teleportPlayer(player2, new Location(worldLobby, 0, 0, 0)));
+        Assertions.assertTrue(manager.teleportPlayer(player3, new Location(worldLobby, 0, 0, 0)));
 
         for (AbstractMapCreditCommand command : commands) {
             Assertions.assertFalse(command.canRun(MockBukkit.getMock().getConsoleSender()));
@@ -156,10 +155,10 @@ class TestMapCreditCommands {
     void testMapAuthorCommand() {
         AbstractMapCreditCommand command = new MapAuthorCommand();
         String label = command.getAliases().get(0);
-        TeleportManager manager = ConstructionSiteProvider.getSite().getManager(TeleportManager.class);
+        TeleportManager teleportManager = ConstructionSiteProvider.getSite().getManager(TeleportManager.class);
         MapDataManager mapDataManager = ConstructionSiteProvider.getSite().getManager(MapDataManager.class);
-        Assertions.assertTrue(manager.teleportPlayer(player1, new Location(worldMap, 0, 0, 0)));
-        Assertions.assertTrue(manager.teleportPlayer(player2, new Location(worldMap, 0, 0, 0)));
+        Assertions.assertTrue(teleportManager.teleportPlayer(player1, new Location(worldMap, 0, 0, 0)));
+        Assertions.assertTrue(teleportManager.teleportPlayer(player2, new Location(worldMap, 0, 0, 0)));
         player1.assertLocation(new Location(worldMap, 0, 0, 0), 1);
         player2.assertLocation(new Location(worldMap, 0, 0, 0), 1);
         player1.assertNoMoreSaid();
@@ -192,10 +191,10 @@ class TestMapCreditCommands {
     void testMapNameCommand() {
         AbstractMapCreditCommand command = new MapNameCommand();
         String label = command.getAliases().get(0);
-        TeleportManager manager = ConstructionSiteProvider.getSite().getManager(TeleportManager.class);
+        TeleportManager teleportManager = ConstructionSiteProvider.getSite().getManager(TeleportManager.class);
         MapDataManager mapDataManager = ConstructionSiteProvider.getSite().getManager(MapDataManager.class);
-        Assertions.assertTrue(manager.teleportPlayer(player1, new Location(worldMap, 0, 0, 0)));
-        Assertions.assertTrue(manager.teleportPlayer(player2, new Location(worldMap, 0, 0, 0)));
+        Assertions.assertTrue(teleportManager.teleportPlayer(player1, new Location(worldMap, 0, 0, 0)));
+        Assertions.assertTrue(teleportManager.teleportPlayer(player2, new Location(worldMap, 0, 0, 0)));
         player1.assertLocation(new Location(worldMap, 0, 0, 0), 1);
         player2.assertLocation(new Location(worldMap, 0, 0, 0), 1);
         player1.assertNoMoreSaid();

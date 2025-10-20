@@ -15,7 +15,7 @@ import java.util.logging.Level;
 @SuppressWarnings("unchecked")
 public final class ConstructionSiteServerMock extends ServerMock {
 
-    public static ServerMock mock() {
+    public static ConstructionSiteServerMock mock() {
         return Assertions.assertDoesNotThrow(() -> {
             Field field = MockBukkit.class.getDeclaredField("mock");
             field.setAccessible(true);
@@ -29,7 +29,7 @@ public final class ConstructionSiteServerMock extends ServerMock {
             Bukkit.setServer(mock);
             mock.getLogger().setLevel(defaultLevel);
             field.set(null, mock);
-            return mock;
+            return (ConstructionSiteServerMock) mock;
         });
     }
 

@@ -63,12 +63,11 @@ class TestDifficultyCommand {
         plugin.load();
         ((ConstructionSiteServerMock) MockBukkit.getMock()).addWorld(worldMap);
         Assertions.assertEquals(worldMap, MockBukkit.getMock().getWorld(WorldUtils.getWorldRelativePath(worldMap)));
-        worldMap.setSpawnLocation(8, 9, -10);
         Assertions.assertTrue(WorldUtils.getWorldFolder(worldMap).mkdirs());
         Utils.writeMapData(WorldUtils.getWorldFolder(worldMap), String.format("""
                 currentlyLive:true
-                warps:k1@-1,2,-3;k2@-5,6,-7;
-                MAP_NAME:Test map3
+                warps:
+                MAP_NAME:Test map3 difficulty
                 MAP_AUTHOR:Test author4
                 GAME_TYPE:None
                 ADMIN_LIST:%s
@@ -91,8 +90,8 @@ class TestDifficultyCommand {
         DifficultyCommand command = new DifficultyCommand();
         TeleportManager manager = ConstructionSiteProvider.getSite().getManager(TeleportManager.class);
 
-        manager.teleportToServerSpawn(player1);
-        manager.teleportToServerSpawn(player2);
+        Assertions.assertTrue(manager.teleportToServerSpawn(player1));
+        Assertions.assertTrue(manager.teleportToServerSpawn(player2));
         Assertions.assertFalse(command.canRun(MockBukkit.getMock().getConsoleSender()));
         Assertions.assertFalse(command.canRun(player1));
         player1.assertSaid("§cYou are in \"world\"!");
@@ -101,8 +100,8 @@ class TestDifficultyCommand {
         player2.assertSaid("§cYou are in \"world\"!");
         player2.assertNoMoreSaid();
 
-        manager.teleportPlayer(player1, new Location(worldLobby, 0, 0, 0));
-        manager.teleportPlayer(player2, new Location(worldLobby, 0, 0, 0));
+        Assertions.assertTrue(manager.teleportPlayer(player1, new Location(worldLobby, 0, 0, 0)));
+        Assertions.assertTrue(manager.teleportPlayer(player2, new Location(worldLobby, 0, 0, 0)));
         Assertions.assertFalse(command.canRun(MockBukkit.getMock().getConsoleSender()));
         Assertions.assertFalse(command.canRun(player1));
         player1.assertSaid("§cYou are in \"world_lobby\"!");
@@ -143,7 +142,7 @@ class TestDifficultyCommand {
         worldLobby.setDifficulty(Difficulty.NORMAL);
 
         Assertions.assertTrue(command.runConstruction(player2, label, new String[]{"0"}));
-        player2.assertSaid("Set map Test map3 world difficulty to PEACEFUL");
+        player2.assertSaid("Set map Test map3 difficulty world difficulty to PEACEFUL");
         player2.assertNoMoreSaid();
         Assertions.assertNotEquals(Difficulty.PEACEFUL, world.getDifficulty());
         Assertions.assertNotEquals(Difficulty.PEACEFUL, worldLobby.getDifficulty());
@@ -154,21 +153,21 @@ class TestDifficultyCommand {
         worldLobby.setDifficulty(Difficulty.PEACEFUL);
 
         Assertions.assertTrue(command.runConstruction(player2, label, new String[]{"1"}));
-        player2.assertSaid("Set map Test map3 world difficulty to EASY");
+        player2.assertSaid("Set map Test map3 difficulty world difficulty to EASY");
         player2.assertNoMoreSaid();
         Assertions.assertNotEquals(Difficulty.EASY, world.getDifficulty());
         Assertions.assertNotEquals(Difficulty.EASY, worldLobby.getDifficulty());
         Assertions.assertEquals(Difficulty.EASY, worldMap.getDifficulty());
 
         Assertions.assertTrue(command.runConstruction(player2, label, new String[]{"2"}));
-        player2.assertSaid("Set map Test map3 world difficulty to NORMAL");
+        player2.assertSaid("Set map Test map3 difficulty world difficulty to NORMAL");
         player2.assertNoMoreSaid();
         Assertions.assertNotEquals(Difficulty.NORMAL, world.getDifficulty());
         Assertions.assertNotEquals(Difficulty.NORMAL, worldLobby.getDifficulty());
         Assertions.assertEquals(Difficulty.NORMAL, worldMap.getDifficulty());
 
         Assertions.assertTrue(command.runConstruction(player2, label, new String[]{"3"}));
-        player2.assertSaid("Set map Test map3 world difficulty to HARD");
+        player2.assertSaid("Set map Test map3 difficulty world difficulty to HARD");
         player2.assertNoMoreSaid();
         Assertions.assertNotEquals(Difficulty.HARD, world.getDifficulty());
         Assertions.assertNotEquals(Difficulty.HARD, worldLobby.getDifficulty());
@@ -186,7 +185,7 @@ class TestDifficultyCommand {
         worldLobby.setDifficulty(Difficulty.NORMAL);
 
         Assertions.assertTrue(command.runConstruction(player2, label, new String[]{"peaceFUL"}));
-        player2.assertSaid("Set map Test map3 world difficulty to PEACEFUL");
+        player2.assertSaid("Set map Test map3 difficulty world difficulty to PEACEFUL");
         player2.assertNoMoreSaid();
         Assertions.assertNotEquals(Difficulty.PEACEFUL, world.getDifficulty());
         Assertions.assertNotEquals(Difficulty.PEACEFUL, worldLobby.getDifficulty());
@@ -197,21 +196,21 @@ class TestDifficultyCommand {
         worldLobby.setDifficulty(Difficulty.PEACEFUL);
 
         Assertions.assertTrue(command.runConstruction(player2, label, new String[]{"Easy"}));
-        player2.assertSaid("Set map Test map3 world difficulty to EASY");
+        player2.assertSaid("Set map Test map3 difficulty world difficulty to EASY");
         player2.assertNoMoreSaid();
         Assertions.assertNotEquals(Difficulty.EASY, world.getDifficulty());
         Assertions.assertNotEquals(Difficulty.EASY, worldLobby.getDifficulty());
         Assertions.assertEquals(Difficulty.EASY, worldMap.getDifficulty());
 
         Assertions.assertTrue(command.runConstruction(player2, label, new String[]{"normal"}));
-        player2.assertSaid("Set map Test map3 world difficulty to NORMAL");
+        player2.assertSaid("Set map Test map3 difficulty world difficulty to NORMAL");
         player2.assertNoMoreSaid();
         Assertions.assertNotEquals(Difficulty.NORMAL, world.getDifficulty());
         Assertions.assertNotEquals(Difficulty.NORMAL, worldLobby.getDifficulty());
         Assertions.assertEquals(Difficulty.NORMAL, worldMap.getDifficulty());
 
         Assertions.assertTrue(command.runConstruction(player2, label, new String[]{"HaRd"}));
-        player2.assertSaid("Set map Test map3 world difficulty to HARD");
+        player2.assertSaid("Set map Test map3 difficulty world difficulty to HARD");
         player2.assertNoMoreSaid();
         Assertions.assertNotEquals(Difficulty.HARD, world.getDifficulty());
         Assertions.assertNotEquals(Difficulty.HARD, worldLobby.getDifficulty());
@@ -229,7 +228,7 @@ class TestDifficultyCommand {
         worldLobby.setDifficulty(Difficulty.NORMAL);
 
         Assertions.assertTrue(command.runConstruction(player2, label, new String[]{"p"}));
-        player2.assertSaid("Set map Test map3 world difficulty to PEACEFUL");
+        player2.assertSaid("Set map Test map3 difficulty world difficulty to PEACEFUL");
         player2.assertNoMoreSaid();
         Assertions.assertNotEquals(Difficulty.PEACEFUL, world.getDifficulty());
         Assertions.assertNotEquals(Difficulty.PEACEFUL, worldLobby.getDifficulty());
@@ -240,21 +239,21 @@ class TestDifficultyCommand {
         worldLobby.setDifficulty(Difficulty.PEACEFUL);
 
         Assertions.assertTrue(command.runConstruction(player2, label, new String[]{"E"}));
-        player2.assertSaid("Set map Test map3 world difficulty to EASY");
+        player2.assertSaid("Set map Test map3 difficulty world difficulty to EASY");
         player2.assertNoMoreSaid();
         Assertions.assertNotEquals(Difficulty.EASY, world.getDifficulty());
         Assertions.assertNotEquals(Difficulty.EASY, worldLobby.getDifficulty());
         Assertions.assertEquals(Difficulty.EASY, worldMap.getDifficulty());
 
         Assertions.assertTrue(command.runConstruction(player2, label, new String[]{"n"}));
-        player2.assertSaid("Set map Test map3 world difficulty to NORMAL");
+        player2.assertSaid("Set map Test map3 difficulty world difficulty to NORMAL");
         player2.assertNoMoreSaid();
         Assertions.assertNotEquals(Difficulty.NORMAL, world.getDifficulty());
         Assertions.assertNotEquals(Difficulty.NORMAL, worldLobby.getDifficulty());
         Assertions.assertEquals(Difficulty.NORMAL, worldMap.getDifficulty());
 
         Assertions.assertTrue(command.runConstruction(player2, label, new String[]{"H"}));
-        player2.assertSaid("Set map Test map3 world difficulty to HARD");
+        player2.assertSaid("Set map Test map3 difficulty world difficulty to HARD");
         player2.assertNoMoreSaid();
         Assertions.assertNotEquals(Difficulty.HARD, world.getDifficulty());
         Assertions.assertNotEquals(Difficulty.HARD, worldLobby.getDifficulty());

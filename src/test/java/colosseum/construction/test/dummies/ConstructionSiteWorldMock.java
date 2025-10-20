@@ -4,8 +4,10 @@ import be.seeseemelk.mockbukkit.WorldMock;
 import colosseum.construction.ConstructionSiteProvider;
 import colosseum.construction.WorldUtils;
 import org.bukkit.Difficulty;
+import org.bukkit.entity.Player;
 
 import java.io.File;
+import java.util.List;
 
 public final class ConstructionSiteWorldMock extends WorldMock {
     private Difficulty difficulty;
@@ -126,5 +128,10 @@ public final class ConstructionSiteWorldMock extends WorldMock {
     public File getWorldFolder() {
         // Simulation.
         return map ? WorldUtils.getSingleWorldRootPath(super.getName()) : new File(ConstructionSiteProvider.getSite().getWorldContainer(), super.getName());
+    }
+
+    @Override
+    public List<Player> getPlayers() {
+        return (List<Player>) ConstructionSiteProvider.getSite().getServer().getOnlinePlayers().stream().filter(p -> p.getWorld().equals(this)).toList();
     }
 }

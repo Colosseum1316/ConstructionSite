@@ -18,8 +18,8 @@ class MapGameTypeCommand: AbstractMapAdminCommand(
     "/mapgametype <gametype>"
 ), TabCompleter {
     override fun onTabComplete(
-        sender: CommandSender,
-        command: Command,
+        sender: CommandSender?,
+        command: Command?,
         alias: String,
         args: Array<String>
     ): List<String>? {

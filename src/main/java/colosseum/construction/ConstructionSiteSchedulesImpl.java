@@ -1,7 +1,6 @@
 package colosseum.construction;
 
 import lombok.NoArgsConstructor;
-import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 
 @NoArgsConstructor
@@ -11,7 +10,7 @@ public class ConstructionSiteSchedulesImpl implements ConstructionSiteSchedules 
         if (!clazz.equals(BukkitTask.class) && !clazz.equals(Void.class)) {
             throw new UnsupportedOperationException();
         }
-        BukkitTask task = Bukkit.getScheduler().runTask(ConstructionSiteProvider.getPlugin(), runnable);
+        BukkitTask task = ConstructionSiteProvider.getSite().getServer().getScheduler().runTask(ConstructionSiteProvider.getPlugin(), runnable);
         if (clazz.equals(BukkitTask.class)) {
             return (T) task;
         } else {
@@ -24,7 +23,7 @@ public class ConstructionSiteSchedulesImpl implements ConstructionSiteSchedules 
         if (!clazz.equals(BukkitTask.class) && !clazz.equals(Void.class)) {
             throw new UnsupportedOperationException();
         }
-        BukkitTask task = Bukkit.getScheduler().runTaskLater(ConstructionSiteProvider.getPlugin(), runnable, delay);
+        BukkitTask task = ConstructionSiteProvider.getSite().getServer().getScheduler().runTaskLater(ConstructionSiteProvider.getPlugin(), runnable, delay);
         if (clazz.equals(BukkitTask.class)) {
             return (T) task;
         } else {
@@ -37,7 +36,7 @@ public class ConstructionSiteSchedulesImpl implements ConstructionSiteSchedules 
         if (!clazz.equals(BukkitTask.class) && !clazz.equals(Void.class)) {
             throw new UnsupportedOperationException();
         }
-        BukkitTask task = Bukkit.getScheduler().runTaskTimer(ConstructionSiteProvider.getPlugin(), runnable, delay, period);
+        BukkitTask task = ConstructionSiteProvider.getSite().getServer().getScheduler().runTaskTimer(ConstructionSiteProvider.getPlugin(), runnable, delay, period);
         if (clazz.equals(BukkitTask.class)) {
             return (T) task;
         } else {
@@ -50,7 +49,7 @@ public class ConstructionSiteSchedulesImpl implements ConstructionSiteSchedules 
         if (!clazz.equals(BukkitTask.class) && !clazz.equals(Void.class)) {
             throw new UnsupportedOperationException();
         }
-        BukkitTask task = Bukkit.getScheduler().runTaskAsynchronously(ConstructionSiteProvider.getPlugin(), runnable);
+        BukkitTask task = ConstructionSiteProvider.getSite().getServer().getScheduler().runTaskAsynchronously(ConstructionSiteProvider.getPlugin(), runnable);
         if (clazz.equals(BukkitTask.class)) {
             return (T) task;
         } else {

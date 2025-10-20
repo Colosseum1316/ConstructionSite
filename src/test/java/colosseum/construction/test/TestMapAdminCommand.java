@@ -3,13 +3,16 @@ package colosseum.construction.test;
 import be.seeseemelk.mockbukkit.MockBukkit;
 import colosseum.construction.ConstructionSiteProvider;
 import colosseum.construction.WorldUtils;
-import colosseum.construction.command.vanilla.TimeCommand;
+import colosseum.construction.command.MapAdminCommand;
+import colosseum.construction.data.MutableMapData;
+import colosseum.construction.manager.MapDataManager;
 import colosseum.construction.manager.TeleportManager;
 import colosseum.construction.test.dummies.ConstructionSitePlayerMock;
 import colosseum.construction.test.dummies.ConstructionSiteServerMock;
 import colosseum.construction.test.dummies.ConstructionSiteWorldMock;
 import colosseum.construction.test.dummies.DummySite;
 import colosseum.construction.test.dummies.DummySite3;
+import colosseum.utility.MapData;
 import colosseum.utility.WorldMapConstants;
 import org.bukkit.Location;
 import org.junit.jupiter.api.AfterAll;
@@ -22,14 +25,12 @@ import org.junit.jupiter.api.io.TempDir;
 import java.io.File;
 import java.util.UUID;
 
-class TestTimeCommand {
+class TestMapAdminCommand {
     private DummySite plugin;
     private static final String uuid1 = "5da001d1-f9a4-4c95-9736-9a98327848bf";
     private ConstructionSitePlayerMock player1;
     private static final String uuid2 = "07e79d0b-f86d-4bed-ae37-d87df8d94693";
     private ConstructionSitePlayerMock player2;
-    private static final String uuid3 = "3e65ea50-cd1a-45fb-81d7-7e27c14662d4";
-    private ConstructionSitePlayerMock player3;
     private ConstructionSiteWorldMock world;
     private ConstructionSiteWorldMock worldLobby;
     private ConstructionSiteWorldMock worldMap;
@@ -54,14 +55,11 @@ class TestTimeCommand {
         Assertions.assertEquals(world, MockBukkit.getMock().getWorld(WorldMapConstants.WORLD));
 
         player1 = new ConstructionSitePlayerMock("test1", UUID.fromString(uuid1));
-        player1.setOp(true);
+        player1.setOp(false);
         ((ConstructionSiteServerMock) MockBukkit.getMock()).addPlayer(player1);
         player2 = new ConstructionSitePlayerMock("test2", UUID.fromString(uuid2));
         player2.setOp(false);
         ((ConstructionSiteServerMock) MockBukkit.getMock()).addPlayer(player2);
-        player3 = new ConstructionSitePlayerMock("test3", UUID.fromString(uuid3));
-        player3.setOp(false);
-        ((ConstructionSiteServerMock) MockBukkit.getMock()).addPlayer(player3);
 
         plugin.load();
         ((ConstructionSiteServerMock) MockBukkit.getMock()).addWorld(worldMap);
@@ -70,16 +68,12 @@ class TestTimeCommand {
         Utils.writeMapData(WorldUtils.getWorldFolder(worldMap), String.format("""
                 currentlyLive:true
                 warps:
-                MAP_NAME:Test map9
-                MAP_AUTHOR:Test author10
+                MAP_NAME:Test mapadmin
+                MAP_AUTHOR:Test mapadmin
                 GAME_TYPE:None
                 ADMIN_LIST:%s
-                """.trim(), uuid2));
+                """.trim(), uuid1));
         plugin.enable();
-
-        world.setTime(0);
-        worldLobby.setTime(0);
-        worldMap.setTime(0);
     }
 
     @AfterAll
@@ -90,96 +84,88 @@ class TestTimeCommand {
     @Order(1)
     @Test
     void testPermission() {
-        TimeCommand command = new TimeCommand();
+        MapAdminCommand command = new MapAdminCommand();
         TeleportManager manager = ConstructionSiteProvider.getSite().getManager(TeleportManager.class);
-
         Assertions.assertTrue(manager.teleportToServerSpawn(player1));
         Assertions.assertTrue(manager.teleportToServerSpawn(player2));
-        Assertions.assertTrue(manager.teleportToServerSpawn(player3));
         Assertions.assertFalse(command.canRun(MockBukkit.getMock().getConsoleSender()));
         Assertions.assertFalse(command.canRun(player1));
         Assertions.assertFalse(command.canRun(player2));
-        Assertions.assertFalse(command.canRun(player3));
         player1.assertSaid("§cYou are in \"world\"!");
         player1.assertNoMoreSaid();
         player2.assertSaid("§cYou are in \"world\"!");
         player2.assertNoMoreSaid();
-        player3.assertSaid("§cYou are in \"world\"!");
-        player3.assertNoMoreSaid();
-
         Assertions.assertTrue(manager.teleportPlayer(player1, new Location(worldLobby, 0, 0, 0)));
         Assertions.assertTrue(manager.teleportPlayer(player2, new Location(worldLobby, 0, 0, 0)));
-        Assertions.assertTrue(manager.teleportPlayer(player3, new Location(worldLobby, 0, 0, 0)));
         Assertions.assertFalse(command.canRun(MockBukkit.getMock().getConsoleSender()));
         Assertions.assertFalse(command.canRun(player1));
         Assertions.assertFalse(command.canRun(player2));
-        Assertions.assertFalse(command.canRun(player3));
         player1.assertSaid("§cYou are in \"world_lobby\"!");
         player1.assertNoMoreSaid();
         player2.assertSaid("§cYou are in \"world_lobby\"!");
         player2.assertNoMoreSaid();
-        player3.assertSaid("§cYou are in \"world_lobby\"!");
-        player3.assertNoMoreSaid();
-
-        Assertions.assertTrue(manager.canTeleportTo(player1, new Location(worldMap, 0, 0, 0)));
-        Assertions.assertTrue(manager.canTeleportTo(player2, new Location(worldMap, 0, 0, 0)));
         Assertions.assertTrue(manager.teleportPlayer(player1, new Location(worldMap, 0, 0, 0)));
-        Assertions.assertTrue(manager.teleportPlayer(player2, new Location(worldMap, 0, 0, 0)));
+        Assertions.assertFalse(manager.teleportPlayer(player2, new Location(worldMap, 0, 0, 0)));
         Assertions.assertFalse(command.canRun(MockBukkit.getMock().getConsoleSender()));
         Assertions.assertTrue(command.canRun(player1));
-        Assertions.assertTrue(command.canRun(player2));
+        Assertions.assertFalse(command.canRun(player2));
         player1.assertNoMoreSaid();
+        player2.assertSaid("§cYou are in \"world_lobby\"!");
         player2.assertNoMoreSaid();
     }
 
     @Order(2)
     @Test
-    void testTimeCommand() {
-        TimeCommand command = new TimeCommand();
+    void test() {
+        MapAdminCommand command = new MapAdminCommand();
         String label = command.getAliases().get(0);
-        TeleportManager manager = ConstructionSiteProvider.getSite().getManager(TeleportManager.class);
-        Assertions.assertTrue(manager.canTeleportTo(player1, new Location(worldMap, 0, 0, 0)));
-        Assertions.assertTrue(manager.canTeleportTo(player2, new Location(worldMap, 0, 0, 0)));
-        Assertions.assertTrue(manager.teleportPlayer(player1, new Location(worldMap, 0, 0, 0)));
-        Assertions.assertTrue(manager.teleportPlayer(player2, new Location(worldMap, 0, 0, 0)));
+        TeleportManager teleportManager = ConstructionSiteProvider.getSite().getManager(TeleportManager.class);
+        MapDataManager mapDataManager = ConstructionSiteProvider.getSite().getManager(MapDataManager.class);
 
+        Assertions.assertTrue(teleportManager.teleportPlayer(player1, new Location(worldMap, 0, 0, 0)));
         Assertions.assertFalse(command.runConstruction(player1, label, new String[]{}));
-        Assertions.assertFalse(command.runConstruction(player1, label, new String[]{"1", "2"}));
-        Assertions.assertFalse(command.runConstruction(player1, label, new String[]{"abc"}));
-        Assertions.assertFalse(command.runConstruction(player2, label, new String[]{"-1"}));
-
-        Assertions.assertTrue(command.runConstruction(player1, label, new String[]{"1"}));
-        player1.assertSaid("Set map world time to 1");
-        Assertions.assertEquals(1, worldMap.getTime());
-        Assertions.assertEquals(0, worldLobby.getTime());
-        Assertions.assertEquals(0, world.getTime());
+        Assertions.assertFalse(command.runConstruction(player1, label, new String[]{"", ""}));
+        Assertions.assertTrue(command.runConstruction(player1, label, new String[]{"t"}));
+        Assertions.assertNotNull(player1.nextMessage());
         player1.assertNoMoreSaid();
-        player2.assertNoMoreSaid();
+        Assertions.assertTrue(mapDataManager.get(worldMap).adminList().contains(UUID.fromString(uuid1)));
+        Assertions.assertTrue(mapDataManager.get(worldMap).allows(player1));
+        Assertions.assertFalse(mapDataManager.get(worldMap).adminList().contains(UUID.fromString(uuid2)));
+        Assertions.assertFalse(mapDataManager.get(worldMap).allows(player2));
+        MapData data = Utils.readMapData(worldMap, WorldUtils.getWorldFolder(worldMap));
+        Assertions.assertNotNull(data);
+        Assertions.assertTrue(data.allows(player1));
+        Assertions.assertFalse(data.allows(player2));
+        Assertions.assertTrue(data.adminList().contains(UUID.fromString(uuid1)));
+        Assertions.assertFalse(data.adminList().contains(UUID.fromString(uuid2)));
 
-        Assertions.assertTrue(command.runConstruction(player2, label, new String[]{"24001"}));
-        player2.assertSaid("Set map world time to 24001");
-        Assertions.assertEquals(1, worldMap.getTime());
-        Assertions.assertEquals(0, worldLobby.getTime());
-        Assertions.assertEquals(0, world.getTime());
-        player2.assertNoMoreSaid();
+        Assertions.assertTrue(command.runConstruction(player1, label, new String[]{"test2"}));
+        player1.assertSaid("test2 is now admin in Test mapadmin");
         player1.assertNoMoreSaid();
+        Assertions.assertTrue(mapDataManager.get(worldMap).adminList().contains(UUID.fromString(uuid1)));
+        Assertions.assertTrue(mapDataManager.get(worldMap).allows(player1));
+        Assertions.assertTrue(mapDataManager.get(worldMap).adminList().contains(UUID.fromString(uuid2)));
+        Assertions.assertTrue(mapDataManager.get(worldMap).allows(player2));
+        Assertions.assertTrue(((MutableMapData) mapDataManager.get(worldMap)).write());
+        data = Utils.readMapData(worldMap, WorldUtils.getWorldFolder(worldMap));
+        Assertions.assertTrue(data.allows(player1));
+        Assertions.assertTrue(data.allows(player2));
+        Assertions.assertTrue(data.adminList().contains(UUID.fromString(uuid1)));
+        Assertions.assertTrue(data.adminList().contains(UUID.fromString(uuid2)));
 
-        worldLobby.setTime(1);
-        world.setTime(1);
-        Assertions.assertTrue(command.runConstruction(player2, label, new String[]{"24000"}));
-        player2.assertSaid("Set map world time to 24000");
-        Assertions.assertEquals(0, worldMap.getTime());
-        Assertions.assertEquals(1, worldLobby.getTime());
-        Assertions.assertEquals(1, world.getTime());
+        Assertions.assertTrue(teleportManager.teleportPlayer(player2, new Location(worldMap, 0, 0, 0)));
+        Assertions.assertTrue(command.runConstruction(player2, label, new String[]{"test1"}));
+        player2.assertSaid("test1 is no longer admin in Test mapadmin");
         player2.assertNoMoreSaid();
-        player1.assertNoMoreSaid();
-
-        Assertions.assertTrue(command.runConstruction(player2, label, new String[]{"23999"}));
-        player2.assertSaid("Set map world time to 23999");
-        Assertions.assertEquals(23999, worldMap.getTime());
-        Assertions.assertEquals(1, worldLobby.getTime());
-        Assertions.assertEquals(1, world.getTime());
-        player2.assertNoMoreSaid();
-        player1.assertNoMoreSaid();
+        Assertions.assertFalse(mapDataManager.get(worldMap).adminList().contains(UUID.fromString(uuid1)));
+        Assertions.assertFalse(mapDataManager.get(worldMap).allows(player1));
+        Assertions.assertTrue(mapDataManager.get(worldMap).adminList().contains(UUID.fromString(uuid2)));
+        Assertions.assertTrue(mapDataManager.get(worldMap).allows(player2));
+        Assertions.assertTrue(((MutableMapData) mapDataManager.get(worldMap)).write());
+        data = Utils.readMapData(worldMap, WorldUtils.getWorldFolder(worldMap));
+        Assertions.assertFalse(data.allows(player1));
+        Assertions.assertTrue(data.allows(player2));
+        Assertions.assertFalse(data.adminList().contains(UUID.fromString(uuid1)));
+        Assertions.assertTrue(data.adminList().contains(UUID.fromString(uuid2)));
     }
 }
