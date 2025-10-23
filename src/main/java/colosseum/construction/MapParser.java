@@ -103,16 +103,16 @@ public final class MapParser implements Runnable {
         return chunkAccess.getChunk(Math.floorDiv(blockX, AnvilChunk.CHUNK_X_SIZE), Math.floorDiv(blockZ, AnvilChunk.CHUNK_Z_SIZE));
     }
 
-    private WrappedBaseBlock getBlockBare(World offlineWorld, Chunk chunk, int blockX, int blockY, int blockZ) {
-        return getBlockBare(offlineWorld, chunk.getMaterial(Math.floorMod(blockX, AnvilChunk.CHUNK_X_SIZE), blockY, Math.floorMod(blockZ, AnvilChunk.CHUNK_Z_SIZE)), blockX, blockY, blockZ);
+    private BareBlock getBareBlock(World offlineWorld, Chunk chunk, int blockX, int blockY, int blockZ) {
+        return getBareBlock(offlineWorld, chunk.getMaterial(Math.floorMod(blockX, AnvilChunk.CHUNK_X_SIZE), blockY, Math.floorMod(blockZ, AnvilChunk.CHUNK_Z_SIZE)), blockX, blockY, blockZ);
     }
 
-    private WrappedBaseBlock getBlockBare(World offlineWorld, MaterialData materialData, int blockX, int blockY, int blockZ) {
+    private BareBlock getBareBlock(World offlineWorld, MaterialData materialData, int blockX, int blockY, int blockZ) {
         char id = ((AnvilMaterialMap) offlineWorld.getGameFactory().getMaterialMap()).getOldMinecraftId(materialData);
         short typeId = (short) (id >> 4);
         byte data = (byte) (id & 0xF);
 
-        return new WrappedBaseBlock(materialData, typeId, data, blockX, blockY, blockZ);
+        return new BareBlock(typeId, data, blockX, blockY, blockZ);
     }
 
     /**
@@ -133,21 +133,24 @@ public final class MapParser implements Runnable {
         return res;
     }
 
-    private void setAir(World offlineWorld, Chunk chunk, WrappedBaseBlock block) {
-        setBlock(chunk, block, offlineWorld.getGameFactory().getMaterialMap().getGlobal().getAir());
+    private void setBlock(World offlineWorld, Chunk chunk, short typeId, byte data, int blockX, int blockY, int blockZ) {
+        setBlock(offlineWorld, chunk, new BareBlock(typeId, data, blockX, blockY, blockZ));
     }
 
-    private void setBlock(World offlineWorld, Chunk chunk, int blockX, int blockY, int blockZ, short typeId, byte data) {
-        chunk.setMaterial(Math.floorMod(blockX, AnvilChunk.CHUNK_X_SIZE), blockY, Math.floorMod(blockZ, AnvilChunk.CHUNK_Z_SIZE), ((AnvilMaterialMap) offlineWorld.getGameFactory().getMaterialMap()).getMaterialDataFromOldIds(typeId, data));
+    private void setBlock(World offlineWorld, Chunk chunk, BareBlock block) {
+        chunk.setMaterial(Math.floorMod(block.x, AnvilChunk.CHUNK_X_SIZE), block.y, Math.floorMod(block.z, AnvilChunk.CHUNK_Z_SIZE), ((AnvilMaterialMap) offlineWorld.getGameFactory().getMaterialMap()).getMaterialDataFromOldIds(block.typeId, block.data));
     }
 
-    private void setBlock(Chunk chunk, WrappedBaseBlock block, MaterialData newMaterialData) {
+    private void setBlock(Chunk chunk, BareBlock block, MaterialData newMaterialData) {
         chunk.setMaterial(Math.floorMod(block.x, AnvilChunk.CHUNK_X_SIZE), block.y, Math.floorMod(block.z, AnvilChunk.CHUNK_Z_SIZE), newMaterialData);
     }
 
+    private void setAir(World offlineWorld, Chunk chunk, BareBlock block) {
+        setBlock(chunk, block, offlineWorld.getGameFactory().getMaterialMap().getGlobal().getAir());
+    }
+
     @AllArgsConstructor
-    private static final class WrappedBaseBlock {
-        private final MaterialData materialData;
+    private static final class BareBlock {
         private final short typeId;
         private final byte data;
         private final int x;
@@ -199,7 +202,7 @@ public final class MapParser implements Runnable {
 
                         final int blockY = offsetY;
 
-                        WrappedBaseBlock wrappedObject = getBlockBare(offlineWorld, chunk, blockX, blockY, blockZ);
+                        BareBlock wrappedObject = getBareBlock(offlineWorld, chunk, blockX, blockY, blockZ);
 
                         // ID data
                         if (dataId.contains(wrappedObject.typeId)) {
@@ -211,7 +214,7 @@ public final class MapParser implements Runnable {
 
                         // Signs
                         if (wrappedObject.isMaterial(Material.SIGN_POST) || wrappedObject.isMaterial(Material.WALL_SIGN)) {
-                            WrappedBaseBlock wrappedBlockSponge = getBlockBare(offlineWorld, chunk, blockX, blockY - 1, blockZ);
+                            BareBlock wrappedBlockSponge = getBareBlock(offlineWorld, chunk, blockX, blockY - 1, blockZ);
                             if (wrappedBlockSponge.isMaterial(Material.SPONGE)) {
                                 StringBuilder name = new StringBuilder();
                                 try {
@@ -240,7 +243,7 @@ public final class MapParser implements Runnable {
                             if (wrappedObject.data <= 3) {
                                 // https://minecraft.fandom.com/wiki/Java_Edition_data_values/Pre-flattening#Leaves
                                 // For tree leaves, you add 4 to get the no decay version.
-                                setBlock(offlineWorld, chunk, wrappedObject.x, wrappedObject.y, wrappedObject.z, wrappedObject.typeId, (byte) (wrappedObject.data + 4));
+                                setBlock(offlineWorld, chunk, new BareBlock(wrappedObject.typeId, (byte) (wrappedObject.data + 4), wrappedObject.x, wrappedObject.y, wrappedObject.z));
                                 updated = true;
                                 continue;
                             }
@@ -248,7 +251,7 @@ public final class MapParser implements Runnable {
 
                         // Spawns + Borders
                         if (wrappedObject.isMaterial(Material.GOLD_PLATE)) {
-                            WrappedBaseBlock wrappedBlockWool = getBlockBare(offlineWorld, chunk, blockX, blockY - 1, blockZ);
+                            BareBlock wrappedBlockWool = getBareBlock(offlineWorld, chunk, blockX, blockY - 1, blockZ);
                             if (wrappedBlockWool.isMaterial(Material.WOOL)) {
                                 switch (wrappedBlockWool.data) {
                                     case 0 -> {
@@ -287,7 +290,7 @@ public final class MapParser implements Runnable {
                         }
 
                         if (wrappedObject.isMaterial(Material.IRON_PLATE)) {
-                            WrappedBaseBlock wrappedBlockWool = getBlockBare(offlineWorld, chunk, blockX, blockY - 1, blockZ);
+                            BareBlock wrappedBlockWool = getBareBlock(offlineWorld, chunk, blockX, blockY - 1, blockZ);
                             if (wrappedBlockWool.isMaterial(Material.WOOL)) {
                                 Wool woolData = new Wool(wrappedBlockWool.typeId, wrappedBlockWool.data);
                                 dataLocations.computeIfAbsent(woolData.getColor().name(), k -> new ArrayList<>()).add(wrappedBlockWool.getLocation());
@@ -370,7 +373,7 @@ public final class MapParser implements Runnable {
         return String.join(Constants.LOCATIONS_DELIMITER, locs.stream().map(loc -> String.format("%d,%d,%d", (int) loc.getX(), (int) loc.getY(), (int) loc.getZ())).toArray(String[]::new));
     }
 
-    private void setTeamLocations(String key, WrappedBaseBlock block, WrappedBaseBlock wool, World offlineWorld, Chunk chunk) {
+    private void setTeamLocations(String key, BareBlock block, BareBlock wool, World offlineWorld, Chunk chunk) {
         ConstructionSiteProvider.getSite().getPluginLogger().info("Parsing " + parsableWorldPathString + ": Found team location: " + key + " at " + UtilWorld.vecToStrClean(wool.getLocation()));
         teamLocations.computeIfAbsent(key, k -> new ArrayList<>()).add(wool.getLocation());
         setAir(offlineWorld, chunk, block);
