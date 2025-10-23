@@ -2,7 +2,7 @@ package colosseum.construction.manager;
 
 import colosseum.construction.ConstructionSite;
 import colosseum.construction.ConstructionSiteProvider;
-import colosseum.construction.MapParser;
+import colosseum.construction.parser.MapParser;
 import colosseum.construction.WorldUtils;
 import colosseum.construction.data.FinalizedMapData;
 import colosseum.utility.UtilZipper;
@@ -98,7 +98,7 @@ public final class ParseManager extends ConstructionSiteManager {
                         final FinalizedMapData mapData = site.getManager(MapDataManager.class).getFinalized(destination);
                         ConstructionSiteProvider.getScheduler().schedule(() -> {
                             WorldUtils.loadWorld(originalWorldRelativePath);
-                            parser = new MapParser(destination, mapData, args, startPoint, radius);
+                            parser = new MapParser(destination, mapData, args, startPoint.getBlockX(), startPoint.getBlockY(), startPoint.getBlockZ(), radius);
                             parserBukkitTask = ConstructionSiteProvider.getScheduler().scheduleAsync(parser, BukkitTask.class);
                         });
                     } catch (Exception e) {
@@ -113,20 +113,19 @@ public final class ParseManager extends ConstructionSiteManager {
 
     private void query() {
         if (parser != null) {
-            final AtomicReference<MapParser.Status> status = parser.getStatus();
             for (Player player : ConstructionSiteProvider.getSite().getServer().getOnlinePlayers()) {
                 TextComponent message = new TextComponent(String.format("A map parse task running. (%.2f%%)", getProgress() * 100.0));
                 message.setColor(ChatColor.RED);
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR, message);
             }
-            if (status.get().isRunning()) {
+            if (parser.isRunning()) {
                 return;
             }
             final FinalizedMapData mapData = parser.mapData;
             final File worldFolder = parser.parsableWorldFolder;
             ConstructionSiteProvider.getScheduler().scheduleAsync(() -> {
                 try {
-                    if (status.get().isFail()) {
+                    if (parser.isFail()) {
                         failAndCleanup(worldFolder, null);
                         return;
                     }
@@ -177,12 +176,7 @@ public final class ParseManager extends ConstructionSiteManager {
             parserBukkitTask = null;
         }
         if (parser != null) {
-            parser.getStatus().getAndUpdate((v) -> {
-                if (v.isRunning()) {
-                    return MapParser.Status.CANCELLED;
-                }
-                return v;
-            });
+            parser.cancel();
             File folder = parser.parsableWorldFolder;
             if (unregistering) {
                 FileUtils.deleteQuietly(folder);
