@@ -64,6 +64,9 @@ dependencies {
     shadow(implementation("commons-io:commons-io:${project.findProperty("commons_io_version")}") {
         isTransitive = false
     })
+    shadow(implementation("org.apache.commons:commons-lang3:${project.findProperty("commons_lang3_version")}") {
+        isTransitive = false
+    })
 
     compileOnly("org.projectlombok:lombok:${project.findProperty("lombok_version")}")
     annotationProcessor("org.projectlombok:lombok:${project.findProperty("lombok_version")}")
