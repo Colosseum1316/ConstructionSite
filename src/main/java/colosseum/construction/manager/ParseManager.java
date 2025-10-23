@@ -2,9 +2,9 @@ package colosseum.construction.manager;
 
 import colosseum.construction.ConstructionSite;
 import colosseum.construction.ConstructionSiteProvider;
-import colosseum.construction.parser.MapParser;
 import colosseum.construction.WorldUtils;
 import colosseum.construction.data.FinalizedMapData;
+import colosseum.construction.parser.MapParser;
 import colosseum.utility.UtilZipper;
 import colosseum.utility.WorldMapConstants;
 import net.md_5.bungee.api.ChatColor;
@@ -21,7 +21,6 @@ import java.io.File;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
 public final class ParseManager extends ConstructionSiteManager {

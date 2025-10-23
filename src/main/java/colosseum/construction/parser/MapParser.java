@@ -11,6 +11,7 @@ import lombok.NonNull;
 import nl.rutgerkok.hammer.ChunkAccess;
 import nl.rutgerkok.hammer.anvil.AnvilChunk;
 import nl.rutgerkok.hammer.anvil.tag.AnvilFormat;
+import nl.rutgerkok.hammer.util.MaterialNotFoundException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.bukkit.Material;
@@ -28,7 +29,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
-@SuppressWarnings({"unused", "deprecation", "FieldMayBeFinal", "ClassCanBeRecord"})
+@SuppressWarnings({"unused", "deprecation", "FieldMayBeFinal"})
 public final class MapParser implements Runnable {
     @NotNull
     public final File parsableWorldFolder;
@@ -67,7 +68,7 @@ public final class MapParser implements Runnable {
             try {
                 dataId.add(Short.parseShort(arg));
             } catch (NumberFormatException e) {
-                site.getPluginLogger().log(Level.WARNING, e.getMessage(), e);
+                site.getPluginLogger().log(Level.WARNING, "Invalid argument: " + arg, e);
             }
         }
     }
@@ -166,7 +167,13 @@ public final class MapParser implements Runnable {
 
                         final int blockY = offsetY;
 
-                        Block baseBlock = world.getBlock(chunk, blockX, blockY, blockZ);
+                        Block baseBlock;
+                        try {
+                            baseBlock = world.getBlock(chunk, blockX, blockY, blockZ);
+                        } catch (MaterialNotFoundException e) {
+                            site.getPluginLogger().log(Level.WARNING, String.format("Unknown material at %d,%d,%d, ignoring. Please double check your world save.", blockX, blockY, blockZ), e);
+                            continue;
+                        }
 
                         // ID data
                         if (dataId.contains(baseBlock.getId())) {
@@ -179,18 +186,15 @@ public final class MapParser implements Runnable {
                         if (baseBlock.isMaterial(Material.SIGN_POST) || baseBlock.isMaterial(Material.WALL_SIGN)) {
                             Block sponge = world.getBlock(chunk, blockX, blockY - 1, blockZ);
                             if (sponge.isMaterial(Material.SPONGE)) {
-                                StringBuilder name = new StringBuilder();
-                                try {
-                                    String[] signText = world.readSign(chunk, baseBlock);
-                                    name = new StringBuilder(signText[0]);
-                                    for (int signLineNum = 1; signLineNum <= 3; signLineNum++) {
-                                        String l = signText[signLineNum];
-                                        if (StringUtils.isNotBlank(l)) {
-                                            name.append(" ").append(l);
-                                        }
+                                StringBuilder name;
+
+                                String[] signText = world.readSign(chunk, baseBlock);
+                                name = new StringBuilder(signText[0]);
+                                for (int signLineNum = 1; signLineNum <= 3; signLineNum++) {
+                                    String l = signText[signLineNum];
+                                    if (StringUtils.isNotBlank(l)) {
+                                        name.append(" ").append(l);
                                     }
-                                } catch (Exception e) {
-                                    site.getPluginLogger().log(Level.WARNING, e.getMessage(), e);
                                 }
 
                                 customLocations.computeIfAbsent(name.toString(), k -> new ArrayList<>()).add(sponge.getLocation());
@@ -203,7 +207,8 @@ public final class MapParser implements Runnable {
                         // Tree leaves
                         // https://minecraft.fandom.com/wiki/Java_Edition_data_values/Pre-flattening#Leaves
                         // For tree leaves, you add 4 to get the no decay version.
-                        if ((baseBlock.isMaterial(Material.LEAVES) || baseBlock.isMaterial(Material.LEAVES_2)) && baseBlock.getData() <= 3) {
+                        if ((baseBlock.isMaterial(Material.LEAVES) || baseBlock.isMaterial(Material.LEAVES_2))
+                                && baseBlock.getData() <= 3) {
                             world.setBlock(baseBlock, baseBlock.getId(), (byte) (baseBlock.getData() + 4));
                             continue;
                         }
