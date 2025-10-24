@@ -64,7 +64,6 @@ class TeleportMapCommand: AbstractTeleportCommand(
                 if (getTeleportManager().teleportPlayer(caller, world.spawnLocation)) {
                     caller.gameMode = GameMode.CREATIVE
                     caller.isFlying = true
-                    ConstructionSiteProvider.getSite().pluginLogger.info("Teleported ${caller.name} to ${WorldUtils.getWorldRelativePath(world)}")
                 } else {
                     sayTeleportFail(caller)
                 }

@@ -131,6 +131,7 @@ tasks.shadowJar {
         exclude(dependency("org.projectlombok:lombok:.*"))
     }
     relocate("org.apache.commons.io", "colosseum.construction.shadow.org.apache.commons.io")
+    relocate("org.apache.commons.lang3", "colosseum.construction.shadow.org.apache.commons.lang3")
 }
 
 tasks.build {

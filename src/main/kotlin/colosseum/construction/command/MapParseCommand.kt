@@ -93,7 +93,7 @@ class MapParseCommand: AbstractMapAdminCommand(
         for (other in world.players) {
             ConstructionSiteProvider.getSite().getManager(TeleportManager::class.java).teleportToServerSpawn(other)
         }
-        Command.broadcastCommandMessage(caller, "Parse ${data.mapName} (${data.mapGameType.name})", true)
+        Command.broadcastCommandMessage(caller, "Schedule a parse on \"${data.mapName}\"", true)
         ConstructionSiteProvider.getSite().pluginLogger.info("${caller.name} requests a scheduled parse task on $path")
         getParseManager().schedule(world, args0.asList(), parseLoc, radius)
         return true
