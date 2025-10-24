@@ -122,7 +122,7 @@ public final class PluginUtils {
                 }
                 out.close();
                 inputStream.close();
-                Validate.isTrue(Files.asByteSource(zip).hash(Hashing.sha256()).toString().equals("b4937d2c0c225b578b48fcca3c65250f469101cb0aa22373e2d0ac9bec885354"), "Wrong file.");
+                Validate.isTrue(Files.asByteSource(zip).hash(Hashing.sha256()).toString().equals("73bb1f64abef831d84d2832c8b88fe87a1785dc2bfe30b6de6b592706a4cbaa1"), "Wrong file.");
                 UtilZipper.unzip(zip, destination);
             } catch (Exception e) {
                 throw new Error(e);
