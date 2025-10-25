@@ -48,6 +48,9 @@ dependencies {
     shadow(implementation("colosseum.minecraft:ColosseumUtility:0.1-SNAPSHOT") {
         exclude("colosseum.minecraft", "colosseumspigot-api")
     })
+    shadow(implementation("colosseum.minecraft:flashlight:0.1-SNAPSHOT") {
+        isTransitive = false
+    })
     shadow(implementation("commons-io:commons-io:${project.findProperty("commons_io_version")}") {
         isTransitive = false
     })
