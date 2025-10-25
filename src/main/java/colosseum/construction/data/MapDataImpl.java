@@ -108,7 +108,7 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
             }
         }
         if (mapGameType == null) {
-            site.getPluginLogger().warning("World " + worldFolder.getAbsolutePath() + " has malformed GameType info. Falling back to None.");
+            site.getPluginLogger().warning("World " + worldFolder.getAbsolutePath() + " has malformed GameType info. Fall back to None.");
             mapGameType = GameType.None;
         }
         if (mapGameType.equals(GameType.None)) {

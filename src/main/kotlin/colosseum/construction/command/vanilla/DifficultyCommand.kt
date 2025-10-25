@@ -47,7 +47,7 @@ class DifficultyCommand: AbstractMapAdminCommand(
 
         try {
             val v = args[0].toInt()
-            if (v < 0 || v > 3) {
+            if (v !in 0..3) {
                 return false
             }
             val difficulty = Difficulty.getByValue(v)

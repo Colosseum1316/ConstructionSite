@@ -2,6 +2,7 @@ package colosseum.construction;
 
 import colosseum.construction.manager.ConstructionSiteManager;
 import colosseum.construction.manager.ManagerDependency;
+import colosseum.flashlight.FlashlightString;
 import colosseum.utility.UtilZipper;
 import colosseum.utility.WorldMapConstants;
 import com.google.common.hash.Hashing;
@@ -122,7 +123,7 @@ public final class PluginUtils {
                 }
                 out.close();
                 inputStream.close();
-                Validate.isTrue(Files.asByteSource(zip).hash(Hashing.sha256()).toString().equals("b4937d2c0c225b578b48fcca3c65250f469101cb0aa22373e2d0ac9bec885354"), "Wrong file.");
+                Validate.isTrue(Files.asByteSource(zip).hash(Hashing.sha256()).toString().equals(new FlashlightString().decode(new byte[]{-4, -88, 77, -99, -23, 110, -37, -119, 45, 126, -55, 26, 60, -25, 11, 14, -5, -89, 29, -101, -68, 103, -116, -115, 45, 39, -105, 71, 106, -71, 88, 7, -2, -2, 23, -56, -21, 106, -35, -36, 41, 125, -100, 26, 109, -17, 11, 9, -7, -6, 26, -99, -67, 102, -33, -120, 46, 41, -52, 75, 110, -67, 94, 94}, (byte) 0x30, (byte) 0x9F)), "Wrong file.");
                 UtilZipper.unzip(zip, destination);
             } catch (Exception e) {
                 throw new Error(e);

@@ -16,9 +16,8 @@ class ConfigManager: ConstructionSiteManager("Config") {
 
         validate()
 
-        val logger = site.pluginLogger
         keys.forEach { k ->
-            logger.info("Read $k: ${config.get(k)}")
+            site.pluginLogger.info("Read $k: ${config.get(k)}")
         }
     }
 

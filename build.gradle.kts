@@ -37,20 +37,7 @@ base {
 }
 
 repositories {
-    mavenCentral()
-    maven("https://maven.enginehub.org/repo/")
-    maven("https://repo.papermc.io/repository/maven-public/")
-    exclusiveContent {
-        forRepository {
-            maven("https://coffeewarehouse.harborbucket.top/snapshots")
-        }
-        filter {
-            includeGroup("colosseum.minecraft")
-            includeGroup("colosseum.minecraft.nl.rutgerkok")
-            includeGroup("net.md-5")
-            includeGroup("com.github.MockBukkit")
-        }
-    }
+    maven("https://coffeewarehouse.harborbucket.top/snapshots")
 }
 
 dependencies {
@@ -61,7 +48,13 @@ dependencies {
     shadow(implementation("colosseum.minecraft:ColosseumUtility:0.1-SNAPSHOT") {
         exclude("colosseum.minecraft", "colosseumspigot-api")
     })
+    shadow(implementation("colosseum.minecraft:flashlight:0.1-SNAPSHOT") {
+        isTransitive = false
+    })
     shadow(implementation("commons-io:commons-io:${project.findProperty("commons_io_version")}") {
+        isTransitive = false
+    })
+    shadow(implementation("org.apache.commons:commons-lang3:${project.findProperty("commons_lang3_version")}") {
         isTransitive = false
     })
 
@@ -74,6 +67,7 @@ dependencies {
     testImplementation("com.github.MockBukkit:MockBukkit:v1.8-spigot-SNAPSHOT") {
         exclude("org.spigotmc")
     }
+    testImplementation("org.apache.commons:commons-lang3:${project.findProperty("commons_lang3_version")}")
     testImplementation("commons-io:commons-io:${project.findProperty("commons_io_version")}")
 }
 
@@ -128,6 +122,7 @@ tasks.shadowJar {
         exclude(dependency("org.projectlombok:lombok:.*"))
     }
     relocate("org.apache.commons.io", "colosseum.construction.shadow.org.apache.commons.io")
+    relocate("org.apache.commons.lang3", "colosseum.construction.shadow.org.apache.commons.lang3")
 }
 
 tasks.build {
