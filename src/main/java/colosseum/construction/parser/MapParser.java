@@ -14,6 +14,7 @@ import nl.rutgerkok.hammer.anvil.tag.AnvilFormat;
 import nl.rutgerkok.hammer.util.MaterialNotFoundException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Material;
 import org.bukkit.material.Wool;
 import org.jetbrains.annotations.NotNull;
@@ -260,13 +261,9 @@ public final class MapParser implements Runnable {
             world.getOfflineWorld().getLevelTag().setString(AnvilFormat.LevelTag.LEVEL_NAME, String.format("%s - %s  (%s)", mapData.getMapName().get(), mapData.getMapCreator().get(), mapData.getMapGameType().get().name()));
             world.getOfflineWorld().saveLevelTag();
 
-            world.getVisitedChunks().forEach((p, c) -> {
-                try {
-                    chunkAccess.saveChunk(c);
-                } catch (Exception e) {
-                    throw new Error(e);
-                }
-            });
+            for (Map.Entry<Pair<Integer, Integer>, AnvilChunk> c : world.getVisitedChunks().entrySet()) {
+                chunkAccess.saveChunk(c.getValue());
+            }
 
             try (FileWriter writer = new FileWriter(parsableWorldFolder.toPath().resolve(WorldMapConstants.WORLDCONFIG_DAT).toFile());
                  BufferedWriter buffer = new BufferedWriter(writer)
