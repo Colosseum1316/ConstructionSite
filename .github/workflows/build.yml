@@ -10,11 +10,8 @@ on:
       - "src/main/resources/Lobby.zip"
       - "src/main/resources/META-INF/services/"
       - "src/test/java/**/*.java"
+      - "src/test/kotlin/**/*.kt"
       - "!.gitignore"
-      - "build.gradle.kts"
-      - "gradle.properties"
-      - "properties.gradle.kts"
-      - "settings.gradle.kts"
       - "!README.md"
       - "!README"
       - "!LICENSE"
@@ -28,11 +25,8 @@ on:
       - "src/main/resources/Lobby.zip"
       - "src/main/resources/META-INF/services/"
       - "src/test/java/**/*.java"
+      - "src/test/kotlin/**/*.kt"
       - "!.gitignore"
-      - "build.gradle.kts"
-      - "gradle.properties"
-      - "properties.gradle.kts"
-      - "settings.gradle.kts"
       - "!README.md"
       - "!README"
       - "!LICENSE"
@@ -68,19 +62,21 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: ${{ matrix.java-version }}
-          distribution: corretto
+          distribution: temurin
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+      - name: Setup Maven
+        uses: stCarolas/setup-maven@v5
+        with:
+          maven-version: 3.8.7
 
       - name: Build
-        run: ./gradlew build --refresh-dependencies
+        run: mvn -B -V -e -ntp -Dstyle.color=always clean package verify
 
       - name: Write test report
         uses: mikepenz/action-junit-report@v5
         if: ${{ success() || failure() }}
         with:
-          report_paths: './build/test-results/test/TEST-*.xml'
+          report_paths: ./target/surefire-reports/TEST-*.xml
           include_passed: true
           detailed_summary: true
           fail_on_failure: true
@@ -89,13 +85,10 @@ jobs:
           check_title_template: '{{SUITE_NAME}} | {{TEST_NAME}}'
 
       - name: JaCoCo Code Coverage Report
-        uses: PavanMudigonda/jacoco-reporter@v5.0
+        uses: jjmrocha/jacoco-summary@v1.1.1
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         with:
-          coverage_results_path: build/reports/jacoco/test/jacocoTestReport.xml
-          coverage_report_name: Coverage (${{ matrix.os }}) (Java ${{ matrix.java-version }})
-          coverage_report_title: JaCoCo (${{ matrix.os }}) (Java ${{ matrix.java-version }})
-          fail_below_threshold: false
-          publish_only_summary: true
+          jacoco-csv-file: target/jacoco-report/jacoco.csv
 
       - name: Upload artifacts
         if: ${{ (github.ref_name == 'master' && github.event_name == 'push') || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' }}
@@ -103,7 +96,8 @@ jobs:
         with:
           name: ConstructionSite-${{ github.run_id }}-${{ matrix.os }}-java-${{ matrix.java-version }}
           path: |
-            build/libs/*.jar
-            build/reports/
+            target/*.jar
+            target/jacoco-report
+            target/surefire-reports
           retention-days: 1
           overwrite: true

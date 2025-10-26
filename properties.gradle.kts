@@ -1,1 +1,0 @@
-extra["compilation_java_version"] = 17
