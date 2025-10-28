@@ -4,7 +4,7 @@ import colosseum.construction.Constants;
 import colosseum.construction.ConstructionSite;
 import colosseum.construction.ConstructionSiteProvider;
 import colosseum.construction.data.FinalizedMapData;
-import colosseum.utility.TeamNames;
+import colosseum.utility.TeamName;
 import colosseum.utility.UtilWorld;
 import colosseum.utility.WorldMapConstants;
 import lombok.NonNull;
@@ -53,23 +53,22 @@ public final class MapParser implements Runnable {
             @NonNull File parsableWorldFolder,
             @NonNull FinalizedMapData mapData,
             List<String> args,
-            int x, int y, int z, int radius
+            int x, int z, int radius
     ) {
         this.parsableWorldFolder = parsableWorldFolder;
         this.parsableWorldPathString = parsableWorldFolder.getAbsolutePath();
 
-        this.startPoint = new Location(x, y, z);
+        this.startPoint = new Location(x, 0, z);
         this.radius = radius;
         Validate.isTrue(radius > 0, "Radius must be greater than 0");
         this.wholeCubeSize = (long) (Math.pow(radius * 2 + 1, 2) * 256);
 
-        final ConstructionSite site = ConstructionSiteProvider.getSite();
         this.mapData = mapData;
         for (String arg : args) {
             try {
                 dataId.add(Short.parseShort(arg));
             } catch (NumberFormatException e) {
-                site.getPluginLogger().log(Level.WARNING, "Invalid argument: " + arg, e);
+                ConstructionSiteProvider.getSite().getPluginLogger().log(Level.WARNING, "Invalid argument: " + arg, e);
             }
         }
     }
@@ -230,7 +229,9 @@ public final class MapParser implements Runnable {
                                     world.setAir(baseBlock);
                                     world.setAir(wool);
                                 } else if (data >= 1 && data <= 15) {
-                                    setTeamLocations(world, TeamNames.values()[data], baseBlock, wool);
+                                    teamLocations.computeIfAbsent(TeamName.values()[data].name(), k -> new ArrayList<>()).add(wool.getLocation());
+                                    world.setAir(baseBlock);
+                                    world.setAir(wool);
                                 } else {
                                     throw new IllegalStateException("Unexpected wool data: " + data);
                                 }
@@ -307,11 +308,5 @@ public final class MapParser implements Runnable {
 
     private String locationsToString(List<Location> locs) {
         return String.join(Constants.LOCATIONS_DELIMITER, locs.stream().map(loc -> String.format("%d,%d,%d", (int) loc.getX(), (int) loc.getY(), (int) loc.getZ())).toArray(String[]::new));
-    }
-
-    private void setTeamLocations(World world, TeamNames teamName, Block block, Block wool) throws Exception {
-        teamLocations.computeIfAbsent(teamName.name(), k -> new ArrayList<>()).add(wool.getLocation());
-        world.setAir(block);
-        world.setAir(wool);
     }
 }

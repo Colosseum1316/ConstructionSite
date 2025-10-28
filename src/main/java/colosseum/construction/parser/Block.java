@@ -9,8 +9,8 @@ final class Block {
     @Getter
     @Setter
     private short id;
-    @Setter
     @Getter
+    @Setter
     private byte data;
     private Location location;
 

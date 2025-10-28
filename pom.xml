@@ -23,10 +23,16 @@
     <repositories>
         <repository>
             <id>coffeewarehouse-snapshots</id>
-            <url>https://coffeewarehouse.harborbucket.top/snapshots</url>
+            <name>Coffee Warehouse</name>
+            <url>https://coffeewarehouse.harborbucket.top/snapshots/</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
+        </repository>
+        <repository>
+            <id>coffeewarehouse-releases</id>
+            <name>Coffee Warehouse</name>
+            <url>https://coffeewarehouse.harborbucket.top/releases/</url>
         </repository>
     </repositories>
 
@@ -52,13 +58,13 @@
         <dependency>
             <groupId>colosseum.minecraft</groupId>
             <artifactId>ColosseumUtility</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <version>0.1</version>
             <type>jar</type>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
-                    <groupId>colosseum.minecraft</groupId>
-                    <artifactId>colosseumspigot-api</artifactId>
+                    <groupId>org.spigotmc</groupId>
+                    <artifactId>spigot-api</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -163,6 +169,7 @@
                             <goal>compile</goal>
                         </goals>
                         <configuration>
+                            <jvmTarget>${maven.compiler.target}</jvmTarget>
                             <sourceDirs>
                                 <sourceDir>src/main/kotlin</sourceDir>
                                 <sourceDir>src/main/java</sourceDir>
@@ -175,6 +182,7 @@
                             <goal>test-compile</goal>
                         </goals>
                         <configuration>
+                            <jvmTarget>${maven.compiler.target}</jvmTarget>
                             <sourceDirs>
                                 <sourceDir>src/test/kotlin</sourceDir>
                                 <sourceDir>src/test/java</sourceDir>

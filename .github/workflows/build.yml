@@ -11,6 +11,7 @@ on:
       - "src/main/resources/META-INF/services/"
       - "src/test/java/**/*.java"
       - "src/test/kotlin/**/*.kt"
+      - "pom.xml"
       - "!.gitignore"
       - "!README.md"
       - "!README"
@@ -26,6 +27,7 @@ on:
       - "src/main/resources/META-INF/services/"
       - "src/test/java/**/*.java"
       - "src/test/kotlin/**/*.kt"
+      - "pom.xml"
       - "!.gitignore"
       - "!README.md"
       - "!README"
@@ -62,16 +64,11 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: ${{ matrix.java-version }}
-          distribution: temurin
+          distribution: corretto
           cache: maven
 
-      - name: Setup Maven
-        uses: stCarolas/setup-maven@v5
-        with:
-          maven-version: 3.8.7
-
       - name: Build
-        run: mvn -B -V -e -ntp -Dstyle.color=always clean package verify
+        run: mvn -B -V -e -ntp -Dstyle.color=always clean verify
 
       - name: Write test report
         uses: mikepenz/action-junit-report@v5

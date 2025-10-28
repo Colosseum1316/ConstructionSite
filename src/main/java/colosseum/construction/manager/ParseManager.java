@@ -97,7 +97,7 @@ public final class ParseManager extends ConstructionSiteManager {
                         final FinalizedMapData mapData = site.getManager(MapDataManager.class).getFinalized(destination);
                         ConstructionSiteProvider.getScheduler().schedule(() -> {
                             WorldUtils.loadWorld(originalWorldRelativePath);
-                            parser = new MapParser(destination, mapData, args, startPoint.getBlockX(), startPoint.getBlockY(), startPoint.getBlockZ(), radius);
+                            parser = new MapParser(destination, mapData, args, startPoint.getBlockX(), startPoint.getBlockZ(), radius);
                             parserBukkitTask = ConstructionSiteProvider.getScheduler().scheduleAsync(parser, BukkitTask.class);
                         });
                     } catch (Exception e) {
