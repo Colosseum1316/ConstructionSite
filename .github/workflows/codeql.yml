@@ -8,10 +8,8 @@ on:
       - "src/main/java/**/*.java"
       - "src/main/kotlin/**/*.kt"
       - "src/test/java/**/*.java"
-      - "build.gradle.kts"
-      - "gradle.properties"
-      - "properties.gradle.kts"
-      - "settings.gradle.kts"
+      - "src/test/kotlin/**/*.kt"
+      - "pom.xml"
   pull_request:
     branches:
       - "master"
@@ -19,10 +17,8 @@ on:
       - "src/main/java/**/*.java"
       - "src/main/kotlin/**/*.kt"
       - "src/test/java/**/*.java"
-      - "build.gradle.kts"
-      - "gradle.properties"
-      - "properties.gradle.kts"
-      - "settings.gradle.kts"
+      - "src/test/kotlin/**/*.kt"
+      - "pom.xml"
   schedule:
     - cron: "0 0 * * 0"
 
@@ -54,9 +50,9 @@ jobs:
           build-mode: ${{ matrix.build-mode }}
 
       - name: Manual build mode
-        if: matrix.build-mode == 'manual'
+        if: ${{ matrix.build-mode == 'manual' }}
         shell: bash
-        run: ./gradlew build --refresh-dependencies
+        run: mvn -B -V -e -ntp -Dstyle.color=always clean package
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3

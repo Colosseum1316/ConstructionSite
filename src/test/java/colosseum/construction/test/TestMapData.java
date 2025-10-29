@@ -16,6 +16,7 @@ import colosseum.utility.WorldMapConstants;
 import colosseum.utility.arcade.GameType;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import org.apache.commons.io.FileUtils;
 import org.bukkit.util.Vector;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -73,7 +74,7 @@ class TestMapData {
     void setupEach() {
         File file = tempWorldDir.toPath().resolve(WorldMapConstants.MAP_DAT).toFile();
         ConstructionSiteProvider.getSite().getPluginLogger().info("Deleting " + file.getAbsolutePath());
-        file.delete();
+        FileUtils.deleteQuietly(file);
     }
 
     private DummyMapDataRead testRead0(final String testCase) {

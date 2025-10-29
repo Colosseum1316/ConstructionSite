@@ -64,7 +64,7 @@ class TeleportManager: ConstructionSiteManager("Teleport") {
         }
         return player.teleport(destination).also { v ->
             if (v) {
-                ConstructionSiteProvider.getSite().pluginLogger.info("Teleported ${player.name} to ${locToStrClean(destination)} in ${WorldUtils.getWorldRelativePath(destination.world)}")
+                ConstructionSiteProvider.getSite().pluginLogger.info("Teleported ${player.name} to ${WorldUtils.getWorldRelativePath(destination.world)} ${locToStrClean(destination)}")
             } else {
                 ConstructionSiteProvider.getSite().pluginLogger.warning("Internal failure whilst teleporting ${player.name}!!!")
             }
