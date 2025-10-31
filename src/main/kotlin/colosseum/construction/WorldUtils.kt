@@ -129,4 +129,9 @@ object WorldUtils {
         }
         ConstructionSiteProvider.getSite().pluginLogger.info("Unloaded world \"$path\". World ${(if (save) "" else "not ")}saved.")
     }
+
+    @JvmStatic
+    fun mapDatFile(worldFolder: File): File {
+        return worldFolder.resolve(WorldMapConstants.MAP_DAT)
+    }
 }

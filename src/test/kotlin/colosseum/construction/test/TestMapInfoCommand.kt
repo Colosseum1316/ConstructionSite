@@ -12,7 +12,6 @@ import colosseum.construction.test.dummies.DummySite
 import colosseum.construction.test.dummies.DummySite3
 import colosseum.utility.WorldMapConstants
 import org.bukkit.Location
-import org.bukkit.entity.Player
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll

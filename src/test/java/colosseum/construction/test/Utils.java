@@ -2,9 +2,9 @@ package colosseum.construction.test;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
 import colosseum.construction.ConstructionSite;
+import colosseum.construction.WorldUtils;
 import colosseum.construction.test.dummies.DummySite;
 import colosseum.construction.test.dummies.data.DummyMapDataRead;
-import colosseum.utility.WorldMapConstants;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.bukkit.World;
@@ -21,7 +21,7 @@ import java.util.logging.SimpleFormatter;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Utils {
     public static void writeMapData(final File worldDir, final String testCase) {
-        File mapDat = worldDir.toPath().resolve(WorldMapConstants.MAP_DAT).toFile();
+        File mapDat = WorldUtils.mapDatFile(worldDir);
         Assertions.assertDoesNotThrow(() -> {
             try (FileWriter writer = new FileWriter(mapDat); BufferedWriter buffer = new BufferedWriter(writer)) {
                 buffer.write(testCase);

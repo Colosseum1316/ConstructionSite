@@ -4,6 +4,7 @@ import be.seeseemelk.mockbukkit.MockBukkit
 import be.seeseemelk.mockbukkit.WorldMock
 import be.seeseemelk.mockbukkit.entity.PlayerMock
 import colosseum.construction.ConstructionSiteProvider
+import colosseum.construction.WorldUtils
 import colosseum.construction.data.DummyMapData
 import colosseum.construction.data.FinalizedMapData
 import colosseum.construction.data.MapDataImpl
@@ -12,7 +13,6 @@ import colosseum.construction.test.dummies.DummySite1
 import colosseum.construction.test.dummies.data.DummyMapDataRead
 import colosseum.construction.test.dummies.data.DummyMapDataWrite
 import colosseum.utility.MapData
-import colosseum.utility.WorldMapConstants
 import colosseum.utility.arcade.GameType
 import com.google.common.collect.ImmutableMap
 import com.google.common.collect.ImmutableSet
@@ -75,8 +75,7 @@ internal class TestMapData {
 
     @BeforeEach
     fun setupEach() {
-        val file: File =
-            tempWorldDir!!.toPath().resolve(WorldMapConstants.MAP_DAT).toFile()
+        val file: File = WorldUtils.mapDatFile(tempWorldDir!!)
         ConstructionSiteProvider.getSite().getPluginLogger().info("Deleting " + file.absolutePath)
         FileUtils.deleteQuietly(file)
     }
@@ -260,13 +259,9 @@ internal class TestMapData {
 
     @Test
     fun assertInitialization() {
-        Assertions.assertFalse(
-            tempWorldDir!!.toPath().resolve(WorldMapConstants.MAP_DAT).toFile().exists()
-        )
+        Assertions.assertFalse(WorldUtils.mapDatFile(tempWorldDir!!).exists())
         val data: MapData = MapDataImpl(null, tempWorldDir!!)
-        Assertions.assertTrue(
-            tempWorldDir!!.toPath().resolve(WorldMapConstants.MAP_DAT).toFile().exists()
-        )
+        Assertions.assertTrue(WorldUtils.mapDatFile(tempWorldDir!!).exists())
         Assertions.assertEquals("MapName", data.mapName)
         Assertions.assertEquals("MapCreator", data.mapCreator)
         Assertions.assertEquals(GameType.None, data.mapGameType)

@@ -64,7 +64,7 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
         if (world != null) {
             Validate.isTrue(WorldUtils.getWorldFolder(world).equals(worldFolder));
         }
-        this.datFile = worldFolder.toPath().resolve(WorldMapConstants.MAP_DAT).toFile();
+        this.datFile = WorldUtils.mapDatFile(worldFolder);
         if (this.datFile.exists()) {
             read();
         } else {
