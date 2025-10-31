@@ -11,6 +11,7 @@ import org.bukkit.command.RemoteConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Getter
@@ -20,15 +21,15 @@ public abstract class ConstructionSiteCommand implements CommandExecutor {
     private final String usage;
 
     protected ConstructionSiteCommand(String name) {
-        this(List.of(name));
+        this(Arrays.asList(name));
     }
 
     protected ConstructionSiteCommand(String name, String usage) {
-        this(List.of(name), usage);
+        this(Arrays.asList(name), usage);
     }
 
     protected ConstructionSiteCommand(String name, String description, String usage) {
-        this(List.of(name), description, usage);
+        this(Arrays.asList(name), description, usage);
     }
 
     protected ConstructionSiteCommand(List<String> aliases) {

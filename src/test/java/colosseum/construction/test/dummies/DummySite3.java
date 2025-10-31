@@ -12,8 +12,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -36,7 +36,7 @@ public final class DummySite3 implements DummySite {
 
         managers.clear();
         managersReference.clear();
-        managersReference.addAll(PluginUtils.discoverManagers(List.of(WorldManager.class, MapDataManager.class, TeleportManager.class)));
+        managersReference.addAll(PluginUtils.discoverManagers(Arrays.asList(WorldManager.class, MapDataManager.class, TeleportManager.class)));
 
         serverMock = ConstructionSiteServerMock.mock();
     }

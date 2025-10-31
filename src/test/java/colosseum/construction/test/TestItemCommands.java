@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
-import java.util.List;
+import java.util.Arrays;
 
 class TestItemCommands {
     private DummySite plugin;
@@ -89,7 +89,7 @@ class TestItemCommands {
 
         item = player.getItemInHand();
         Assertions.assertEquals(2, item.getItemMeta().getLore().size());
-        Assertions.assertLinesMatch(List.of(
+        Assertions.assertLinesMatch(Arrays.asList(
                 "A line of lore.",
                 "Another line §cof lore."
         ), item.getItemMeta().getLore());

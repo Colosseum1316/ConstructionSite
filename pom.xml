@@ -52,15 +52,11 @@
             <groupId>colosseum.minecraft.nl.rutgerkok</groupId>
             <artifactId>hammer</artifactId>
             <version>0.1-SNAPSHOT</version>
-            <type>jar</type>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>colosseum.minecraft</groupId>
             <artifactId>ColosseumUtility</artifactId>
             <version>0.1</version>
-            <type>jar</type>
-            <scope>compile</scope>
             <exclusions>
                 <exclusion>
                     <groupId>org.spigotmc</groupId>
@@ -72,22 +68,16 @@
             <groupId>colosseum.minecraft</groupId>
             <artifactId>flashlight</artifactId>
             <version>0.1-SNAPSHOT</version>
-            <type>jar</type>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>${commons_io.version}</version>
-            <type>jar</type>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${commons_lang3.version}</version>
-            <type>jar</type>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

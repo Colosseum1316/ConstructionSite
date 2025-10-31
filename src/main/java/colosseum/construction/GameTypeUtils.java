@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class GameTypeUtils {
@@ -16,7 +17,7 @@ public final class GameTypeUtils {
     }
 
     public static List<GameType> getGameTypes() {
-        return GameType.getEntries().stream().filter(v -> v != GameType.None).toList();
+        return GameType.getEntries().stream().filter(v -> v != GameType.None).collect(Collectors.toList());
     }
 
     public static GameType determineGameType(String raw, boolean noneOnError) {

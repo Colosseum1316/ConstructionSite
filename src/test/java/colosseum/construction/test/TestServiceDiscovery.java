@@ -14,14 +14,16 @@ import colosseum.construction.test.dummies.manager.DummyManager8;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.ServiceLoader;
+import java.util.stream.StreamSupport;
 
 class TestServiceDiscovery {
     @Test
     void testServiceLoader() {
         ServiceLoader<ConstructionSiteCommand> loader = ServiceLoader.load(ConstructionSiteCommand.class, ConstructionSiteCommand.class.getClassLoader());
-        Assertions.assertEquals(24, loader.stream().toList().size());
+        Assertions.assertEquals(24, StreamSupport.stream(loader.spliterator(), false).count());
         for (Object provider : loader) {
             Class<? extends ConstructionSiteCommand> providerClass = provider.getClass().asSubclass(ConstructionSiteCommand.class);
             Assertions.assertDoesNotThrow(() -> {
@@ -37,7 +39,7 @@ class TestServiceDiscovery {
     @Test
     void testConstructionSiteManagerDiscoveryCyclingGraph() {
         Assertions.assertThrows(IllegalStateException.class, () -> {
-            PluginUtils.discoverManagers(List.of(DummyManager1.class, DummyManager2.class));
+            PluginUtils.discoverManagers(Arrays.asList(DummyManager1.class, DummyManager2.class));
         });
     }
 
@@ -48,7 +50,7 @@ class TestServiceDiscovery {
             // 5 -> 3 -> 4
             // ^    ^    ^
             // 8 -> 7 ---|
-            List<Class<? extends ConstructionSiteManager>> discovery = PluginUtils.discoverManagers(List.of(DummyManager3.class, DummyManager4.class, DummyManager5.class, DummyManager6.class, DummyManager7.class, DummyManager8.class));
+            List<Class<? extends ConstructionSiteManager>> discovery = PluginUtils.discoverManagers(Arrays.asList(DummyManager3.class, DummyManager4.class, DummyManager5.class, DummyManager6.class, DummyManager7.class, DummyManager8.class));
             Assertions.assertEquals(6, discovery.size());
             final int index3 = discovery.indexOf(DummyManager3.class);
             final int index4 = discovery.indexOf(DummyManager4.class);

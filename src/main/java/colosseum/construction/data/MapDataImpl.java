@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 public class MapDataImpl extends AbstractMapData implements MutableMapData {
     protected File datFile;
@@ -80,7 +81,7 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
 
             try (BufferedReader br = Files.newBufferedReader(datFile.toPath(), StandardCharsets.UTF_8)) {
                 while ((line = br.readLine()) != null) {
-                    List<String> tokens = Arrays.stream(line.split(":")).toList();
+                    List<String> tokens = Arrays.stream(line.split(":")).collect(Collectors.toList());
                     if (tokens.size() < 2) {
                         continue;
                     }
@@ -88,19 +89,37 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
                         continue;
                     }
                     switch (tokens.get(0)) {
-                        case "currentlyLive" -> live = Boolean.parseBoolean(tokens.get(1));
-                        case "warps" -> {
+                        case "currentlyLive": {
+                            live = Boolean.parseBoolean(tokens.get(1));
+                            break;
+                        }
+                        case "warps": {
                             for (String w : tokens.get(1).split(Constants.LOCATIONS_DELIMITER)) {
                                 String[] entry = w.split("@");
                                 Validate.isTrue(entry.length >= 2);
                                 String[] xyz = entry[1].replaceAll("[()]", "").split(",");
                                 warps.computeIfAbsent(entry[0], k -> new Vector(Double.parseDouble(xyz[0]), Double.parseDouble(xyz[1]), Double.parseDouble(xyz[2])));
                             }
+                            break;
                         }
-                        case "MAP_NAME" -> mapName = tokens.get(1);
-                        case "MAP_AUTHOR", "MAP_CREATOR" -> mapCreator = tokens.get(1);
-                        case "GAME_TYPE" -> mapGameType = GameTypeUtils.determineGameType(tokens.get(1), true);
-                        case "ADMIN_LIST", "BUILD_LIST" -> adminList.addAll(Arrays.stream(tokens.get(1).split(",")).map(UUID::fromString).toList());
+                        case "MAP_NAME": {
+                            mapName = tokens.get(1);
+                            break;
+                        }
+                        case "MAP_AUTHOR":
+                        case "MAP_CREATOR": {
+                            mapCreator = tokens.get(1);
+                            break;
+                        }
+                        case "GAME_TYPE": {
+                            mapGameType = GameTypeUtils.determineGameType(tokens.get(1), true);
+                            break;
+                        }
+                        case "ADMIN_LIST":
+                        case "BUILD_LIST": {
+                            adminList.addAll(Arrays.stream(tokens.get(1).split(",")).map(UUID::fromString).collect(Collectors.toList()));
+                            break;
+                        }
                     }
                 }
             } catch (IOException e) {
@@ -149,7 +168,7 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
                 buffer.write("MAP_NAME:" + mapName);
                 buffer.write("\nMAP_AUTHOR:" + mapCreator);
                 buffer.write("\nGAME_TYPE:" + mapGameType);
-                buffer.write("\nADMIN_LIST:" + String.join(",", adminList.stream().map(UUID::toString).toList()));
+                buffer.write("\nADMIN_LIST:" + adminList.stream().map(UUID::toString).collect(Collectors.joining(",")));
                 buffer.write("\ncurrentlyLive:" + currentlyLive);
                 buffer.write("\nwarps:" + warpsToString(warps));
                 return true;
@@ -180,6 +199,6 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
     }
 
     private static String warpsToString(ImmutableMap<String, Vector> warps) {
-        return String.join(Constants.LOCATIONS_DELIMITER, warps.entrySet().stream().map(entry -> entry.getKey() + "@" + UtilWorld.vecToStrClean(entry.getValue())).toList());
+        return warps.entrySet().stream().map(entry -> entry.getKey() + "@" + UtilWorld.vecToStrClean(entry.getValue())).collect(Collectors.joining(Constants.LOCATIONS_DELIMITER));
     }
 }
