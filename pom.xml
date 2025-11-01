@@ -9,8 +9,8 @@
     <packaging>jar</packaging>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
         <kotlin.version>2.1.20</kotlin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spigot.version>1.8.8-R0.1-SNAPSHOT</spigot.version>
@@ -52,15 +52,11 @@
             <groupId>colosseum.minecraft.nl.rutgerkok</groupId>
             <artifactId>hammer</artifactId>
             <version>0.1-SNAPSHOT</version>
-            <type>jar</type>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>colosseum.minecraft</groupId>
             <artifactId>ColosseumUtility</artifactId>
             <version>0.1</version>
-            <type>jar</type>
-            <scope>compile</scope>
             <exclusions>
                 <exclusion>
                     <groupId>org.spigotmc</groupId>
@@ -72,22 +68,16 @@
             <groupId>colosseum.minecraft</groupId>
             <artifactId>flashlight</artifactId>
             <version>0.1-SNAPSHOT</version>
-            <type>jar</type>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>${commons_io.version}</version>
-            <type>jar</type>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${commons_lang3.version}</version>
-            <type>jar</type>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -178,6 +168,7 @@
                     </execution>
                     <execution>
                         <id>test-compile</id>
+                        <phase>verify</phase>
                         <goals>
                             <goal>test-compile</goal>
                         </goals>
@@ -198,7 +189,6 @@
                 <configuration>
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
-                    <proc>full</proc>
                 </configuration>
                 <executions>
                     <execution>
@@ -218,48 +208,10 @@
                     </execution>
                     <execution>
                         <id>java-test-compile</id>
-                        <phase>test-compile</phase>
+                        <phase>verify</phase>
                         <goals>
                             <goal>testCompile</goal>
                         </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.5.4</version>
-                <configuration>
-                    <useModulePath>false</useModulePath>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.14</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>report</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                        <configuration>
-                            <includes>
-                                <include>colosseum/construction/**</include>
-                            </includes>
-                            <formats>
-                                <format>HTML</format>
-                                <format>XML</format>
-                                <format>CSV</format>
-                            </formats>
-                            <outputDirectory>${project.build.directory}/jacoco-report</outputDirectory>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -308,6 +260,77 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.4</version>
+                <executions>
+                    <execution>
+                        <id>default-test</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>run-tests-in-verify</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <useModulePath>false</useModulePath>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.14</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>colosseum/construction/**</include>
+                            </includes>
+                            <formats>
+                                <format>HTML</format>
+                                <format>XML</format>
+                                <format>CSV</format>
+                            </formats>
+                            <outputDirectory>${project.build.directory}/jacoco-report</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>jdk-21-plus</id>
+            <activation>
+                <jdk>[21,)</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <proc>full</proc>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class ConstructionSiteWorldMock extends WorldMock {
     private Difficulty difficulty;
@@ -104,23 +105,25 @@ public final class ConstructionSiteWorldMock extends WorldMock {
                 return false;
             }
         } else {
-            return switch (rule) {
-                case "doFireTick" -> true;
-                case "mobGriefing" -> true;
-                case "keepInventory" -> true;
-                case "doMobSpawning" -> true;
-                case "doMobLoot" -> true;
-                case "doTileDrops" -> true;
-                case "doEntityDrops" -> true;
-                case "commandBlockOutput" -> true;
-                case "naturalRegeneration" -> true;
-                case "doDaylightCycle" -> true;
-                case "logAdminCommands" -> true;
-                case "showDeathMessages" -> true;
-                case "sendCommandFeedback" -> true;
-                case "reducedDebugInfo" -> true;
-                default -> false;
-            };
+            switch (rule) {
+                case "doFireTick":
+                case "mobGriefing":
+                case "keepInventory":
+                case "doMobSpawning":
+                case "doMobLoot":
+                case "doTileDrops":
+                case "doEntityDrops":
+                case "commandBlockOutput":
+                case "naturalRegeneration":
+                case "doDaylightCycle":
+                case "logAdminCommands":
+                case "showDeathMessages":
+                case "sendCommandFeedback":
+                case "reducedDebugInfo":
+                    return true;
+                default:
+                    return false;
+            }
         }
     }
 
@@ -132,6 +135,6 @@ public final class ConstructionSiteWorldMock extends WorldMock {
 
     @Override
     public List<Player> getPlayers() {
-        return (List<Player>) ConstructionSiteProvider.getSite().getServer().getOnlinePlayers().stream().filter(p -> p.getWorld().equals(this)).toList();
+        return (List<Player>) ConstructionSiteProvider.getSite().getServer().getOnlinePlayers().stream().filter(p -> p.getWorld().equals(this)).collect(Collectors.toList());
     }
 }

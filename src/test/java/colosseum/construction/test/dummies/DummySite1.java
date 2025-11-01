@@ -12,8 +12,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -33,7 +33,7 @@ public final class DummySite1 implements DummySite {
 
         managers.clear();
         managersReference.clear();
-        managersReference.addAll(PluginUtils.discoverManagers(List.of(GameTypeInfoManager.class, SplashTextManager.class)));
+        managersReference.addAll(PluginUtils.discoverManagers(Arrays.asList(GameTypeInfoManager.class, SplashTextManager.class)));
 
         MockBukkit.mock();
     }

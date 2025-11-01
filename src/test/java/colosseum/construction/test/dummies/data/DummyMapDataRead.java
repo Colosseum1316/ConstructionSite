@@ -1,7 +1,7 @@
 package colosseum.construction.test.dummies.data;
 
+import colosseum.construction.WorldUtils;
 import colosseum.construction.data.MapDataImpl;
-import colosseum.utility.WorldMapConstants;
 import org.bukkit.World;
 
 import java.io.File;
@@ -13,7 +13,7 @@ public final class DummyMapDataRead extends MapDataImpl {
 
     @Override
     protected void init() {
-        this.datFile = worldFolder.toPath().resolve(WorldMapConstants.MAP_DAT).toFile();
+        this.datFile = WorldUtils.mapDatFile(worldFolder);
         super.read();
     }
 }

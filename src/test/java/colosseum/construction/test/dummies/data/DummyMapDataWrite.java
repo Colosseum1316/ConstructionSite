@@ -1,8 +1,8 @@
 package colosseum.construction.test.dummies.data;
 
+import colosseum.construction.WorldUtils;
 import colosseum.construction.data.FinalizedMapData;
 import colosseum.construction.data.MapDataImpl;
-import colosseum.utility.WorldMapConstants;
 import colosseum.utility.arcade.GameType;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -55,7 +55,7 @@ public final class DummyMapDataWrite extends MapDataImpl {
 
     @Override
     protected void init() {
-        this.datFile = worldFolder.toPath().resolve(WorldMapConstants.MAP_DAT).toFile();
+        this.datFile = WorldUtils.mapDatFile(worldFolder);
     }
 
     @Override

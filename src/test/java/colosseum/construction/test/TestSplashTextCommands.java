@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
 class TestSplashTextCommands {
@@ -76,14 +77,14 @@ class TestSplashTextCommands {
         player.assertNoMoreSaid();
         ConstructionSite site = ConstructionSiteProvider.getSite();
         List<String> splashText = site.getManager(SplashTextManager.class).getText();
-        Assertions.assertLinesMatch(List.of(
+        Assertions.assertLinesMatch(Arrays.asList(
                 "Line 1 of splash text",
                 "Line 2 &cof splash text"
         ), splashText);
         site.getManager(SplashTextManager.class).unregister();
         site.getManager(SplashTextManager.class).register();
         splashText = site.getManager(SplashTextManager.class).getText();
-        Assertions.assertLinesMatch(List.of(
+        Assertions.assertLinesMatch(Arrays.asList(
                 "Line 1 of splash text",
                 "Line 2 &cof splash text"
         ), splashText);
