@@ -17,7 +17,7 @@
         <commons_io.version>2.20.0</commons_io.version>
         <commons_lang3.version>3.19.0</commons_lang3.version>
         <lombok.version>1.18.38</lombok.version>
-        <junit.version>5.7.2</junit.version>
+        <junit.version>5.11.3</junit.version>
     </properties>
 
     <repositories>
@@ -67,7 +67,7 @@
         <dependency>
             <groupId>colosseum.minecraft</groupId>
             <artifactId>flashlight</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <version>0.1</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -95,13 +95,16 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-launcher</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -118,7 +121,20 @@
         </dependency>
     </dependencies>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <build>
+        <defaultGoal>verify</defaultGoal>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -143,6 +159,7 @@
                 <filtering>false</filtering>
                 <includes>
                     <include>junit-platform.properties</include>
+                    <include>META-INF/</include>
                 </includes>
             </testResource>
         </testResources>
@@ -168,7 +185,7 @@
                     </execution>
                     <execution>
                         <id>test-compile</id>
-                        <phase>verify</phase>
+                        <phase>test-compile</phase>
                         <goals>
                             <goal>test-compile</goal>
                         </goals>
@@ -208,7 +225,7 @@
                     </execution>
                     <execution>
                         <id>java-test-compile</id>
-                        <phase>verify</phase>
+                        <phase>test-compile</phase>
                         <goals>
                             <goal>testCompile</goal>
                         </goals>
@@ -264,22 +281,11 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.5.4</version>
-                <executions>
-                    <execution>
-                        <id>default-test</id>
-                        <phase>none</phase>
-                    </execution>
-                    <execution>
-                        <id>run-tests-in-verify</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                        <configuration>
-                            <useModulePath>false</useModulePath>
-                        </configuration>
-                    </execution>
-                </executions>
+                <configuration>
+                    <useSystemClassLoader>true</useSystemClassLoader>
+                    <trimStackTrace>false</trimStackTrace>
+                    <useModulePath>false</useModulePath>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>

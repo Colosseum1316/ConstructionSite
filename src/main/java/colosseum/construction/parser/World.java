@@ -85,8 +85,9 @@ final class World {
     }
 
     private void setBlock(int blockX, int blockY, int blockZ, short typeId, byte data) throws Exception {
-        ChunkAccess<AnvilChunk> chunkAccess = getChunkAccess();
-        AnvilChunk chunk = getChunk(chunkAccess, blockX, blockZ);
-        chunk.setMaterial(Math.floorMod(blockX, AnvilChunk.CHUNK_X_SIZE), blockY, Math.floorMod(blockZ, AnvilChunk.CHUNK_Z_SIZE), ((AnvilMaterialMap) offlineWorld.getGameFactory().getMaterialMap()).getMaterialDataFromOldIds(typeId, data));
+        try (ChunkAccess<AnvilChunk> chunkAccess = getChunkAccess()) {
+            AnvilChunk chunk = getChunk(chunkAccess, blockX, blockZ);
+            chunk.setMaterial(Math.floorMod(blockX, AnvilChunk.CHUNK_X_SIZE), blockY, Math.floorMod(blockZ, AnvilChunk.CHUNK_Z_SIZE), ((AnvilMaterialMap) offlineWorld.getGameFactory().getMaterialMap()).getMaterialDataFromOldIds(typeId, data));
+        }
     }
 }

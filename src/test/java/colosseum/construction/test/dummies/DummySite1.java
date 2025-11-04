@@ -27,7 +27,7 @@ public final class DummySite1 implements DummySite {
     private final File pluginDataFolder;
 
     public DummySite1(File pluginDataFolder) {
-        this.logger = Utils.getSiteLogger(this);
+        this.logger = Utils.getSiteLogger();
 
         this.pluginDataFolder = pluginDataFolder;
 

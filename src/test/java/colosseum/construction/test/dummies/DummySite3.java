@@ -32,7 +32,7 @@ public final class DummySite3 implements DummySite {
         this.worldContainer = worldContainer;
         this.pluginDataFolder = pluginDataFolder;
 
-        this.logger = Utils.getSiteLogger(this);
+        this.logger = Utils.getSiteLogger();
 
         managers.clear();
         managersReference.clear();

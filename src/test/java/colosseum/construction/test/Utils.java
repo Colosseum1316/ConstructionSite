@@ -1,7 +1,6 @@
 package colosseum.construction.test;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
-import colosseum.construction.ConstructionSite;
 import colosseum.construction.WorldUtils;
 import colosseum.construction.test.dummies.DummySite;
 import colosseum.construction.test.dummies.data.DummyMapDataRead;
@@ -38,12 +37,14 @@ public final class Utils {
         return new DummyMapDataRead(world, worldDir);
     }
 
-    public static Logger getSiteLogger(ConstructionSite site) {
-        ConsoleHandler handler = new ConsoleHandler();
+    public static Logger getSiteLogger() {
+        ConsoleHandler handler = new ConsoleHandler() {{
+            setOutputStream(System.out);
+        }};
         handler.setLevel(Level.ALL);
         handler.setFormatter(new SimpleFormatter());
         Logger logger;
-        logger = Logger.getLogger(site.getClass().getSimpleName());
+        logger = Logger.getLogger("TestLogger");
         logger.setLevel(Level.ALL);
         logger.setUseParentHandlers(false);
         logger.addHandler(handler);
