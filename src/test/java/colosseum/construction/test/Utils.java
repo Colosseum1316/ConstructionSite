@@ -12,8 +12,9 @@ import org.junit.jupiter.api.Assertions;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
 import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
@@ -38,9 +39,26 @@ public final class Utils {
     }
 
     public static Logger getSiteLogger() {
-        ConsoleHandler handler = new ConsoleHandler() {{
-            setOutputStream(System.out);
-        }};
+        Handler handler = new Handler() {
+            @Override
+            public void publish(LogRecord record) {
+                if (!isLoggable(record)) {
+                    return;
+                }
+                String msg = getFormatter().format(record);
+                System.out.println(msg);
+            }
+
+            @Override
+            public void flush() {
+                System.out.flush();
+            }
+
+            @Override
+            public void close() throws SecurityException {
+                flush();
+            }
+        };
         handler.setLevel(Level.ALL);
         handler.setFormatter(new SimpleFormatter());
         Logger logger;

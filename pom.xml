@@ -171,7 +171,7 @@
                 <extensions>true</extensions>
                 <executions>
                     <execution>
-                        <id>compile</id>
+                        <id>default-compile</id>
                         <goals>
                             <goal>compile</goal>
                         </goals>
@@ -184,7 +184,7 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>test-compile</id>
+                        <id>default-test-compile</id>
                         <phase>test-compile</phase>
                         <goals>
                             <goal>test-compile</goal>

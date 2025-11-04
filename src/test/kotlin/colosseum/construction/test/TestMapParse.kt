@@ -65,4 +65,20 @@ internal class TestMapParse {
             return@supplyAsync parser.isSuccess
         }.get(90, TimeUnit.SECONDS))
     }
+
+    @Test
+    @Timeout(value = 60, unit = TimeUnit.SECONDS)
+    fun testCliffside() {
+        val destination = ResourceSession.path.resolve("Cliffside").toFile()
+        val mapData = ConstructionSiteProvider.getSite().getManager(MapDataManager::class.java).getFinalized(destination)
+        val parser = MapParser(destination, mapData, Collections.emptyList(), 0, 0, 100)
+        Assertions.assertEquals(mapData, parser.mapData)
+        Assertions.assertEquals(destination, parser.parsableWorldFolder)
+        Assertions.assertTrue(CompletableFuture.supplyAsync {
+            parser.run()
+            Assertions.assertFalse(parser.isFail)
+            Assertions.assertFalse(parser.isCancelled)
+            return@supplyAsync parser.isSuccess
+        }.get(60, TimeUnit.SECONDS))
+    }
 }
