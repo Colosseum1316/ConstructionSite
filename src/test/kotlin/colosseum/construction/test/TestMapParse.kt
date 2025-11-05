@@ -20,9 +20,9 @@ import org.junit.jupiter.api.Timeout
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Files
-import java.util.Collections
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.TimeUnit
+import java.util.*
+import java.util.concurrent.*
+import java.util.concurrent.atomic.*
 
 internal class TestMapParse {
     companion object {
@@ -52,6 +52,36 @@ internal class TestMapParse {
     @AfterAll
     fun tearDown() {
         Utils.tearDown(plugin)
+    }
+
+    @Test
+    fun testInputs() {
+        val destination = ResourceSession.path.resolve("Void").toFile()
+        val mapData = ConstructionSiteProvider.getSite().getManager(MapDataManager::class.java).getFinalized(destination)
+
+        Assertions.assertThrows(IllegalArgumentException::class.java) {
+            MapParser(destination, mapData, Collections.emptyList(), 0, 0, -1)
+        }
+    }
+
+    @Test
+    @Timeout(value = 5, unit = TimeUnit.SECONDS)
+    fun testCancellation() {
+        val destination = ResourceSession.path.resolve("Void").toFile()
+        val mapData = ConstructionSiteProvider.getSite().getManager(MapDataManager::class.java).getFinalized(destination)
+        val parser = MapParser(destination, mapData, Collections.emptyList(), 0, 0, 1000)
+        val v = AtomicBoolean(false)
+        CompletableFuture.runAsync(parser).thenRun {
+            Assertions.assertFalse(parser.isRunning)
+            Assertions.assertFalse(parser.isSuccess)
+            Assertions.assertTrue(parser.isCancelled)
+            Assertions.assertTrue(parser.isFail)
+            v.set(true)
+        }
+        Thread.sleep(1000)
+        parser.cancel()
+        Thread.sleep(1000)
+        Assertions.assertTrue(v.get())
     }
 
     @Test
