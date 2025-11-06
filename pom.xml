@@ -182,6 +182,9 @@
                                 <sourceDir>src/main/kotlin</sourceDir>
                                 <sourceDir>src/main/java</sourceDir>
                             </sourceDirs>
+                            <args>
+                                <arg>-Xjsr305=strict</arg>
+                            </args>
                         </configuration>
                     </execution>
                     <execution>
@@ -306,25 +309,55 @@
                             <goal>prepare-agent</goal>
                         </goals>
                     </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
                     <execution>
-                        <id>report</id>
+                        <id>jacoco-report</id>
                         <phase>verify</phase>
                         <goals>
-                            <goal>report</goal>
+                            <goal>run</goal>
                         </goals>
                         <configuration>
-                            <includes>
-                                <include>colosseum/construction/**</include>
-                            </includes>
-                            <formats>
-                                <format>HTML</format>
-                                <format>XML</format>
-                                <format>CSV</format>
-                            </formats>
-                            <outputDirectory>${project.build.directory}/jacoco-report</outputDirectory>
+                            <target>
+                                <taskdef name="report" classname="org.jacoco.ant.ReportTask">
+                                    <classpath refid="maven.plugin.classpath"/>
+                                </taskdef>
+
+                                <report>
+                                    <executiondata>
+                                        <fileset file="${project.build.directory}/jacoco.exec"/>
+                                    </executiondata>
+
+                                    <structure name="${project.name}">
+                                        <classfiles>
+                                            <fileset dir="${project.build.outputDirectory}"/>
+                                        </classfiles>
+                                        <sourcefiles encoding="${project.build.sourceEncoding}">
+                                            <fileset dir="src/main/kotlin"/>
+                                            <fileset dir="src/main/java"/>
+                                        </sourcefiles>
+                                    </structure>
+
+                                    <html destdir="${project.build.directory}/jacoco-report"/>
+                                    <xml destfile="${project.build.directory}/jacoco-report/jacoco.xml"/>
+                                    <csv destfile="${project.build.directory}/jacoco-report/jacoco.csv"/>
+                                </report>
+                            </target>
                         </configuration>
                     </execution>
                 </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>org.jacoco.ant</artifactId>
+                        <version>0.8.14</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>
