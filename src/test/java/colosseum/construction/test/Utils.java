@@ -1,7 +1,6 @@
 package colosseum.construction.test;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
-import colosseum.construction.ConstructionSite;
 import colosseum.construction.WorldUtils;
 import colosseum.construction.test.dummies.DummySite;
 import colosseum.construction.test.dummies.data.DummyMapDataRead;
@@ -13,8 +12,9 @@ import org.junit.jupiter.api.Assertions;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
 import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
@@ -38,12 +38,31 @@ public final class Utils {
         return new DummyMapDataRead(world, worldDir);
     }
 
-    public static Logger getSiteLogger(ConstructionSite site) {
-        ConsoleHandler handler = new ConsoleHandler();
+    public static Logger getSiteLogger() {
+        Handler handler = new Handler() {
+            @Override
+            public void publish(LogRecord record) {
+                if (!isLoggable(record)) {
+                    return;
+                }
+                String msg = getFormatter().format(record);
+                System.out.println(msg);
+            }
+
+            @Override
+            public void flush() {
+                System.out.flush();
+            }
+
+            @Override
+            public void close() throws SecurityException {
+                flush();
+            }
+        };
         handler.setLevel(Level.ALL);
         handler.setFormatter(new SimpleFormatter());
         Logger logger;
-        logger = Logger.getLogger(site.getClass().getSimpleName());
+        logger = Logger.getLogger("TestLogger");
         logger.setLevel(Level.ALL);
         logger.setUseParentHandlers(false);
         logger.addHandler(handler);

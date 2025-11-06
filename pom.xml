@@ -17,7 +17,7 @@
         <commons_io.version>2.20.0</commons_io.version>
         <commons_lang3.version>3.19.0</commons_lang3.version>
         <lombok.version>1.18.38</lombok.version>
-        <junit.version>5.7.2</junit.version>
+        <junit.version>5.11.3</junit.version>
     </properties>
 
     <repositories>
@@ -67,7 +67,7 @@
         <dependency>
             <groupId>colosseum.minecraft</groupId>
             <artifactId>flashlight</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <version>0.1</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -95,13 +95,16 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-launcher</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -118,7 +121,20 @@
         </dependency>
     </dependencies>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <build>
+        <defaultGoal>verify</defaultGoal>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -143,6 +159,7 @@
                 <filtering>false</filtering>
                 <includes>
                     <include>junit-platform.properties</include>
+                    <include>META-INF/</include>
                 </includes>
             </testResource>
         </testResources>
@@ -155,6 +172,7 @@
                 <executions>
                     <execution>
                         <id>compile</id>
+                        <phase>compile</phase>
                         <goals>
                             <goal>compile</goal>
                         </goals>
@@ -164,11 +182,14 @@
                                 <sourceDir>src/main/kotlin</sourceDir>
                                 <sourceDir>src/main/java</sourceDir>
                             </sourceDirs>
+                            <args>
+                                <arg>-Xjsr305=strict</arg>
+                            </args>
                         </configuration>
                     </execution>
                     <execution>
                         <id>test-compile</id>
-                        <phase>verify</phase>
+                        <phase>test-compile</phase>
                         <goals>
                             <goal>test-compile</goal>
                         </goals>
@@ -181,6 +202,13 @@
                         </configuration>
                     </execution>
                 </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jetbrains.kotlin</groupId>
+                        <artifactId>kotlin-maven-lombok</artifactId>
+                        <version>${kotlin.version}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -189,6 +217,7 @@
                 <configuration>
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
                 <executions>
                     <execution>
@@ -208,7 +237,7 @@
                     </execution>
                     <execution>
                         <id>java-test-compile</id>
-                        <phase>verify</phase>
+                        <phase>test-compile</phase>
                         <goals>
                             <goal>testCompile</goal>
                         </goals>
@@ -264,22 +293,11 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.5.4</version>
-                <executions>
-                    <execution>
-                        <id>default-test</id>
-                        <phase>none</phase>
-                    </execution>
-                    <execution>
-                        <id>run-tests-in-verify</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                        <configuration>
-                            <useModulePath>false</useModulePath>
-                        </configuration>
-                    </execution>
-                </executions>
+                <configuration>
+                    <useSystemClassLoader>true</useSystemClassLoader>
+                    <trimStackTrace>false</trimStackTrace>
+                    <useModulePath>false</useModulePath>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
@@ -291,25 +309,55 @@
                             <goal>prepare-agent</goal>
                         </goals>
                     </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
                     <execution>
-                        <id>report</id>
+                        <id>jacoco-report</id>
                         <phase>verify</phase>
                         <goals>
-                            <goal>report</goal>
+                            <goal>run</goal>
                         </goals>
                         <configuration>
-                            <includes>
-                                <include>colosseum/construction/**</include>
-                            </includes>
-                            <formats>
-                                <format>HTML</format>
-                                <format>XML</format>
-                                <format>CSV</format>
-                            </formats>
-                            <outputDirectory>${project.build.directory}/jacoco-report</outputDirectory>
+                            <target>
+                                <taskdef name="report" classname="org.jacoco.ant.ReportTask">
+                                    <classpath refid="maven.plugin.classpath"/>
+                                </taskdef>
+
+                                <report>
+                                    <executiondata>
+                                        <fileset file="${project.build.directory}/jacoco.exec"/>
+                                    </executiondata>
+
+                                    <structure name="${project.name}">
+                                        <classfiles>
+                                            <fileset dir="${project.build.outputDirectory}"/>
+                                        </classfiles>
+                                        <sourcefiles encoding="${project.build.sourceEncoding}">
+                                            <fileset dir="src/main/kotlin"/>
+                                            <fileset dir="src/main/java"/>
+                                        </sourcefiles>
+                                    </structure>
+
+                                    <html destdir="${project.build.directory}/jacoco-report"/>
+                                    <xml destfile="${project.build.directory}/jacoco-report/jacoco.xml"/>
+                                    <csv destfile="${project.build.directory}/jacoco-report/jacoco.csv"/>
+                                </report>
+                            </target>
                         </configuration>
                     </execution>
                 </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>org.jacoco.ant</artifactId>
+                        <version>0.8.14</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>

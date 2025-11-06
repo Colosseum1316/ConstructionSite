@@ -50,7 +50,7 @@ jobs:
           build-mode: ${{ matrix.build-mode }}
 
       - name: Manual build mode
-        if: ${{ matrix.build-mode == 'manual' }}
+        if: ${{ matrix.build-mode == 'manual' && matrix.language == 'java-kotlin' }}
         shell: bash
         run: mvn -B -V -e -ntp -Dstyle.color=always clean package
 

@@ -6,32 +6,38 @@ on:
     paths:
       - "src/main/java/**/*.java"
       - "src/main/kotlin/**/*.kt"
-      - "src/main/resources/plugin.yml"
+      - "src/main/resources/config.yml"
       - "src/main/resources/Lobby.zip"
+      - "src/main/resources/plugin.yml"
       - "src/main/resources/META-INF/services/"
       - "src/test/java/**/*.java"
       - "src/test/kotlin/**/*.kt"
+      - "src/test/resources/"
       - "pom.xml"
       - "!.gitignore"
       - "!README.md"
       - "!README"
       - "!LICENSE"
+      - "!COPYING"
   pull_request:
     branches:
       - "master"
     paths:
       - "src/main/java/**/*.java"
       - "src/main/kotlin/**/*.kt"
-      - "src/main/resources/plugin.yml"
+      - "src/main/resources/config.yml"
       - "src/main/resources/Lobby.zip"
+      - "src/main/resources/plugin.yml"
       - "src/main/resources/META-INF/services/"
       - "src/test/java/**/*.java"
       - "src/test/kotlin/**/*.kt"
+      - "src/test/resources/"
       - "pom.xml"
       - "!.gitignore"
       - "!README.md"
       - "!README"
       - "!LICENSE"
+      - "!COPYING"
   workflow_dispatch:
 
 
@@ -83,9 +89,12 @@ jobs:
           check_title_template: '{{SUITE_NAME}} | {{TEST_NAME}}'
 
       - name: JaCoCo Code Coverage Report
-        uses: NorthRealm/jacoco-csv-summary@v1.0.0
+        uses: NorthRealm/jacoco-csv-summary@v1.1.0
         with:
           csv-file: target/jacoco-report/jacoco.csv
+          write-summary: true
+          write-check: true
+          check-name: Jacoco (${{ matrix.os }}, Java ${{ matrix.java-version }})
 
       - name: Upload artifacts
         if: ${{ (github.ref_name == 'master' && github.event_name == 'push') || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' }}
