@@ -7,13 +7,12 @@ import colosseum.construction.ConstructionSiteProvider
 import colosseum.construction.WorldUtils
 import colosseum.construction.data.DummyMapData
 import colosseum.construction.data.FinalizedMapData
+import colosseum.construction.data.MapData
 import colosseum.construction.data.MapDataImpl
 import colosseum.construction.test.dummies.DummySite
 import colosseum.construction.test.dummies.DummySite1
 import colosseum.construction.test.dummies.data.DummyMapDataRead
 import colosseum.construction.test.dummies.data.DummyMapDataWrite
-import colosseum.utility.MapData
-import colosseum.utility.arcade.GameType
 import com.google.common.collect.ImmutableMap
 import com.google.common.collect.ImmutableSet
 import org.apache.commons.io.FileUtils
@@ -89,7 +88,6 @@ internal class TestMapData {
             data: MapData,
             mapName: String,
             mapCreator: String,
-            mapGameType: GameType,
             warps: MutableMap<String, Vector>,
             adminList: MutableSet<UUID>,
             currentlyLive: Boolean
@@ -99,7 +97,6 @@ internal class TestMapData {
     private fun testWrite0(
         mapName: String,
         mapCreator: String,
-        mapGameType: GameType,
         warps: MutableMap<String, Vector>,
         adminList: MutableSet<UUID>,
         currentlyLive: Boolean,
@@ -110,13 +107,12 @@ internal class TestMapData {
             tempWorldDir,
             mapName,
             mapCreator,
-            mapGameType,
             warps,
             adminList,
             currentlyLive
         ).write()
         val data: MapData = Utils.readMapData(world, tempWorldDir)
-        assertion.assertion(data, mapName, mapCreator, mapGameType, warps, adminList, currentlyLive)
+        assertion.assertion(data, mapName, mapCreator, warps, adminList, currentlyLive)
     }
 
     @Order(1)
@@ -130,7 +126,6 @@ internal class TestMapData {
                 warps:w1@(0,0,0);w2@(1,0,-1);w3@-1,-1,1;w4w4@0,0,0;
                 MAP_NAME:Test Map_-Name123 456 789
                 MAP_AUTHOR: Test Author_-Team123 456 789
-                GAME_TYPE:
                 ADMIN_LIST:%s,%s
                 """.trimIndent().trim { it <= ' ' }, uuid1, uuid2
             )
@@ -147,7 +142,6 @@ internal class TestMapData {
         Assertions.assertEquals(data.warps().get("w4w4"), Vector(0, 0, 0))
         Assertions.assertEquals("Test Map_-Name123 456 789", data.mapName)
         Assertions.assertEquals(" Test Author_-Team123 456 789", data.mapCreator)
-        Assertions.assertEquals(GameType.None, data.mapGameType)
         Assertions.assertEquals(2, data.adminList().size)
         Assertions.assertTrue(
             data.adminList().stream().anyMatch({ v -> v.toString() == uuid1 })
@@ -167,7 +161,6 @@ internal class TestMapData {
                 warps:;
                 MAP_NAME:TEST MAP
                 MAP_AUTHOR:TEST AUTHOR
-                GAME_TYPE:DragonEscape
                 ADMIN_LIST:%s
                 """.trimIndent().trim { it <= ' ' }, uuid1
             )
@@ -176,7 +169,6 @@ internal class TestMapData {
         Assertions.assertTrue(data.warps().isEmpty())
         Assertions.assertEquals("TEST MAP", data.getMapName())
         Assertions.assertEquals("TEST AUTHOR", data.getMapCreator())
-        Assertions.assertEquals(GameType.DragonEscape, data.getMapGameType())
         Assertions.assertEquals(1, data.adminList().size)
         Assertions.assertTrue(
             data.adminList().stream().anyMatch({ v -> v.toString() == uuid1 })
@@ -195,22 +187,19 @@ internal class TestMapData {
         testWrite0(
             "TEST MAP NONETYPE",
             "TEST MAP NONETYPE AUTHOR",
-            GameType.None,
             kotlin.collections.mutableMapOf<String, Vector>(),
             kotlin.collections.mutableSetOf<UUID>(),
             true
-        ) { data: MapData, mapName: String, mapCreator: String, mapGameType: GameType, warps: MutableMap<String, Vector>, adminList: MutableSet<UUID>, currentlyLive: Boolean ->
+        ) { data: MapData, mapName: String, mapCreator: String, warps: MutableMap<String, Vector>, adminList: MutableSet<UUID>, currentlyLive: Boolean ->
             Assertions.assertTrue(data.isLive)
             Assertions.assertTrue(data.warps().isEmpty())
             Assertions.assertTrue(data.adminList().isEmpty())
-            Assertions.assertEquals(GameType.None, data.mapGameType)
             Assertions.assertEquals("TEST MAP NONETYPE", data.mapName)
             Assertions.assertEquals("TEST MAP NONETYPE AUTHOR", data.mapCreator)
         }
         testWrite0(
             "TEST MAP 1",
             "TEST MAP 1 AUTHOR",
-            GameType.DragonEscape,
             mutableMapOf(
                 "a1" to Vector(0, 0, 0),
                 "a2" to Vector(0, 1, 0),
@@ -221,7 +210,7 @@ internal class TestMapData {
                 UUID.fromString(uuid2)
             ),
             false
-        ) { data: MapData, mapName: String, mapCreator: String, mapGameType: GameType, warps: MutableMap<String, Vector>, adminList: MutableSet<UUID>, currentlyLive: Boolean ->
+        ) { data: MapData, mapName: String, mapCreator: String, warps: MutableMap<String, Vector>, adminList: MutableSet<UUID>, currentlyLive: Boolean ->
             Assertions.assertFalse(data.isLive)
             Assertions.assertEquals(3, data.warps().size)
             Assertions.assertTrue(data.warps().containsKey("a1"))
@@ -237,7 +226,6 @@ internal class TestMapData {
             Assertions.assertTrue(
                 data.adminList().stream().anyMatch({ v -> v.toString() == uuid2 })
             )
-            Assertions.assertEquals(GameType.DragonEscape, data.mapGameType)
             Assertions.assertEquals("TEST MAP 1", data.mapName)
             Assertions.assertEquals("TEST MAP 1 AUTHOR", data.mapCreator)
             Assertions.assertTrue(data.allows(player1))
@@ -251,7 +239,6 @@ internal class TestMapData {
         val data: MapData = DummyMapData()
         val player: PlayerMock = MockBukkit.getMock().addPlayer()
         Assertions.assertTrue(data.isLive)
-        Assertions.assertEquals(GameType.None, data.mapGameType)
         Assertions.assertEquals(0, data.warps().size)
         Assertions.assertEquals(0, data.adminList().size)
         Assertions.assertTrue(data.allows(player))
@@ -264,7 +251,6 @@ internal class TestMapData {
         Assertions.assertTrue(WorldUtils.mapDatFile(tempWorldDir!!).exists())
         Assertions.assertEquals("MapName", data.mapName)
         Assertions.assertEquals("MapCreator", data.mapCreator)
-        Assertions.assertEquals(GameType.None, data.mapGameType)
         Assertions.assertEquals(0, data.warps().size)
         Assertions.assertEquals(0, data.adminList().size)
         Assertions.assertTrue(data.isLive)
@@ -274,7 +260,6 @@ internal class TestMapData {
     fun assertFinalized() {
         val mapName = "TEST MAP FINALIZED"
         val mapCreator = "TEST MAP AUTHOR FINALIZED"
-        val mapGameType: GameType = GameType.DragonEscape
         val warps: ImmutableMap<String, Vector> = ImmutableMap.of(
             "a1", Vector(0, 0, 0),
             "a2", Vector(0, 1, 0),
@@ -286,11 +271,10 @@ internal class TestMapData {
             UUID.fromString(uuid3)
         )
         var mapData = FinalizedMapData(
-            mapName, mapCreator, mapGameType, warps, adminList, false
+            mapName, mapCreator, warps, adminList, false
         )
         Assertions.assertEquals(mapName, mapData.mapName.get())
         Assertions.assertEquals(mapCreator, mapData.mapCreator.get())
-        Assertions.assertEquals(mapGameType, mapData.mapGameType.get())
         Assertions.assertEquals(warps, mapData.warps.get())
         Assertions.assertEquals(adminList, mapData.adminList.get())
         Assertions.assertFalse(mapData.live.get())
@@ -300,27 +284,22 @@ internal class TestMapData {
         )
         Assertions.assertEquals(mapName, mapData.mapName.get())
         Assertions.assertEquals(mapCreator, mapData.mapCreator.get())
-        Assertions.assertNull(mapData.mapGameType.orElse(null))
         Assertions.assertNull(mapData.warps.orElse(null))
         Assertions.assertNull(mapData.adminList.orElse(null))
         Assertions.assertNull(mapData.live.orElse(null))
 
         mapData = FinalizedMapData(
-            mapName, mapCreator, mapGameType, warps
+            mapName, mapCreator, warps
         )
         Assertions.assertEquals(mapName, mapData.mapName.get())
         Assertions.assertEquals(mapCreator, mapData.mapCreator.get())
-        Assertions.assertEquals(mapGameType, mapData.mapGameType.get())
         Assertions.assertEquals(warps, mapData.warps.get())
         Assertions.assertNull(mapData.adminList.orElse(null))
         Assertions.assertNull(mapData.live.orElse(null))
 
-        mapData = FinalizedMapData(
-            mapName, mapCreator, mapGameType, adminList
-        )
+        mapData = FinalizedMapData(mapName, mapCreator, adminList)
         Assertions.assertEquals(mapName, mapData.mapName.get())
         Assertions.assertEquals(mapCreator, mapData.mapCreator.get())
-        Assertions.assertEquals(mapGameType, mapData.mapGameType.get())
         Assertions.assertNull(mapData.warps.orElse(null))
         Assertions.assertEquals(adminList, mapData.adminList.get())
         Assertions.assertNull(mapData.live.orElse(null))
@@ -328,7 +307,6 @@ internal class TestMapData {
         mapData = FinalizedMapData(true)
         Assertions.assertNull(mapData.mapName.orElse(null))
         Assertions.assertNull(mapData.mapCreator.orElse(null))
-        Assertions.assertNull(mapData.mapGameType.orElse(null))
         Assertions.assertNull(mapData.warps.orElse(null))
         Assertions.assertNull(mapData.adminList.orElse(null))
         Assertions.assertTrue(mapData.live.get())
@@ -336,7 +314,6 @@ internal class TestMapData {
         mapData = FinalizedMapData(adminList)
         Assertions.assertNull(mapData.mapName.orElse(null))
         Assertions.assertNull(mapData.mapCreator.orElse(null))
-        Assertions.assertNull(mapData.mapGameType.orElse(null))
         Assertions.assertNull(mapData.warps.orElse(null))
         Assertions.assertEquals(adminList, mapData.adminList.get())
         Assertions.assertNull(mapData.live.orElse(null))
@@ -344,16 +321,7 @@ internal class TestMapData {
         mapData = FinalizedMapData(warps)
         Assertions.assertNull(mapData.mapName.orElse(null))
         Assertions.assertNull(mapData.mapCreator.orElse(null))
-        Assertions.assertNull(mapData.mapGameType.orElse(null))
         Assertions.assertEquals(warps, mapData.warps.get())
-        Assertions.assertNull(mapData.adminList.orElse(null))
-        Assertions.assertNull(mapData.live.orElse(null))
-
-        mapData = FinalizedMapData(mapGameType)
-        Assertions.assertNull(mapData.mapName.orElse(null))
-        Assertions.assertNull(mapData.mapCreator.orElse(null))
-        Assertions.assertEquals(mapGameType, mapData.mapGameType.get())
-        Assertions.assertNull(mapData.warps.orElse(null))
         Assertions.assertNull(mapData.adminList.orElse(null))
         Assertions.assertNull(mapData.live.orElse(null))
 
@@ -365,7 +333,6 @@ internal class TestMapData {
                 warps:w1@(0,0,0);w2@(1,0,-1);w3@-1,-1,1;w4w4@0,0,0;
                 MAP_NAME:Test Map finalized 2
                 MAP_AUTHOR: Test Author finalized 2
-                GAME_TYPE:DragonEscape
                 ADMIN_LIST:%s,%s
                 """.trimIndent().trim { it <= ' ' }, uuid1, uuid2
                 )
@@ -383,7 +350,6 @@ internal class TestMapData {
         Assertions.assertEquals(mapData.warps.get().get("w4w4"), Vector(0, 0, 0))
         Assertions.assertEquals("Test Map finalized 2", mapData.mapName.orElse(null))
         Assertions.assertEquals(" Test Author finalized 2", mapData.mapCreator.orElse(null))
-        Assertions.assertEquals(GameType.DragonEscape, mapData.mapGameType.orElse(null))
         Assertions.assertEquals(2, mapData.adminList.orElse(ImmutableSet.of()).size)
         Assertions.assertTrue(
             mapData.adminList.get().stream().anyMatch({ v -> v.toString() == uuid1 })

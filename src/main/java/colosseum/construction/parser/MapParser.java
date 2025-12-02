@@ -259,7 +259,7 @@ public final class MapParser implements Runnable {
                 cornerB = new Location(256.0, 0.0, 256.0);
             }
 
-            world.getOfflineWorld().getLevelTag().setString(AnvilFormat.LevelTag.LEVEL_NAME, String.format("%s - %s  (%s)", mapData.getMapName().get(), mapData.getMapCreator().get(), mapData.getMapGameType().get().name()));
+            world.getOfflineWorld().getLevelTag().setString(AnvilFormat.LevelTag.LEVEL_NAME, String.format("%s - %s", mapData.getMapName().get(), mapData.getMapCreator().get()));
             world.getOfflineWorld().saveLevelTag();
 
             for (Map.Entry<Pair<Integer, Integer>, AnvilChunk> c : world.getVisitedChunks().entrySet()) {

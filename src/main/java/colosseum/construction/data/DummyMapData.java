@@ -1,6 +1,5 @@
 package colosseum.construction.data;
 
-import colosseum.utility.arcade.GameType;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import org.bukkit.entity.Player;
@@ -37,11 +36,6 @@ public final class DummyMapData extends AbstractMapData {
     @Override
     public ImmutableSet<UUID> adminList() {
         return ImmutableSet.of();
-    }
-
-    @Override
-    public GameType getMapGameType() {
-        return GameType.None;
     }
 
     @Override

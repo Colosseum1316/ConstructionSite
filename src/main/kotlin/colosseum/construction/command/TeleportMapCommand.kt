@@ -27,7 +27,7 @@ class TeleportMapCommand: AbstractTeleportCommand(
             if (f.isDirectory) {
                 UtilWorld.getWorld(WorldUtils.getWorldRelativePath(f))?.let { world ->
                     val data = mapDataManager.get(world)
-                    available[world.uid] = "${data.mapName} - ${data.mapCreator} (${data.mapGameType.name})"
+                    available[world.uid] = "${data.mapName} - ${data.mapCreator}"
                 }
             }
         }

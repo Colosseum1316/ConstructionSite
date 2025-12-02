@@ -4,6 +4,7 @@ import be.seeseemelk.mockbukkit.MockBukkit
 import colosseum.construction.ConstructionSiteProvider
 import colosseum.construction.WorldUtils
 import colosseum.construction.command.MapAdminCommand
+import colosseum.construction.data.MapData
 import colosseum.construction.data.MutableMapData
 import colosseum.construction.manager.MapDataManager
 import colosseum.construction.manager.TeleportManager
@@ -12,7 +13,6 @@ import colosseum.construction.test.dummies.ConstructionSiteServerMock
 import colosseum.construction.test.dummies.ConstructionSiteWorldMock
 import colosseum.construction.test.dummies.DummySite
 import colosseum.construction.test.dummies.DummySite3
-import colosseum.utility.MapData
 import colosseum.utility.WorldMapConstants
 import org.bukkit.Location
 import org.junit.jupiter.api.AfterAll
@@ -77,7 +77,6 @@ internal class TestMapAdminCommand {
                 warps:
                 MAP_NAME:Test mapadmin
                 MAP_AUTHOR:Test mapadmin
-                GAME_TYPE:None
                 ADMIN_LIST:%s
                 """.trimIndent().trim { it <= ' ' }, uuid1
             )

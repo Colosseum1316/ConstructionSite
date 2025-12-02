@@ -2,7 +2,6 @@ colosseum.construction.manager.CommandManager
 colosseum.construction.manager.ConfigManager
 colosseum.construction.manager.ParseManager
 colosseum.construction.manager.EventListenerManager
-colosseum.construction.manager.GameTypeInfoManager
 colosseum.construction.manager.MapDataManager
 colosseum.construction.manager.SplashTextManager
 colosseum.construction.manager.TeleportManager

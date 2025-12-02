@@ -1,6 +1,5 @@
 package colosseum.construction.data;
 
-import colosseum.utility.MapData;
 import org.bukkit.World;
 import org.jetbrains.annotations.Nullable;
 

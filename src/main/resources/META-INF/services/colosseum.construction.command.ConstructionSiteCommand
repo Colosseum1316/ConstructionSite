@@ -1,5 +1,4 @@
 colosseum.construction.command.FlySpeedCommand
-colosseum.construction.command.GameTypeInfoCommand
 colosseum.construction.command.ItemAddLoreCommand
 colosseum.construction.command.ItemClearLoreCommand
 colosseum.construction.command.ItemNameCommand
@@ -7,7 +6,6 @@ colosseum.construction.command.MapAdminCommand
 colosseum.construction.command.MapAuthorCommand
 colosseum.construction.command.MapCurrentlyLiveCommand
 colosseum.construction.command.MapDeleteCommand
-colosseum.construction.command.MapGameTypeCommand
 colosseum.construction.command.MapInfoCommand
 colosseum.construction.command.MapNameCommand
 colosseum.construction.command.MapParseCommand

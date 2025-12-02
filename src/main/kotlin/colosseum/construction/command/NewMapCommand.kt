@@ -1,13 +1,11 @@
 package colosseum.construction.command
 
 import colosseum.construction.ConstructionSiteProvider
-import colosseum.construction.GameTypeUtils
 import colosseum.construction.WorldUtils
 import colosseum.construction.data.FinalizedMapData
 import colosseum.construction.data.MutableMapData
 import colosseum.construction.manager.MapDataManager
 import colosseum.construction.manager.TeleportManager
-import colosseum.utility.arcade.GameType
 import com.google.common.collect.ImmutableSet
 import org.bukkit.Difficulty
 import org.bukkit.GameMode
@@ -24,12 +22,12 @@ import java.util.*
 class NewMapCommand: AbstractOpCommand(
     listOf("newmap"),
     """
-        Create a new map with a set Gametype. 
+        Create a new map.
         -v: Void map in Overworld.
         -n: Void map in Nether.
         -e: Void map in The End.
     """.trimIndent(),
-    "/newmap <gametype> [optional args]"
+    "/newmap [optional arg]"
 ), TabCompleter {
     companion object {
         private val VOID_OVERWORLD = "-v"
@@ -64,25 +62,17 @@ class NewMapCommand: AbstractOpCommand(
         args: Array<String>
     ): List<String>? {
         if (args.size == 1) {
-            return StringUtil.copyPartialMatches(args[0], GameTypeUtils.getGameTypes().map { v -> v.name }, ArrayList())
-        }
-        if (args.size == 2) {
-            return StringUtil.copyPartialMatches(args[1], listOf(VOID_OVERWORLD, VOID_NETHER, VOID_END), ArrayList())
+            return StringUtil.copyPartialMatches(args[0], listOf(VOID_OVERWORLD, VOID_NETHER, VOID_END), ArrayList())
         }
         return null
     }
 
     override fun runConstruction(caller: Player, label: String, args: Array<String>): Boolean {
-        if (args.isEmpty() || args.size > 2) {
+        if (args.size > 1) {
             return false
         }
-        val gameType = GameTypeUtils.determineGameType(args[0], true)
-        if (gameType == GameType.None) {
-            GameTypeUtils.printValidGameTypes(caller)
-            return true
-        }
 
-        val worldFolderName = "${gameType.name}-${caller.name}-${System.nanoTime()}"
+        val worldFolderName = "${caller.name}-${System.nanoTime()}"
         var worldCreator = WorldUtils.getWorldCreator(WorldUtils.getWorldRelativePath(WorldUtils.getSingleWorldRootPath(worldFolderName)))
         worldCreator.type(WorldType.FLAT)
         worldCreator.generateStructures(false)
@@ -91,10 +81,10 @@ class NewMapCommand: AbstractOpCommand(
         var voidNether = false
         var voidOverworld = false
         var generateVoidWorld = false
-        if (args.size == 2) {
-            voidEnd = args[1].equals(VOID_END, ignoreCase = true)
-            voidNether = args[1].equals(VOID_NETHER, ignoreCase = true)
-            voidOverworld = args[1].equals(VOID_OVERWORLD, ignoreCase = true)
+        if (args.size == 1) {
+            voidEnd = args[0].equals(VOID_END, ignoreCase = true)
+            voidNether = args[0].equals(VOID_NETHER, ignoreCase = true)
+            voidOverworld = args[0].equals(VOID_OVERWORLD, ignoreCase = true)
         }
         generateVoidWorld = voidNether || voidEnd || voidOverworld
 
@@ -124,7 +114,7 @@ class NewMapCommand: AbstractOpCommand(
 
             ConstructionSiteProvider.getScheduler().scheduleAsync {
                 val mapData = getMapDataManager().get(world) as MutableMapData
-                mapData.update(FinalizedMapData(worldFolderName, caller.name, gameType, ImmutableSet.of(caller.uniqueId)))
+                mapData.update(FinalizedMapData(worldFolderName, caller.name, ImmutableSet.of(caller.uniqueId)))
                 ConstructionSiteProvider.getScheduler().schedule {
                     getTeleportManager().teleportPlayer(caller, world.spawnLocation)
                     caller.gameMode = GameMode.CREATIVE

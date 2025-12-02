@@ -80,7 +80,6 @@ internal class TestTimeCommand {
                 warps:
                 MAP_NAME:Test map9
                 MAP_AUTHOR:Test author10
-                GAME_TYPE:None
                 ADMIN_LIST:%s
                 """.trimIndent().trim { it <= ' ' }, uuid2
             )

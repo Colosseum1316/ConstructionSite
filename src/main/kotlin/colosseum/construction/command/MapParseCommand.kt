@@ -6,7 +6,6 @@ import colosseum.construction.WorldUtils
 import colosseum.construction.manager.ParseManager
 import colosseum.construction.manager.TeleportManager
 import colosseum.utility.UtilPlayerBase
-import colosseum.utility.arcade.GameType
 import org.apache.commons.lang.StringUtils
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -83,8 +82,8 @@ class MapParseCommand: AbstractMapAdminCommand(
         val world = parseLoc.world
 
         val data = getMapDataManager().get(world)
-        if (StringUtils.isEmpty(data.mapName) || StringUtils.isEmpty(data.mapCreator) || data.mapGameType == GameType.None) {
-            UtilPlayerBase.sendMessage(caller, "&cMap Name/Author/GameType are not set!")
+        if (StringUtils.isEmpty(data.mapName) || StringUtils.isEmpty(data.mapCreator)) {
+            UtilPlayerBase.sendMessage(caller, "&cMalformed metadata. The parse won't start.")
             return true
         }
 
