@@ -58,7 +58,7 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
 
     protected void init() {
         if (world != null) {
-            Validate.isTrue(WorldUtils.getWorldFolder(world).equals(worldFolder));
+            Validate.isTrue(WorldUtils.getWorldFolder(world).equals(worldFolder), "World folder mismatch!!!");
         }
         this.datFile = WorldUtils.mapDatFile(worldFolder);
         if (this.datFile.exists()) {
@@ -92,7 +92,7 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
                         case "warps": {
                             for (String w : tokens.get(1).split(Constants.LOCATIONS_DELIMITER)) {
                                 String[] entry = w.split("@");
-                                Validate.isTrue(entry.length >= 2);
+                                Validate.isTrue(entry.length >= 2, "Malformed map data file!");
                                 String[] xyz = entry[1].replaceAll("[()]", "").split(",");
                                 warps.computeIfAbsent(entry[0], k -> new Vector(Double.parseDouble(xyz[0]), Double.parseDouble(xyz[1]), Double.parseDouble(xyz[2])));
                             }
