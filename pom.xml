@@ -57,7 +57,7 @@
         <dependency>
             <groupId>colosseum.minecraft</groupId>
             <artifactId>ColosseumUtility</artifactId>
-            <version>0.2-SNAPSHOT</version>
+            <version>0.2</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.spigotmc</groupId>
