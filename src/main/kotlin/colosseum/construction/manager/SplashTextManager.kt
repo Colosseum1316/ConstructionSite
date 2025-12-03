@@ -16,19 +16,23 @@ class SplashTextManager: ConstructionSiteManager("Splash text") {
         loadText()
     }
 
+    override fun unregister() {
+        saveText()
+    }
+
+    private fun getFile(): File {
+        return PluginUtils.loadYml(ConstructionSiteProvider.getSite().pluginDataFolder, "join-text.yml")
+    }
+
     private fun loadText() {
-        val file: File = PluginUtils.loadYml(ConstructionSiteProvider.getSite().pluginDataFolder, "join-text.yml")
+        val file: File = getFile()
         val config: FileConfiguration = YamlConfiguration.loadConfiguration(file)
         val messages = config.getStringList("messages") ?: Lists.newCopyOnWriteArrayList()
         splashText = messages
     }
 
-    override fun unregister() {
-        saveText()
-    }
-
     private fun saveText() {
-        val file: File = PluginUtils.loadYml(ConstructionSiteProvider.getSite().pluginDataFolder, "join-text.yml")
+        val file: File = getFile()
         val config: FileConfiguration = YamlConfiguration.loadConfiguration(file)
         config["messages"] = splashText
         try {
