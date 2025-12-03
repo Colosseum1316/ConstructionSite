@@ -38,7 +38,7 @@ public final class PluginUtils {
             return;
         }
         if (!visiting.add(currentReference)) {
-            throw new IllegalStateException("Bro, you can't be this terrible having composed a cycling directed graph. Please double check " + currentReference.getName());
+            throw new IllegalStateException("You composed a cycling directed graph. Please double check " + currentReference.getName());
         }
         ManagerDependency anno = currentReference.getAnnotation(ManagerDependency.class);
         if (anno != null) {
