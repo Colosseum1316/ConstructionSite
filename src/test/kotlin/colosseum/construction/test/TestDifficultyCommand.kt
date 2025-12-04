@@ -76,7 +76,6 @@ internal class TestDifficultyCommand {
                 warps:
                 MAP_NAME:Test map3 difficulty
                 MAP_AUTHOR:Test author4
-                GAME_TYPE:None
                 ADMIN_LIST:%s
                 """.trimIndent().trim { it <= ' ' }, uuid2
             )

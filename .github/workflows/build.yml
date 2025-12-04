@@ -46,11 +46,6 @@ defaults:
     shell: bash
 
 
-permissions:
-  contents: read
-  checks: write
-
-
 jobs:
   build:
     strategy:
@@ -60,9 +55,13 @@ jobs:
         java-version: [8, 11, 17, 21, 25]
     timeout-minutes: 10
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+      checks: write
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -91,7 +90,7 @@ jobs:
       - name: JaCoCo Code Coverage Report
         uses: NorthRealm/jacoco-csv-summary@v1.1.0
         with:
-          csv-file: target/jacoco-report/jacoco.csv
+          csv-file: ./target/jacoco-report/jacoco.csv
           write-summary: true
           write-check: true
           check-name: Jacoco (${{ matrix.os }}, Java ${{ matrix.java-version }})

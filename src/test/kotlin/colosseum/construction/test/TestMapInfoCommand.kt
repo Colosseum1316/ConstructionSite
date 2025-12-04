@@ -69,7 +69,6 @@ internal class TestMapInfoCommand {
                 warps:
                 MAP_NAME:MAPINFO 123456789MAPINFO
                 MAP_AUTHOR:MAPAUTHOR 101112131415MAPINFO
-                GAME_TYPE:DragonEscape
                 ADMIN_LIST:%s
                 """.trimIndent().trim { it <= ' ' }, uuid1
             )
@@ -115,7 +114,6 @@ internal class TestMapInfoCommand {
         Assertions.assertTrue(command.runConstruction(player1, label, arrayOf()))
         player1.assertSaid("Map name: §eMAPINFO 123456789MAPINFO")
         player1.assertSaid("Author: §eMAPAUTHOR 101112131415MAPINFO")
-        player1.assertSaid("GameType: §eDragonEscape§r (§eDragon Escape§r)")
         player1.assertNoMoreSaid()
     }
 }

@@ -74,7 +74,6 @@ internal class TestMapDeleteCommand {
                 warps:
                 MAP_NAME:Test mapdelete
                 MAP_AUTHOR:Test mapdelete
-                GAME_TYPE:None
                 ADMIN_LIST:%s,%s
                 """.trimIndent().trim { it <= ' ' },
                 uuid1,

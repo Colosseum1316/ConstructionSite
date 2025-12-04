@@ -4,7 +4,6 @@ import be.seeseemelk.mockbukkit.MockBukkit;
 import colosseum.construction.ConstructionSiteProvider;
 import colosseum.construction.PluginUtils;
 import colosseum.construction.manager.ConstructionSiteManager;
-import colosseum.construction.manager.GameTypeInfoManager;
 import colosseum.construction.manager.SplashTextManager;
 import colosseum.construction.test.Utils;
 import org.bukkit.Server;
@@ -33,7 +32,7 @@ public final class DummySite1 implements DummySite {
 
         managers.clear();
         managersReference.clear();
-        managersReference.addAll(PluginUtils.discoverManagers(Arrays.asList(GameTypeInfoManager.class, SplashTextManager.class)));
+        managersReference.addAll(PluginUtils.discoverManagers(Arrays.asList(SplashTextManager.class)));
 
         MockBukkit.mock();
     }

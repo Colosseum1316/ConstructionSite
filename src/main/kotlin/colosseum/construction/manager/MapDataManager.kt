@@ -3,9 +3,9 @@ package colosseum.construction.manager
 import colosseum.construction.WorldUtils
 import colosseum.construction.data.DummyMapData
 import colosseum.construction.data.FinalizedMapData
+import colosseum.construction.data.MapData
 import colosseum.construction.data.MapDataImpl
 import colosseum.construction.data.MutableMapData
-import colosseum.utility.MapData
 import com.google.common.collect.Maps
 import org.bukkit.World
 import java.io.File

@@ -3,7 +3,6 @@ package colosseum.construction.test.dummies.data;
 import colosseum.construction.WorldUtils;
 import colosseum.construction.data.FinalizedMapData;
 import colosseum.construction.data.MapDataImpl;
-import colosseum.utility.arcade.GameType;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import lombok.NonNull;
@@ -19,7 +18,6 @@ import java.util.UUID;
 public final class DummyMapDataWrite extends MapDataImpl {
     private final String testMapName;
     private final String testMapCreator;
-    private final GameType testMapGameType;
     private final ImmutableMap<String, Vector> testWarps;
     private final ImmutableSet<UUID> testAdminList;
     private final boolean testCurrentlyLive;
@@ -29,7 +27,6 @@ public final class DummyMapDataWrite extends MapDataImpl {
             File worldFolder,
             @NonNull String mapName,
             @NonNull String mapCreator,
-            @NonNull GameType mapGameType,
             @NonNull Map<String, Vector> warps,
             @NonNull Set<UUID> adminList,
             boolean currentlyLive
@@ -38,7 +35,6 @@ public final class DummyMapDataWrite extends MapDataImpl {
 
         this.testMapName = mapName;
         this.testMapCreator = mapCreator;
-        this.testMapGameType = mapGameType;
 
         ImmutableMap.Builder<String, Vector> mapBuilder = ImmutableMap.builder();
         warps.forEach((s, l) -> mapBuilder.put(s, l.clone()));
@@ -50,7 +46,7 @@ public final class DummyMapDataWrite extends MapDataImpl {
 
         this.testCurrentlyLive = currentlyLive;
 
-        super.update(new FinalizedMapData(this.testMapName, this.testMapCreator, this.testMapGameType, this.testWarps, this.testAdminList, this.testCurrentlyLive));
+        super.update(new FinalizedMapData(this.testMapName, this.testMapCreator, this.testWarps, this.testAdminList, this.testCurrentlyLive));
     }
 
     @Override

@@ -3,11 +3,9 @@ package colosseum.construction.data;
 import colosseum.construction.Constants;
 import colosseum.construction.ConstructionSite;
 import colosseum.construction.ConstructionSiteProvider;
-import colosseum.construction.GameTypeUtils;
 import colosseum.construction.WorldUtils;
 import colosseum.utility.UtilWorld;
 import colosseum.utility.WorldMapConstants;
-import colosseum.utility.arcade.GameType;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
@@ -43,8 +41,6 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
     protected String mapName;
     @Getter
     protected String mapCreator;
-    @Getter
-    protected GameType mapGameType;
     protected final Map<String, Vector> warps;
     protected final Set<UUID> adminList;
     @Getter
@@ -62,14 +58,14 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
 
     protected void init() {
         if (world != null) {
-            Validate.isTrue(WorldUtils.getWorldFolder(world).equals(worldFolder));
+            Validate.isTrue(WorldUtils.getWorldFolder(world).equals(worldFolder), "World folder mismatch!!!");
         }
         this.datFile = WorldUtils.mapDatFile(worldFolder);
         if (this.datFile.exists()) {
             read();
         } else {
             ConstructionSiteProvider.getSite().getPluginLogger().warning(String.format("There's no \"%s\" in \"%s\"! Creating a dummy one. Please set map data accordingly.", WorldMapConstants.MAP_DAT, worldFolder.getAbsolutePath()));
-            update(new FinalizedMapData("MapName", "MapCreator", GameType.None, ImmutableMap.of(), ImmutableSet.of(), true));
+            update(new FinalizedMapData("MapName", "MapCreator", ImmutableMap.of(), ImmutableSet.of(), true));
             write();
         }
     }
@@ -96,7 +92,7 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
                         case "warps": {
                             for (String w : tokens.get(1).split(Constants.LOCATIONS_DELIMITER)) {
                                 String[] entry = w.split("@");
-                                Validate.isTrue(entry.length >= 2);
+                                Validate.isTrue(entry.length >= 2, "Malformed map data file!");
                                 String[] xyz = entry[1].replaceAll("[()]", "").split(",");
                                 warps.computeIfAbsent(entry[0], k -> new Vector(Double.parseDouble(xyz[0]), Double.parseDouble(xyz[1]), Double.parseDouble(xyz[2])));
                             }
@@ -111,10 +107,6 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
                             mapCreator = tokens.get(1);
                             break;
                         }
-                        case "GAME_TYPE": {
-                            mapGameType = GameTypeUtils.determineGameType(tokens.get(1), true);
-                            break;
-                        }
                         case "ADMIN_LIST":
                         case "BUILD_LIST": {
                             adminList.addAll(Arrays.stream(tokens.get(1).split(",")).map(UUID::fromString).collect(Collectors.toList()));
@@ -126,13 +118,6 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
                 site.getPluginLogger().log(Level.SEVERE, "Cannot read dat file!", e);
             }
         }
-        if (mapGameType == null) {
-            site.getPluginLogger().warning("World " + worldFolder.getAbsolutePath() + " has malformed GameType info. Fall back to None.");
-            mapGameType = GameType.None;
-        }
-        if (mapGameType.equals(GameType.None)) {
-            site.getPluginLogger().warning("World " + worldFolder.getAbsolutePath() + " has a \"None\" GameType!");
-        }
     }
 
     @Override
@@ -140,7 +125,6 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
         synchronized (lock) {
             this.mapName = newMapData.getMapName().orElse(this.mapName);
             this.mapCreator = newMapData.getMapCreator().orElse(this.mapCreator);
-            this.mapGameType = newMapData.getMapGameType().orElse(this.mapGameType);
             newMapData.getWarps().ifPresent(w -> {
                 this.warps.clear();
                 this.warps.putAll(w);
@@ -158,7 +142,6 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
         synchronized (lock) {
             String mapName = this.mapName;
             String mapCreator = this.mapCreator;
-            GameType mapGameType = this.mapGameType;
             boolean currentlyLive = this.live;
             ImmutableSet<UUID> adminList = adminList();
             ImmutableMap<String, Vector> warps = warps();
@@ -167,7 +150,6 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
                 site.getPluginLogger().info("Writing " + datFile.getAbsolutePath());
                 buffer.write("MAP_NAME:" + mapName);
                 buffer.write("\nMAP_AUTHOR:" + mapCreator);
-                buffer.write("\nGAME_TYPE:" + mapGameType);
                 buffer.write("\nADMIN_LIST:" + adminList.stream().map(UUID::toString).collect(Collectors.joining(",")));
                 buffer.write("\ncurrentlyLive:" + currentlyLive);
                 buffer.write("\nwarps:" + warpsToString(warps));

@@ -12,6 +12,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <kotlin.version>2.1.20</kotlin.version>
+        <kotlin.compiler.incremental>false</kotlin.compiler.incremental>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spigot.version>1.8.8-R0.1-SNAPSHOT</spigot.version>
         <commons_io.version>2.20.0</commons_io.version>
@@ -56,7 +57,7 @@
         <dependency>
             <groupId>colosseum.minecraft</groupId>
             <artifactId>ColosseumUtility</artifactId>
-            <version>0.1</version>
+            <version>0.2</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.spigotmc</groupId>
@@ -171,28 +172,19 @@
                 <extensions>true</extensions>
                 <executions>
                     <execution>
-                        <id>compile</id>
+                        <id>default-compile</id>
                         <phase>compile</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
                         <configuration>
                             <jvmTarget>${maven.compiler.target}</jvmTarget>
                             <sourceDirs>
                                 <sourceDir>src/main/kotlin</sourceDir>
                                 <sourceDir>src/main/java</sourceDir>
                             </sourceDirs>
-                            <args>
-                                <arg>-Xjsr305=strict</arg>
-                            </args>
                         </configuration>
                     </execution>
                     <execution>
-                        <id>test-compile</id>
+                        <id>default-test-compile</id>
                         <phase>test-compile</phase>
-                        <goals>
-                            <goal>test-compile</goal>
-                        </goals>
                         <configuration>
                             <jvmTarget>${maven.compiler.target}</jvmTarget>
                             <sourceDirs>
@@ -202,6 +194,11 @@
                         </configuration>
                     </execution>
                 </executions>
+                <configuration>
+                    <args>
+                        <arg>-Xjsr305=strict</arg>
+                    </args>
+                </configuration>
                 <dependencies>
                     <dependency>
                         <groupId>org.jetbrains.kotlin</groupId>
@@ -209,40 +206,6 @@
                         <version>${kotlin.version}</version>
                     </dependency>
                 </dependencies>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.14.0</version>
-                <configuration>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>default-compile</id>
-                        <phase>none</phase>
-                    </execution>
-                    <execution>
-                        <id>default-testCompile</id>
-                        <phase>none</phase>
-                    </execution>
-                    <execution>
-                        <id>java-compile</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>java-test-compile</id>
-                        <phase>test-compile</phase>
-                        <goals>
-                            <goal>testCompile</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

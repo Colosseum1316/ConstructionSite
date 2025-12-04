@@ -6,6 +6,7 @@ import colosseum.construction.WorldUtils
 import colosseum.construction.command.AbstractMapCreditCommand
 import colosseum.construction.command.MapAuthorCommand
 import colosseum.construction.command.MapNameCommand
+import colosseum.construction.data.MapData
 import colosseum.construction.data.MutableMapData
 import colosseum.construction.manager.MapDataManager
 import colosseum.construction.manager.TeleportManager
@@ -14,7 +15,6 @@ import colosseum.construction.test.dummies.ConstructionSiteServerMock
 import colosseum.construction.test.dummies.ConstructionSiteWorldMock
 import colosseum.construction.test.dummies.DummySite
 import colosseum.construction.test.dummies.DummySite3
-import colosseum.utility.MapData
 import colosseum.utility.WorldMapConstants
 import org.bukkit.Location
 import org.junit.jupiter.api.AfterAll
@@ -84,7 +84,6 @@ internal class TestMapCreditCommands {
                 warps:
                 MAP_NAME:map none
                 MAP_AUTHOR:author none
-                GAME_TYPE:None
                 ADMIN_LIST:%s
                 """.trimIndent().trim { it <= ' ' }, uuid2
             )

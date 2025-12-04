@@ -87,7 +87,6 @@ internal class TestTeleportCommands {
                 warps:k1@-1,2,-3;k2@-5,6,-7;
                 MAP_NAME:Test map1mapteleport
                 MAP_AUTHOR:Test author2mapteleport
-                GAME_TYPE:None
                 ADMIN_LIST:%s
                 
                 """.trimIndent().trim { it <= ' ' }, uuid2
@@ -251,7 +250,7 @@ internal class TestTeleportCommands {
             )
         )
         Assertions.assertTrue(command.runConstruction(player1, label, arrayOf()))
-        player1.assertSaid("§7Test map1mapteleport - Test author2mapteleport (None): §e" + worldMap.uid)
+        player1.assertSaid("§7Test map1mapteleport - Test author2mapteleport: §e" + worldMap.uid)
         player1.assertNoMoreSaid()
 
         // Possibility of UUID.randomUUID().equals(worldMap.getUID()) is practically zero.
