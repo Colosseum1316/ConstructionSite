@@ -60,12 +60,12 @@ public abstract class ConstructionSiteCommand implements CommandExecutor {
             if ((sender instanceof ConsoleCommandSender || sender instanceof RemoteConsoleCommandSender) && canRun((CommandSender) sender)) {
                 return runConstruction(sender, label, args);
             } else {
-                sender.sendMessage(ChatColor.RED + "You must be a player.");
+                sender.sendMessage(ChatColor.RED + "You must be a player!");
                 return true;
             }
         }
         if (!canRun((Player) sender)) {
-            sender.sendMessage(ChatColor.RED + "You can't run this command. Probably it can't be used now or you don't have permission.");
+            sender.sendMessage(ChatColor.RED + "You can't run this command. Probably because it can't be used now or you don't have permission.");
             return true;
         } else {
             return runConstruction((Player) sender, label, args);
