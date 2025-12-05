@@ -23,6 +23,16 @@
 
     <repositories>
         <repository>
+            <id>sonatype</id>
+            <url>https://repository.sonatype.org/content/groups/public</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
             <id>coffeewarehouse-snapshots</id>
             <name>Coffee Warehouse</name>
             <url>https://coffeewarehouse.harborbucket.top/snapshots/</url>
@@ -235,6 +245,7 @@
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <manifestEntries>
                                         <Built-By></Built-By>
+                                        <Created-By></Created-By>
                                     </manifestEntries>
                                 </transformer>
                             </transformers>
@@ -334,6 +345,7 @@
             <build>
                 <plugins>
                     <plugin>
+                        <!-- Intentional. Refer to kotlin-maven-plugin. -->
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-compiler-plugin</artifactId>
                         <configuration>
