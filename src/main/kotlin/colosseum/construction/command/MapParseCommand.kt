@@ -60,7 +60,7 @@ class MapParseCommand: AbstractMapAdminCommand(
                     UtilPlayerBase.sendMessage(caller, "&cRadius must be no less than 10")
                     return true
                 }
-                if (radius > ConstructionSiteProvider.getSite().config.getInt(Constants.ConfigKeys.PARSE_MAXIMUM_RADIUS)) {
+                if (radius > ConstructionSiteProvider.getSite().config.getInt(Constants.ConfigKeys.PARSE__MAXIMUM_RADIUS)) {
                     UtilPlayerBase.sendMessage(caller, "&cAre you sure you wanna build a map this large-scale?")
                     return true
                 }

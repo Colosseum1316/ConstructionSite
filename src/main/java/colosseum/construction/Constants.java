@@ -9,6 +9,6 @@ public final class Constants {
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static final class ConfigKeys {
-        public static final String PARSE_MAXIMUM_RADIUS = "parse.maximum_radius";
+        public static final String PARSE__MAXIMUM_RADIUS = "parse.maximum_radius";
     }
 }
