@@ -12,6 +12,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -21,7 +22,7 @@ public final class DummySite1 implements DummySite {
     private final Logger logger;
 
     private final Map<Class<? extends ConstructionSiteManager>, ConstructionSiteManager> managers = new HashMap<>();
-    private final ArrayList<Class<? extends ConstructionSiteManager>> managersReference = new ArrayList<>();
+    private final ArrayList<Class<? extends ConstructionSiteManager>> managerClassReference = new ArrayList<>();
 
     private final File pluginDataFolder;
 
@@ -31,8 +32,8 @@ public final class DummySite1 implements DummySite {
         this.pluginDataFolder = pluginDataFolder;
 
         managers.clear();
-        managersReference.clear();
-        managersReference.addAll(PluginUtils.discoverManagers(Arrays.asList(SplashTextManager.class)));
+        managerClassReference.clear();
+        managerClassReference.addAll(PluginUtils.discoverManagers(Collections.singletonList(SplashTextManager.class)));
 
         MockBukkit.mock();
     }
@@ -45,16 +46,17 @@ public final class DummySite1 implements DummySite {
     @Override
     public void enable() {
         ConstructionSiteProvider.setSite(this);
-        PluginUtils.registerManagers(managersReference, managers);
+        managers.put(SplashTextManager.class, new SplashTextManager());
+        PluginUtils.registerManagers(managerClassReference, managers);
         ConstructionSiteProvider.setLive(true);
     }
 
     @Override
     public void disable() {
         ConstructionSiteProvider.setLive(false);
-        PluginUtils.unregisterManagers(managersReference, managers);
+        PluginUtils.unregisterManagers(managerClassReference, managers);
         managers.clear();
-        managersReference.clear();
+        managerClassReference.clear();
         ConstructionSiteProvider.setSite(null);
     }
 

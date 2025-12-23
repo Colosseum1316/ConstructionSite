@@ -19,10 +19,11 @@ public final class CommandManager extends ConstructionSiteManager {
 
     @Override
     public void register() {
-        ServiceLoader<ConstructionSiteCommand> commandServiceLoader = ServiceLoader.load(ConstructionSiteCommand.class, ConstructionSiteCommand.class.getClassLoader());
+        ServiceLoader<ConstructionSiteCommand> commandProviders = ServiceLoader.load(ConstructionSiteCommand.class, ConstructionSiteCommand.class.getClassLoader());
         try {
-            for (ConstructionSiteCommand c : commandServiceLoader) {
-                PluginCommand command = CommandUtils.getPluginCommand(c.getAliases().get(0));
+            for (ConstructionSiteCommand c : commandProviders) {
+                String alias = c.getAliases().get(0);
+                PluginCommand command = CommandUtils.getPluginCommand(alias);
                 command.setAliases(c.getAliases());
                 command.setDescription(c.getDescription());
                 command.setUsage(c.getUsage());
