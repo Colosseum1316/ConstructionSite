@@ -9,8 +9,8 @@ body:
         1. Use English.
         2. Use latest version of the plugin, likely issue resolved already.
         3. Do research before opening issue.
-        4. Details are important!
-        5. Only open issue when you believe that you've found a bug. Otherwise, please go to Discussions instead.
+        4. Details are important! It's not possible to troubleshoot without sufficient information!
+        5. Only open issue when you believe you've found a bug. Otherwise, please go to Discussions instead.
         6. If you find your issue magically disappear, DO NOT ask why.
 
   - type: dropdown
@@ -19,9 +19,9 @@ body:
       label: Spigot server brand name
       description: Your Spigot server brand name
       options:
-        - Colosseum
+        - ColosseumSpigot
         - Spigot
-        - Paper
+        - PaperSpigot
         - PandaSpigot
         - Other (Elaborate in description)
     validations:
@@ -31,7 +31,7 @@ body:
     id: java-version
     attributes:
       label: Java version
-      description: The Java version the Spigot server runs on. Sometimes Java 17+ running Java 8 application is troublesome.
+      description: The Java version the Spigot server runs on.
     validations:
       required: true
 

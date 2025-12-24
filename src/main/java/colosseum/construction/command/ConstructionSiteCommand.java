@@ -1,8 +1,9 @@
 package colosseum.construction.command;
 
 import colosseum.construction.ConstructionSiteProvider;
+import colosseum.utility.UtilPlayerBase;
+import com.google.common.collect.ImmutableList;
 import lombok.Getter;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -10,13 +11,12 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.RemoteConsoleCommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 @Getter
 public abstract class ConstructionSiteCommand implements CommandExecutor {
-    private final List<String> aliases = new ArrayList<>();
+    private final List<String> aliases;
     private final String description;
     private final String usage;
 
@@ -41,7 +41,7 @@ public abstract class ConstructionSiteCommand implements CommandExecutor {
     }
 
     protected ConstructionSiteCommand(List<String> aliases, String description, String usage) {
-        this.aliases.addAll(aliases);
+        this.aliases = ImmutableList.copyOf(aliases);
         this.description = description;
         this.usage = usage;
     }
@@ -60,12 +60,12 @@ public abstract class ConstructionSiteCommand implements CommandExecutor {
             if ((sender instanceof ConsoleCommandSender || sender instanceof RemoteConsoleCommandSender) && canRun((CommandSender) sender)) {
                 return runConstruction(sender, label, args);
             } else {
-                sender.sendMessage(ChatColor.RED + "You must be a player!");
+                UtilPlayerBase.sendMessage(sender, "&cYou must be a player!");
                 return true;
             }
         }
         if (!canRun((Player) sender)) {
-            sender.sendMessage(ChatColor.RED + "You can't run this command. Probably because it can't be used now or you don't have permission.");
+            UtilPlayerBase.sendMessage(sender, "&cYou can't run this command. Probably because it can't be used now or you don't have permission.");
             return true;
         } else {
             return runConstruction((Player) sender, label, args);

@@ -22,9 +22,9 @@ import java.util.stream.StreamSupport;
 class TestServiceDiscovery {
     @Test
     void testServiceLoader() {
-        ServiceLoader<ConstructionSiteCommand> loader = ServiceLoader.load(ConstructionSiteCommand.class, ConstructionSiteCommand.class.getClassLoader());
-        Assertions.assertEquals(22, StreamSupport.stream(loader.spliterator(), false).count());
-        for (Object provider : loader) {
+        ServiceLoader<ConstructionSiteCommand> providers = ServiceLoader.load(ConstructionSiteCommand.class, ConstructionSiteCommand.class.getClassLoader());
+        Assertions.assertEquals(22, StreamSupport.stream(providers.spliterator(), false).count());
+        for (Object provider : providers) {
             Class<? extends ConstructionSiteCommand> providerClass = provider.getClass().asSubclass(ConstructionSiteCommand.class);
             Assertions.assertDoesNotThrow(() -> {
                 providerClass.getDeclaredConstructor().newInstance();
@@ -32,7 +32,7 @@ class TestServiceDiscovery {
         }
 
         Assertions.assertDoesNotThrow(() -> {
-            Assertions.assertEquals(8, PluginUtils.discoverManagers().size());
+            Assertions.assertEquals(8, PluginUtils.discoverManagers(ServiceLoader.load(ConstructionSiteManager.class, ConstructionSiteManager.class.getClassLoader())).size());
         });
     }
 

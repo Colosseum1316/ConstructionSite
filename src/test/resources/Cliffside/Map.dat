@@ -1,7 +1,5 @@
 MAP_NAME:Cliffside
 MAP_AUTHOR:Pyxl
-GAME_TYPE:MicroBattle
 ADMIN_LIST:
 currentlyLive:false
 warps:
-LOCKED:false

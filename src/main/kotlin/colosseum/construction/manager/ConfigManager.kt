@@ -1,6 +1,6 @@
 package colosseum.construction.manager
 
-import colosseum.construction.Constants
+import colosseum.construction.Constants.ConfigKeys.*
 import colosseum.construction.ConstructionSiteProvider
 
 class ConfigManager: ConstructionSiteManager("Config") {
@@ -10,13 +10,18 @@ class ConfigManager: ConstructionSiteManager("Config") {
         val site = ConstructionSiteProvider.getSite()
         val config = site.config
 
-        val keys = arrayOf(
-            Constants.ConfigKeys.PARSE_MAXIMUM_RADIUS
+        val defaults = mapOf<String, Any>(
+            PARSE__MAXIMUM_RADIUS to 1000
         )
+        defaults.forEach { (k, v) ->
+            config.addDefault(k, v)
+        }
+        config.options().copyDefaults(true)
+        save()
 
         validate()
 
-        keys.forEach { k ->
+        defaults.keys.forEach { k ->
             site.pluginLogger.info("Read $k: ${config.get(k)}")
         }
     }
@@ -29,9 +34,9 @@ class ConfigManager: ConstructionSiteManager("Config") {
         var r = false
 
         val config = ConstructionSiteProvider.getSite().config
-        if (config.getInt(Constants.ConfigKeys.PARSE_MAXIMUM_RADIUS) < 10) {
+        if (config.getInt(PARSE__MAXIMUM_RADIUS) < 10) {
             r = true
-            config.set(Constants.ConfigKeys.PARSE_MAXIMUM_RADIUS, 10)
+            config.set(PARSE__MAXIMUM_RADIUS, 10)
         }
 
         if (r) {
@@ -40,15 +45,15 @@ class ConfigManager: ConstructionSiteManager("Config") {
         }
     }
 
-    fun create() {
+    private fun create() {
         ConstructionSiteProvider.getPlugin().saveDefaultConfig()
     }
 
-    fun reload() {
+    private fun reload() {
         ConstructionSiteProvider.getPlugin().reloadConfig()
     }
 
-    fun save() {
+    private fun save() {
         ConstructionSiteProvider.getPlugin().saveConfig()
     }
 }

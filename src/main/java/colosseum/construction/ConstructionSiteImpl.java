@@ -8,12 +8,14 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.logging.Logger;
 
 public final class ConstructionSiteImpl extends JavaPlugin implements ConstructionSite {
 
+    private ServiceLoader<ConstructionSiteManager> managerProviders;
     private final Map<Class<? extends ConstructionSiteManager>, ConstructionSiteManager> managers = new HashMap<>();
-    private final ArrayList<Class<? extends ConstructionSiteManager>> managersReference = new ArrayList<>();
+    private final ArrayList<Class<? extends ConstructionSiteManager>> managerClassReference = new ArrayList<>();
 
     @Override
     public <T extends ConstructionSiteManager> T getManager(Class<T> tClass) {
@@ -24,11 +26,14 @@ public final class ConstructionSiteImpl extends JavaPlugin implements Constructi
     public void onLoad() {
         Validate.isTrue(BaseUtils.initDir(getPluginDataFolder()), "Cannot initialize plugin data folder");
         ConstructionSiteProvider.setSite(this);
+        if (managerProviders == null) {
+            managerProviders = ServiceLoader.load(ConstructionSiteManager.class, ConstructionSiteManager.class.getClassLoader());
+        }
         try {
             PluginUtils.unzip();
             managers.clear();
-            managersReference.clear();
-            managersReference.addAll(PluginUtils.discoverManagers());
+            managerClassReference.clear();
+            managerClassReference.addAll(PluginUtils.discoverManagers(managerProviders));
         } catch (Exception e) {
             throw new Error(e);
         }
@@ -37,18 +42,22 @@ public final class ConstructionSiteImpl extends JavaPlugin implements Constructi
     @Override
     public void onEnable() {
         ConstructionSiteProvider.setScheduler(new ConstructionSiteSchedulesImpl());
-        PluginUtils.registerManagers(managersReference, managers);
+        for (ConstructionSiteManager provider : managerProviders) {
+            managers.put(provider.getClass(), provider);
+        }
+        PluginUtils.registerManagers(managerClassReference, managers);
         ConstructionSiteProvider.setLive(true);
     }
 
     @Override
     public void onDisable() {
         ConstructionSiteProvider.setLive(false);
-        PluginUtils.unregisterManagers(managersReference, managers);
+        PluginUtils.unregisterManagers(managerClassReference, managers);
         ConstructionSiteProvider.setScheduler(null);
         managers.clear();
-        managersReference.clear();
+        managerClassReference.clear();
         ConstructionSiteProvider.setSite(null);
+        managerProviders = null;
     }
 
     @Override

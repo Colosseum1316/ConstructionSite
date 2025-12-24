@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.ServiceLoader;
 import java.util.Set;
@@ -63,23 +64,22 @@ public final class PluginUtils {
         return res;
     }
 
-    public static List<Class<? extends ConstructionSiteManager>> discoverManagers() {
+    public static List<Class<? extends ConstructionSiteManager>> discoverManagers(ServiceLoader<ConstructionSiteManager> serviceLoader) {
         List<Class<? extends ConstructionSiteManager>> discovered = new ArrayList<>();
-        ServiceLoader<ConstructionSiteManager> loader = ServiceLoader.load(ConstructionSiteManager.class, ConstructionSiteManager.class.getClassLoader());
-        for (ConstructionSiteManager manager : loader) {
+        for (ConstructionSiteManager manager : serviceLoader) {
             discovered.add(manager.getClass());
         }
         return discoverManagers(discovered);
     }
 
     public static void registerManagers(
-            List<Class<? extends ConstructionSiteManager>> managersReference,
+            List<Class<? extends ConstructionSiteManager>> managerClassReference,
             Map<Class<? extends ConstructionSiteManager>, ConstructionSiteManager> managers
     ) {
         try {
-            for (Class<? extends ConstructionSiteManager> aClass : managersReference) {
-                ConstructionSiteManager manager = aClass.getDeclaredConstructor().newInstance();
-                managers.put(aClass, manager);
+            for (Class<? extends ConstructionSiteManager> aClass : managerClassReference) {
+                ConstructionSiteManager manager = managers.get(aClass);
+                Objects.requireNonNull(manager);
                 ConstructionSiteProvider.getSite().getPluginLogger().info("Registering " + manager.getName());
                 manager.register();
             }
@@ -89,11 +89,11 @@ public final class PluginUtils {
     }
 
     public static void unregisterManagers(
-            List<Class<? extends ConstructionSiteManager>> managersReference,
+            List<Class<? extends ConstructionSiteManager>> managerClassReference,
             Map<Class<? extends ConstructionSiteManager>, ConstructionSiteManager> managers
     ) {
-        for (int i = managersReference.size() - 1; i >= 0; i--) {
-            managers.computeIfPresent(managersReference.get(i), (c, in) -> {
+        for (int i = managerClassReference.size() - 1; i >= 0; i--) {
+            managers.computeIfPresent(managerClassReference.get(i), (c, in) -> {
                 ConstructionSiteProvider.getSite().getPluginLogger().info("Unregistering " + in.getName());
                 in.unregister();
                 return null;

@@ -1,7 +1,5 @@
 MAP_NAME:Void
 MAP_AUTHOR:Void
-GAME_TYPE:DragonEscape
 ADMIN_LIST:
 currentlyLive:false
 warps:
-LOCKED:false

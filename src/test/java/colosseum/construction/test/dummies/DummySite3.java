@@ -54,6 +54,9 @@ public final class DummySite3 implements DummySite {
     @Override
     public void enable() {
         ConstructionSiteProvider.setScheduler(new DummySchedules());
+        managers.put(WorldManager.class, new WorldManager());
+        managers.put(MapDataManager.class, new MapDataManager());
+        managers.put(TeleportManager.class, new TeleportManager());
         PluginUtils.registerManagers(managersReference, managers);
         ConstructionSiteProvider.setLive(true);
     }
