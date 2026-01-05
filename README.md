@@ -52,34 +52,8 @@ Because the commands in the plugin are subject to change.
 ### Why should I use the plugin in another server? Can't I just use it in my SMP or whatsoever?
 
 Because the plugin has reliance on a premade world save,
-a selected few of XYZ coordinates are hardcoded in the plugin codebase based on it.
+and a selected few of XYZ coordinates are hardcoded in the plugin codebase based on it.
 As such, for consistency, you're advised to do so.
 
 Secondly, what the plugin provides is never meant for **public** Minecraft servers.
 No builder would ever expect a 3-year-old kid ruining their fruit.
-
-### Then why's the plugin licensed under GPL3?
-
-It's because of upstream. Technically no one really cares about it,
-unless something dead serious that requires court interference strikes in, which has practically down to zero possibility for this plugin.
-It's not AGPL either, just relax. 
-
-### The plugin document sucks!
-
-Then please open a Pull Request instead of constant nonsensical annoyance. We assume you should've figured out the full usage by then.
-
-### What's exactly [CENSORED]?
-
-A clue to you: The plugin is made against a Minecraft minigame server network that shut down in 2023.
-
-If you wish to know what exactly [CENSORED] is, you may contact us by sending an email to `/dev/null` and we will get back to you within 14 business days.
-
-Impatient? Intrigued? Mischievous? Then try posting/guessing/spamming in Issues/Pull Requests/Discussions, and we're pretty sure in this case your GitHub ID would be noted and reported, and **any** post/comment you leave around here would be wiped clean as much as possible. Please don't ever try to reveal [CENSORED] here in any of our repositories, unless you really regard DMCA as a cyber nuclear weapon.
-
-### Ok I'll stop asking what's [CENSORED], but why do you say like that?
-
-It's due to something you would never want to hear about.
-
-### What's that?
-
-I said stop.
