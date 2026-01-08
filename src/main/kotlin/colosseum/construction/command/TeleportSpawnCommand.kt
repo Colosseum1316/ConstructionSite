@@ -4,7 +4,7 @@ import colosseum.utility.UtilPlayerBase
 import colosseum.utility.UtilWorld.locToStrClean
 import org.bukkit.entity.Player
 
-class TeleportSpawnCommand: AbstractTeleportCommand(
+class TeleportSpawnCommand : AbstractTeleportCommand(
     listOf("spawn"),
     "Teleport to world spawn point.",
     "/spawn"

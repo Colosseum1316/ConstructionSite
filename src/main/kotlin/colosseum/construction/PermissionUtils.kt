@@ -19,11 +19,18 @@ object PermissionUtils {
 
     @JvmStatic
     fun getAsteriskPermission(): Permission {
-        return Bukkit.getPluginManager().getPermission(getAsteriskPermissionString()) ?: Permission(getAsteriskPermissionString(), PermissionDefault.OP)
+        return Bukkit.getPluginManager().getPermission(getAsteriskPermissionString()) ?: Permission(
+            getAsteriskPermissionString(),
+            PermissionDefault.OP
+        )
     }
 
     @JvmStatic
     fun getPermission(command: ConstructionSiteCommand): Permission {
-        return Bukkit.getPluginManager().getPermission(getPermissionString(command)) ?: Permission(getPermissionString(command), if (command is AbstractOpCommand) PermissionDefault.OP else PermissionDefault.TRUE)
+        return Bukkit.getPluginManager().getPermission(getPermissionString(command)) ?: Permission(
+            getPermissionString(
+                command
+            ), if (command is AbstractOpCommand) PermissionDefault.OP else PermissionDefault.TRUE
+        )
     }
 }

@@ -4,7 +4,7 @@ import colosseum.construction.command.AbstractMapAdminCommand
 import colosseum.utility.UtilPlayerBase
 import org.bukkit.entity.Player
 
-class TimeCommand: AbstractMapAdminCommand(
+class TimeCommand : AbstractMapAdminCommand(
     listOf("time"),
     "Set map world time",
     "/time <absolute tick>"

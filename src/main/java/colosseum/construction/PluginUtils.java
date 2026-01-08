@@ -25,6 +25,7 @@ import java.util.Queue;
 import java.util.ServiceLoader;
 import java.util.Set;
 
+@SuppressWarnings("unused")
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class PluginUtils {
 
@@ -142,7 +143,7 @@ public final class PluginUtils {
 
     /**
      * @param dataFolder Plugin data folder
-     * @param filename Single filename
+     * @param filename   Single filename
      * @return File object
      */
     public static File loadYml(File dataFolder, String filename) {

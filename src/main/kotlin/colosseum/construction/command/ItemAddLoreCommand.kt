@@ -3,7 +3,7 @@ package colosseum.construction.command
 import colosseum.utility.UtilPlayerBase
 import org.bukkit.entity.Player
 
-class ItemAddLoreCommand: ItemCommand(
+class ItemAddLoreCommand : ItemCommand(
     listOf("addlore"),
     "Add a line of lore to item.",
     "/addlore <text>"

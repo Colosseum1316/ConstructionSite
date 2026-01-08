@@ -2,7 +2,7 @@ package colosseum.construction.command
 
 import org.bukkit.entity.Player
 
-class TeleportHubCommand: AbstractTeleportCommand(
+class TeleportHubCommand : AbstractTeleportCommand(
     listOf("hub", "lobby"),
     "Go back to hub.",
     "/hub"

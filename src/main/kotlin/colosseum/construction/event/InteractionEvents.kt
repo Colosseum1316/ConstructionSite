@@ -42,13 +42,15 @@ import org.bukkit.event.weather.LightningStrikeEvent
 import org.bukkit.event.weather.ThunderChangeEvent
 import org.bukkit.event.weather.WeatherChangeEvent
 
-class InteractionEvents: ConstructionSiteEventListener() {
+class InteractionEvents : ConstructionSiteEventListener() {
 
     private fun disableInteraction(player: Player, event: Cancellable) {
         if (WorldUtils.isLevelNamePreserved(WorldUtils.getWorldRelativePath(player.world))) {
             event.isCancelled = true
         }
-        if (!ConstructionSiteProvider.getSite().getManager(MapDataManager::class.java).get(player.world).allows(player)) {
+        if (!ConstructionSiteProvider.getSite().getManager(MapDataManager::class.java).get(player.world)
+                .allows(player)
+        ) {
             event.isCancelled = true
         }
     }
@@ -162,7 +164,8 @@ class InteractionEvents: ConstructionSiteEventListener() {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onEntityDamage(event: EntityDamageEvent) {
-        event.isCancelled = event.entityType == EntityType.PLAYER && (event.cause != EntityDamageEvent.DamageCause.VOID && event.cause != EntityDamageEvent.DamageCause.CUSTOM && event.cause != EntityDamageEvent.DamageCause.SUICIDE)
+        event.isCancelled =
+            event.entityType == EntityType.PLAYER && (event.cause != EntityDamageEvent.DamageCause.VOID && event.cause != EntityDamageEvent.DamageCause.CUSTOM && event.cause != EntityDamageEvent.DamageCause.SUICIDE)
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -182,7 +185,8 @@ class InteractionEvents: ConstructionSiteEventListener() {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun disableIgnite(event: BlockIgniteEvent) {
-        event.isCancelled = event.cause == BlockIgniteEvent.IgniteCause.LAVA || event.cause == BlockIgniteEvent.IgniteCause.SPREAD
+        event.isCancelled =
+            event.cause == BlockIgniteEvent.IgniteCause.LAVA || event.cause == BlockIgniteEvent.IgniteCause.SPREAD
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

@@ -57,9 +57,9 @@ final class World {
     public String[] readSign(AnvilChunk chunk, Block signBlock) {
         CompoundTag signTag = chunk.getTileEntities().stream().filter(v ->
                 v.getString(AnvilFormat.TileEntityTag.ID).equals("Sign")
-                && v.getInt(AnvilFormat.TileEntityTag.X_POS) == signBlock.getX()
-                && v.getInt(AnvilFormat.TileEntityTag.Y_POS) == signBlock.getY()
-                && v.getInt(AnvilFormat.TileEntityTag.Z_POS) == signBlock.getZ()).findFirst().orElse(null);
+                        && v.getInt(AnvilFormat.TileEntityTag.X_POS) == signBlock.getX()
+                        && v.getInt(AnvilFormat.TileEntityTag.Y_POS) == signBlock.getY()
+                        && v.getInt(AnvilFormat.TileEntityTag.Z_POS) == signBlock.getZ()).findFirst().orElse(null);
         if (signTag == null) {
             throw new IllegalStateException("There's no sign.");
         }

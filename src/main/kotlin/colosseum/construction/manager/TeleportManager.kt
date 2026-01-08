@@ -13,7 +13,7 @@ import java.util.logging.*
 
 @Suppress("MemberVisibilityCanBePrivate")
 @ManagerDependency(WorldManager::class, MapDataManager::class)
-class TeleportManager: ConstructionSiteManager("Teleport") {
+class TeleportManager : ConstructionSiteManager("Teleport") {
     private lateinit var serverSpawnLocation: Location
 
     private fun getMapDataManager(): MapDataManager {
@@ -64,7 +64,13 @@ class TeleportManager: ConstructionSiteManager("Teleport") {
         }
         return player.teleport(destination).also { v ->
             if (v) {
-                ConstructionSiteProvider.getSite().pluginLogger.info("Teleported ${player.name} to ${WorldUtils.getWorldRelativePath(destination.world)} ${locToStrClean(destination)}")
+                ConstructionSiteProvider.getSite().pluginLogger.info(
+                    "Teleported ${player.name} to ${
+                        WorldUtils.getWorldRelativePath(
+                            destination.world
+                        )
+                    } ${locToStrClean(destination)}"
+                )
             } else {
                 ConstructionSiteProvider.getSite().pluginLogger.warning("Internal failure whilst teleporting ${player.name}!!!")
             }

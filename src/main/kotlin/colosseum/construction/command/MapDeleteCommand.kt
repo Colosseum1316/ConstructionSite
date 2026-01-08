@@ -14,7 +14,7 @@ import org.bukkit.command.Command
 import org.bukkit.entity.Player
 import java.util.*
 
-class MapDeleteCommand: AbstractMapAdminCommand(
+class MapDeleteCommand : AbstractMapAdminCommand(
     listOf("mapdelete"),
     "Delete map by world uuid. ",
     "/mapdelete <world uuid>"
@@ -26,7 +26,8 @@ class MapDeleteCommand: AbstractMapAdminCommand(
             message0.color = ChatColor.RED
             val message = TextComponent(world.uid.toString())
             message.color = ChatColor.YELLOW
-            message.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT, arrayOf(TextComponent("Click to run the command!")))
+            message.hoverEvent =
+                HoverEvent(HoverEvent.Action.SHOW_TEXT, arrayOf(TextComponent("Click to run the command!")))
             message.clickEvent = ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/mapdelete ${world.uid}")
             message0.addExtra(message)
             caller.spigot().sendMessage(message0)

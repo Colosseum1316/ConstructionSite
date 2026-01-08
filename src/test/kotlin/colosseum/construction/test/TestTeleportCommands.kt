@@ -42,7 +42,7 @@ internal class TestTeleportCommands {
         @JvmField
         var tempPluginDataDir: File? = null
     }
-    
+
     private var plugin: DummySite? = null
     private lateinit var player1: ConstructionSitePlayerMock
     private lateinit var player2: ConstructionSitePlayerMock

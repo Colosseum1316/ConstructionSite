@@ -11,7 +11,7 @@ import org.bukkit.GameMode
 import org.bukkit.entity.Player
 import java.util.*
 
-class TeleportMapCommand: AbstractTeleportCommand(
+class TeleportMapCommand : AbstractTeleportCommand(
     listOf("tpmap"),
     "Teleport to a map by world uuid.",
     "/tpmap <world uuid>"
@@ -39,7 +39,8 @@ class TeleportMapCommand: AbstractTeleportCommand(
                 val message0 = TextComponent(entry.key.toString())
                 message0.color = ChatColor.YELLOW
                 message0.clickEvent = ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/tpmap ${entry.key}")
-                message0.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                message0.hoverEvent = HoverEvent(
+                    HoverEvent.Action.SHOW_TEXT,
                     arrayOf(TextComponent("Click to run the command!"))
                 )
                 message.addExtra(message0)

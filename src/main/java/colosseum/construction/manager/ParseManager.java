@@ -162,7 +162,9 @@ public final class ParseManager extends ConstructionSiteManager {
         return running.get();
     }
 
-    /** 0.0 - 1.0 */
+    /**
+     * 0.0 - 1.0
+     */
     public double getProgress() {
         if (isRunning()) {
             return parser != null ? parser.getProgress() : 0.0;

@@ -28,7 +28,7 @@ import java.io.File
 import java.util.*
 
 internal class TestMapData {
-    
+
     companion object {
         @TempDir
         @JvmField
@@ -42,7 +42,7 @@ internal class TestMapData {
         private const val uuid2 = "07e79d0b-f86d-4bed-ae37-d87df8d94693"
         private const val uuid3 = "3e65ea50-cd1a-45fb-81d7-7e27c14662d4"
     }
-    
+
     private var plugin: DummySite? = null
     private lateinit var world: WorldMock
 
