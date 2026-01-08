@@ -4,15 +4,12 @@ import be.seeseemelk.mockbukkit.MockBukkit;
 import colosseum.construction.ConstructionSiteProvider;
 import colosseum.construction.PluginUtils;
 import colosseum.construction.manager.ConstructionSiteManager;
-import colosseum.construction.manager.SplashTextManager;
 import colosseum.construction.test.Utils;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -33,7 +30,6 @@ public final class DummySite1 implements DummySite {
 
         managers.clear();
         managerClassReference.clear();
-        managerClassReference.addAll(PluginUtils.discoverManagers(Collections.singletonList(SplashTextManager.class)));
 
         MockBukkit.mock();
     }
@@ -46,7 +42,6 @@ public final class DummySite1 implements DummySite {
     @Override
     public void enable() {
         ConstructionSiteProvider.setSite(this);
-        managers.put(SplashTextManager.class, new SplashTextManager());
         PluginUtils.registerManagers(managerClassReference, managers);
         ConstructionSiteProvider.setLive(true);
     }

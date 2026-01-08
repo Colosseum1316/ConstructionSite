@@ -28,10 +28,6 @@ parse:
   maximum_radius: 1000
 ```
 
-### join-text.yml
-
-`join-text.yml` is a list of messages that will be sent upon every player join. In most cases this file can be safely ignored.
-
 ## Usage
 
 Drop the plugin jar into `plugins` directory, then start server.
