@@ -3,9 +3,7 @@ package colosseum.construction.event
 import colosseum.construction.ConstructionSiteProvider
 import colosseum.construction.WorldUtils
 import colosseum.construction.manager.MapDataManager
-import colosseum.construction.manager.SplashTextManager
 import colosseum.construction.manager.TeleportManager
-import colosseum.utility.UtilPlayerBase.sendMessage
 import org.bukkit.GameMode
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
@@ -43,7 +41,6 @@ import org.bukkit.event.player.PlayerTeleportEvent
 import org.bukkit.event.weather.LightningStrikeEvent
 import org.bukkit.event.weather.ThunderChangeEvent
 import org.bukkit.event.weather.WeatherChangeEvent
-import java.util.function.*
 
 class InteractionEvents: ConstructionSiteEventListener() {
 
@@ -89,11 +86,6 @@ class InteractionEvents: ConstructionSiteEventListener() {
     @EventHandler(priority = EventPriority.MONITOR)
     fun onPlayerJoinTeleportToSpawn(event: PlayerJoinEvent) {
         ConstructionSiteProvider.getSite().getManager(TeleportManager::class.java).teleportToServerSpawn(event.player)
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    fun onPlayerJoinPrintSplashText(event: PlayerJoinEvent) {
-        ConstructionSiteProvider.getSite().getManager(SplashTextManager::class.java).getText().forEach(Consumer { v: String -> sendMessage(event.player, v) })
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

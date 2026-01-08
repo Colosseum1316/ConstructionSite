@@ -88,12 +88,12 @@ jobs:
           check_title_template: '{{SUITE_NAME}} | {{TEST_NAME}}'
 
       - name: JaCoCo Code Coverage Report
-        uses: NorthRealm/jacoco-csv-summary@v1.1.0
+        uses: NorthRealm/jacoco-csv-summary@v1.1.1
         with:
           csv-file: ./target/jacoco-report/jacoco.csv
           write-summary: true
           write-check: true
-          check-name: Jacoco (${{ matrix.os }}, Java ${{ matrix.java-version }})
+          check-name: Code Coverage (${{ matrix.os }}, Java ${{ matrix.java-version }})
 
       - name: Upload artifacts
         if: ${{ (github.ref_name == 'master' && github.event_name == 'push') || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' }}

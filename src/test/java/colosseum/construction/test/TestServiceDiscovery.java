@@ -23,7 +23,7 @@ class TestServiceDiscovery {
     @Test
     void testServiceLoader() {
         ServiceLoader<ConstructionSiteCommand> providers = ServiceLoader.load(ConstructionSiteCommand.class, ConstructionSiteCommand.class.getClassLoader());
-        Assertions.assertEquals(22, StreamSupport.stream(providers.spliterator(), false).count());
+        Assertions.assertEquals(20, StreamSupport.stream(providers.spliterator(), false).count());
         for (Object provider : providers) {
             Class<? extends ConstructionSiteCommand> providerClass = provider.getClass().asSubclass(ConstructionSiteCommand.class);
             Assertions.assertDoesNotThrow(() -> {
@@ -32,7 +32,7 @@ class TestServiceDiscovery {
         }
 
         Assertions.assertDoesNotThrow(() -> {
-            Assertions.assertEquals(8, PluginUtils.discoverManagers(ServiceLoader.load(ConstructionSiteManager.class, ConstructionSiteManager.class.getClassLoader())).size());
+            Assertions.assertEquals(7, PluginUtils.discoverManagers(ServiceLoader.load(ConstructionSiteManager.class, ConstructionSiteManager.class.getClassLoader())).size());
         });
     }
 

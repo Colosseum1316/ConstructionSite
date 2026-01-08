@@ -5,7 +5,7 @@
     <groupId>colosseum.minecraft</groupId>
     <name>ConstructionSite</name>
     <artifactId>ConstructionSite</artifactId>
-    <version>0.1.1</version>
+    <version>0.1.2</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -19,6 +19,7 @@
         <commons_lang3.version>3.19.0</commons_lang3.version>
         <lombok.version>1.18.38</lombok.version>
         <junit.version>5.11.3</junit.version>
+        <jacoco.version>0.8.14</jacoco.version>
     </properties>
 
     <repositories>
@@ -276,7 +277,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.14</version>
+                <version>${jacoco.version}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -288,7 +289,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.2.0</version>
                 <executions>
                     <execution>
                         <id>jacoco-report</id>
@@ -329,7 +330,7 @@
                     <dependency>
                         <groupId>org.jacoco</groupId>
                         <artifactId>org.jacoco.ant</artifactId>
-                        <version>0.8.14</version>
+                        <version>${jacoco.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>

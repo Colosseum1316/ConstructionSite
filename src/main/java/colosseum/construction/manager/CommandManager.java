@@ -9,7 +9,7 @@ import org.bukkit.command.TabCompleter;
 
 import java.util.ServiceLoader;
 
-@ManagerDependency({MapDataManager.class, SplashTextManager.class, TeleportManager.class, WorldManager.class})
+@ManagerDependency({MapDataManager.class, TeleportManager.class, WorldManager.class})
 public final class CommandManager extends ConstructionSiteManager {
     public static final String FALLBACK_PREFIX = "colosseum-constructionsite";
 
