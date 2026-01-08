@@ -13,7 +13,7 @@ class TeleportSpawnCommand: AbstractTeleportCommand(
         val world = caller.world
         val location = world.spawnLocation
         if (getTeleportManager().teleportPlayer(caller, location)) {
-            UtilPlayerBase.sendMessage(caller, "Teleported to ${locToStrClean(location)}")
+            UtilPlayerBase.sendMessage(caller, "Teleported to &e${locToStrClean(location)}")
         } else {
             sayTeleportFail(caller)
         }

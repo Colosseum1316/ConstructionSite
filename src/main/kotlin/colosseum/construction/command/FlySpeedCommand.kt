@@ -4,7 +4,7 @@ import colosseum.construction.ConstructionSiteProvider
 import colosseum.utility.UtilPlayerBase
 import org.bukkit.entity.Player
 
-class FlySpeedCommand: ConstructionSiteCommand(
+class FlySpeedCommand: AbstractOpCommand(
     listOf("flyspeed"),
     "Set your flight speed. Use it whilst flying. Range from 1.0 to 10.0",
     "/flyspeed <speed>"

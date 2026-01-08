@@ -42,8 +42,16 @@ class TestFlySpeedCommand {
         Assertions.assertFalse(command.canRun(MockBukkit.getMock().getConsoleSender()));
         Assertions.assertFalse(command.canRun(player));
         player.setFlying(true);
-        Assertions.assertTrue(command.canRun(player));
+
+        player.setOp(false);
         Assertions.assertFalse(command.canRun(MockBukkit.getMock().getConsoleSender()));
+        Assertions.assertFalse(command.canRun(player));
+
+        player.setOp(true);
+        Assertions.assertFalse(command.canRun(MockBukkit.getMock().getConsoleSender()));
+        Assertions.assertTrue(command.canRun(player));
+
+        player.setOp(true);
     }
 
     @Order(2)

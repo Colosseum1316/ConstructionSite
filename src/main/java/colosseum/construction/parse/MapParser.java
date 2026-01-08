@@ -1,4 +1,4 @@
-package colosseum.construction.parser;
+package colosseum.construction.parse;
 
 import colosseum.construction.Constants;
 import colosseum.construction.ConstructionSite;

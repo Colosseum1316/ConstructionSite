@@ -5,7 +5,7 @@ import colosseum.construction.ConstructionSite;
 import colosseum.construction.ConstructionSiteProvider;
 import colosseum.construction.WorldUtils;
 import colosseum.construction.data.FinalizedMapData;
-import colosseum.construction.parser.MapParser;
+import colosseum.construction.parse.MapParser;
 import colosseum.utility.UtilZipper;
 import colosseum.utility.WorldMapConstants;
 import net.md_5.bungee.api.ChatColor;

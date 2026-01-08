@@ -4,7 +4,7 @@ import be.seeseemelk.mockbukkit.MockBukkit
 import colosseum.construction.Constants
 import colosseum.construction.ConstructionSiteProvider
 import colosseum.construction.manager.MapDataManager
-import colosseum.construction.parser.MapParser
+import colosseum.construction.parse.MapParser
 import colosseum.construction.test.dummies.ConstructionSiteServerMock
 import colosseum.construction.test.dummies.ConstructionSiteWorldMock
 import colosseum.construction.test.dummies.DummySite
