@@ -260,7 +260,7 @@ public final class MapParser implements Runnable {
                 cornerB = new Location(256.0, 0.0, 256.0);
             }
 
-            world.getOfflineWorld().getLevelTag().setString(AnvilFormat.LevelTag.LEVEL_NAME, String.format("%s - %s", mapData.getMapName().orElse(Constants.UNTITLED), mapData.getMapCreator().orElse("null")));
+            world.getOfflineWorld().getLevelTag().setString(AnvilFormat.LevelTag.LEVEL_NAME, String.format("%s - %s", mapData.getMapName().orElse(Constants.UNTITLED), mapData.getMapCreator().orElse(Constants.NULL)));
             world.getOfflineWorld().saveLevelTag();
 
             for (Map.Entry<Pair<Integer, Integer>, AnvilChunk> c : world.getVisitedChunks().entrySet()) {
@@ -273,7 +273,7 @@ public final class MapParser implements Runnable {
                 site.getPluginLogger().info("Parsing " + parsableWorldPathString + ": Writing " + WorldMapConstants.WORLDCONFIG_DAT);
 
                 buffer.write("MAP_NAME:" + mapData.getMapName().orElse(Constants.UNTITLED));
-                buffer.write("\nMAP_AUTHOR:" + mapData.getMapCreator().orElse("null"));
+                buffer.write("\nMAP_AUTHOR:" + mapData.getMapCreator().orElse(Constants.NULL));
                 buffer.write("\n\nMIN_X:" + Math.min(cornerA.getBlockX(), cornerB.getBlockX()));
                 buffer.write("\nMAX_X:" + Math.max(cornerA.getBlockX(), cornerB.getBlockX()));
                 buffer.write("\nMIN_Z:" + Math.min(cornerA.getBlockZ(), cornerB.getBlockZ()));
