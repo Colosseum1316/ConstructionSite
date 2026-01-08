@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.logging.Logger;
 
+@SuppressWarnings({"unused", "unchecked"})
 public final class ConstructionSiteImpl extends JavaPlugin implements ConstructionSite {
 
     private ServiceLoader<ConstructionSiteManager> managerProviders;

@@ -12,6 +12,7 @@ import org.bukkit.util.StringUtil
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 
+@Suppress("unchecked", "deprecation", "RedundantSuppression")
 class DifficultyCommand: AbstractMapAdminCommand(
     listOf("difficulty"),
     "Set map world difficulty",
@@ -53,7 +54,7 @@ class DifficultyCommand: AbstractMapAdminCommand(
             val difficulty = Difficulty.getByValue(v)
             setDifficulty(caller, caller.world, difficulty)
             return true
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             // no op
         }
 

@@ -1,5 +1,6 @@
 package colosseum.construction;
 
+@SuppressWarnings("UnusedReturnValue")
 public interface ConstructionSiteSchedules {
     <T> T schedule(Runnable runnable, Class<T> clazz);
 

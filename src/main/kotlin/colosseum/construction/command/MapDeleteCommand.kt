@@ -54,7 +54,7 @@ class MapDeleteCommand: AbstractMapAdminCommand(
                 FileUtils.deleteQuietly(f)
             }
             return true
-        } catch (e: IllegalArgumentException) {
+        } catch (_: IllegalArgumentException) {
             UtilPlayerBase.sendMessage(caller, "&cInvalid input!")
             return false
         }

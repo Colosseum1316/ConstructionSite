@@ -21,7 +21,7 @@ class TimeCommand: AbstractMapAdminCommand(
             }
             caller.world.time = t
             UtilPlayerBase.sendMessage(caller, "Set map world time to $t")
-        } catch (e: NumberFormatException) {
+        } catch (_: NumberFormatException) {
             return false
         }
         return true

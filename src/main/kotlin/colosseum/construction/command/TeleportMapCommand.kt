@@ -67,7 +67,7 @@ class TeleportMapCommand: AbstractTeleportCommand(
                     sayTeleportFail(caller)
                 }
                 return true
-            } catch (e: IllegalArgumentException) {
+            } catch (_: IllegalArgumentException) {
                 UtilPlayerBase.sendMessage(caller, "&cInvalid UUID!")
                 return false
             }

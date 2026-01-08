@@ -64,7 +64,7 @@ class MapParseCommand: AbstractMapAdminCommand(
                     UtilPlayerBase.sendMessage(caller, "&cAre you sure you wanna build a map this large-scale?")
                     return true
                 }
-            } catch (ex: NumberFormatException) {
+            } catch (_: NumberFormatException) {
                 return false
             }
 

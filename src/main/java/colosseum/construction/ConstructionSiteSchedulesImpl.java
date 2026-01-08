@@ -3,6 +3,7 @@ package colosseum.construction;
 import lombok.NoArgsConstructor;
 import org.bukkit.scheduler.BukkitTask;
 
+@SuppressWarnings("unchecked")
 @NoArgsConstructor
 public class ConstructionSiteSchedulesImpl implements ConstructionSiteSchedules {
     @Override

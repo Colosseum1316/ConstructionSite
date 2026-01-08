@@ -8,7 +8,6 @@ import static org.bukkit.Location.locToBlock;
 
 @AllArgsConstructor
 @Getter
-@SuppressWarnings("ClassCanBeRecord")
 final class Location {
     private final double x;
     private final double y;

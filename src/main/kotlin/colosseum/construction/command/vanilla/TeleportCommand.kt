@@ -10,6 +10,7 @@ import org.bukkit.command.defaults.TeleportCommand
 import org.bukkit.entity.Player
 import java.lang.reflect.Method
 
+@Suppress("deprecation", "RedundantSuppression")
 class TeleportCommand: AbstractTeleportCommand(
     listOf("tp", "teleport"),
     "Teleport.",

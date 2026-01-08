@@ -21,6 +21,7 @@ import java.util.*
 import java.util.concurrent.*
 import java.util.function.*
 
+@Suppress("UnstableApiUsage")
 class TreeEvents: ConstructionSiteEventListener() {
     private val treeHistory: Cache<UUID, MutableList<Set<BlockData>>> = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).build()
 

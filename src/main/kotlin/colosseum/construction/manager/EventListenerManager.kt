@@ -27,7 +27,7 @@ class EventListenerManager: ConstructionSiteManager("Events") {
     }
 
     private fun unregisterEvents() {
-        treeEvents?.let { HandlerList.unregisterAll(it) }
-        interactionEvents?.let { HandlerList.unregisterAll(it) }
+        treeEvents.let { HandlerList.unregisterAll(it) }
+        interactionEvents.let { HandlerList.unregisterAll(it) }
     }
 }

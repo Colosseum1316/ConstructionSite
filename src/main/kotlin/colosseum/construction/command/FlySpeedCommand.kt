@@ -22,7 +22,7 @@ class FlySpeedCommand: AbstractOpCommand(
                 if (newSpeed !in 1.0..10.0) {
                     return false
                 }
-            } catch (ex: NumberFormatException) {
+            } catch (_: NumberFormatException) {
                 return false
             }
         } else {
