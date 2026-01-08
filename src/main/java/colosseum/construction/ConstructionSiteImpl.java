@@ -29,6 +29,7 @@ public final class ConstructionSiteImpl extends JavaPlugin implements Constructi
         if (managerProviders == null) {
             managerProviders = ServiceLoader.load(ConstructionSiteManager.class, ConstructionSiteManager.class.getClassLoader());
         }
+        PluginUtils.deleteWorlds();
         try {
             PluginUtils.unzip();
             managers.clear();

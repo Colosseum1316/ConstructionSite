@@ -101,6 +101,14 @@ public final class PluginUtils {
         }
     }
 
+    public static void deleteWorlds() {
+        ConstructionSite site = ConstructionSiteProvider.getSite();
+        FileUtils.deleteQuietly(site.getWorldContainer().toPath().resolve(WorldMapConstants.WORLD).toFile());
+        FileUtils.deleteQuietly(site.getWorldContainer().toPath().resolve(WorldMapConstants.WORLD_LOBBY).toFile());
+        FileUtils.deleteQuietly(site.getWorldContainer().toPath().resolve("world_nether").toFile());
+        FileUtils.deleteQuietly(site.getWorldContainer().toPath().resolve("world_the_end").toFile());
+    }
+
     public static void unzip() {
         ConstructionSite site = ConstructionSiteProvider.getSite();
         File destination = site.getWorldContainer().toPath().resolve(WorldMapConstants.WORLD).toFile();

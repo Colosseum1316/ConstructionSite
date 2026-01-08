@@ -135,7 +135,7 @@ internal class TestMapDeleteCommand {
         Assertions.assertTrue(teleportManager.teleportPlayer(player2, Location(worldMap, 0.0, 0.0, 0.0)))
         val uid: UUID = worldMap.uid
         Assertions.assertTrue(command.runConstruction(player1, label, arrayOf()))
-        player1.assertSaid(String.format("§e%s", uid))
+        player1.assertSaid(String.format("§cConfirm world deletion by clicking this: §e%s", uid))
         player1.assertNoMoreSaid()
         Assertions.assertFalse(command.runConstruction(player1, label, arrayOf("", "")))
         Assertions.assertTrue(
