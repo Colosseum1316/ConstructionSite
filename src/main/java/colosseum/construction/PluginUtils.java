@@ -28,7 +28,6 @@ import java.util.Set;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class PluginUtils {
 
-    @SuppressWarnings("ConstantConditions")
     private static void discoverManagers_TopologicalSort(
             Class<? extends ConstructionSiteManager> currentReference,
             Set<Class<? extends ConstructionSiteManager>> visited,
