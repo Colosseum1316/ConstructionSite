@@ -114,12 +114,14 @@ class InteractionEvents : ConstructionSiteEventListener() {
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.HIGHEST)
     fun onPlayerRespawn(event: PlayerRespawnEvent) {
-        ConstructionSiteProvider.getSite().getManager(TeleportManager::class.java).teleportToServerSpawn(event.player)
+        event.respawnLocation = ConstructionSiteProvider.getSite().getManager(TeleportManager::class.java).getSpawnLocation()
+        event.player.gameMode = GameMode.ADVENTURE
+        event.player.isFlying = false
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.HIGHEST)
     fun onPlayerDeath(event: PlayerDeathEvent) {
         event.keepInventory = true
     }
