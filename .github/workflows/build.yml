@@ -72,8 +72,18 @@ jobs:
           distribution: corretto
           cache: maven
 
-      - name: Build
+      - uses: dorny/paths-filter@v3
+        id: path-filter
+        with:
+          filters: |
+            parser:
+              - "src/main/java/colosseum/construction/parse/*.java"
+
+      - if: ${{ steps.path-filter.outputs.parser == 'true' }}
         run: mvn -B -V -e -ntp -Dstyle.color=always clean verify
+
+      - if: ${{ steps.path-filter.outputs.parser != 'true' }}
+        run: set +H && mvn -B -V -e -ntp -Dstyle.color=always -Dtest='!TestMapParse' clean verify
 
       - name: Write test report
         uses: mikepenz/action-junit-report@v5
