@@ -59,7 +59,7 @@ class TeleportManager : ConstructionSiteManager("Teleport") {
     }
 
     fun teleportPlayer(player: Player, destination: Location): Boolean {
-        if (!canTeleportTo(player, destination)) {
+        if (!check(player, destination)) {
             return false
         }
         if (player.isDead) {
@@ -81,7 +81,7 @@ class TeleportManager : ConstructionSiteManager("Teleport") {
         }
     }
 
-    fun canTeleportTo(player: Player, destination: Location): Boolean {
+    fun check(player: Player, destination: Location): Boolean {
         if (player.world == destination.world) {
             return true
         }

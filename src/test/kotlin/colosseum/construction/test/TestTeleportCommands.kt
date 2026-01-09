@@ -154,9 +154,9 @@ internal class TestTeleportCommands {
         player3.assertSaid("§cCannot use warps in lobby!")
         player3.assertNoMoreSaid()
 
-        Assertions.assertTrue(manager.canTeleportTo(player1, Location(worldMap, 0.0, 0.0, 0.0)))
-        Assertions.assertTrue(manager.canTeleportTo(player2, Location(worldMap, 0.0, 0.0, 0.0)))
-        Assertions.assertFalse(manager.canTeleportTo(player3, Location(worldMap, 0.0, 0.0, 0.0)))
+        Assertions.assertTrue(manager.check(player1, Location(worldMap, 0.0, 0.0, 0.0)))
+        Assertions.assertTrue(manager.check(player2, Location(worldMap, 0.0, 0.0, 0.0)))
+        Assertions.assertFalse(manager.check(player3, Location(worldMap, 0.0, 0.0, 0.0)))
         Assertions.assertTrue(manager.teleportPlayer(player1, Location(worldMap, 0.0, 0.0, 0.0)))
         Assertions.assertTrue(manager.teleportPlayer(player2, Location(worldMap, 0.0, 0.0, 0.0)))
         Assertions.assertFalse(manager.teleportPlayer(player3, Location(worldMap, 0.0, 0.0, 0.0)))
