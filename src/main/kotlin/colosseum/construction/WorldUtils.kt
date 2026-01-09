@@ -129,7 +129,7 @@ object WorldUtils {
         }
         val path = getWorldRelativePath(world)
         if (!ConstructionSiteProvider.getSite().getServer().unloadWorld(world, save)) {
-            throw UnsupportedOperationException("Cannot unload world \"$path\"!")
+            throw Exception("Cannot unload world \"$path\"!")
         }
         ConstructionSiteProvider.getSite().pluginLogger.info("Unloaded world \"$path\". World ${(if (save) "" else "not ")}saved.")
     }
