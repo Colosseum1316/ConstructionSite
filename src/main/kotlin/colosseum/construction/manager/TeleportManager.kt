@@ -62,6 +62,10 @@ class TeleportManager : ConstructionSiteManager("Teleport") {
         if (!canTeleportTo(player, destination)) {
             return false
         }
+        if (player.isDead) {
+            ConstructionSiteProvider.getSite().pluginLogger.warning("Cannot teleport ${player.name}. Why are they dead?")
+            return false
+        }
         return player.teleport(destination).also { v ->
             if (v) {
                 ConstructionSiteProvider.getSite().pluginLogger.info(
@@ -72,7 +76,7 @@ class TeleportManager : ConstructionSiteManager("Teleport") {
                     } ${locToStrClean(destination)}"
                 )
             } else {
-                ConstructionSiteProvider.getSite().pluginLogger.warning("Internal failure whilst teleporting ${player.name}!!!")
+                ConstructionSiteProvider.getSite().pluginLogger.warning("Internal failure whilst teleporting ${player.name}!")
             }
         }
     }
@@ -86,5 +90,9 @@ class TeleportManager : ConstructionSiteManager("Teleport") {
             WORLD_LOBBY, WORLD -> true
             else -> getMapDataManager().get(destination.world).allows(player)
         }
+    }
+
+    fun getSpawnLocation(): Location {
+        return serverSpawnLocation.clone()
     }
 }

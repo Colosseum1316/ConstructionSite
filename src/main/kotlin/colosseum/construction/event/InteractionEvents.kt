@@ -28,7 +28,9 @@ import org.bukkit.event.entity.EntityBreakDoorEvent
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.EntityPortalEvent
 import org.bukkit.event.entity.EntitySpawnEvent
+import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerBedEnterEvent
+import org.bukkit.event.player.PlayerChangedWorldEvent
 import org.bukkit.event.player.PlayerEditBookEvent
 import org.bukkit.event.player.PlayerFishEvent
 import org.bukkit.event.player.PlayerGameModeChangeEvent
@@ -36,8 +38,8 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerPortalEvent
+import org.bukkit.event.player.PlayerRespawnEvent
 import org.bukkit.event.player.PlayerShearEntityEvent
-import org.bukkit.event.player.PlayerTeleportEvent
 import org.bukkit.event.weather.LightningStrikeEvent
 import org.bukkit.event.weather.ThunderChangeEvent
 import org.bukkit.event.weather.WeatherChangeEvent
@@ -104,12 +106,22 @@ class InteractionEvents : ConstructionSiteEventListener() {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    fun onTeleport(event: PlayerTeleportEvent) {
-        if (WorldUtils.isLevelNamePreserved(WorldUtils.getWorldRelativePath(event.to.world))) {
+    @EventHandler(priority = EventPriority.MONITOR)
+    fun onPlayerWorldChange(event: PlayerChangedWorldEvent) {
+        if (WorldUtils.isLevelNamePreserved(WorldUtils.getWorldRelativePath(event.player.world))) {
             event.player.gameMode = GameMode.ADVENTURE
             event.player.isFlying = false
         }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    fun onPlayerRespawn(event: PlayerRespawnEvent) {
+        ConstructionSiteProvider.getSite().getManager(TeleportManager::class.java).teleportToServerSpawn(event.player)
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    fun onPlayerDeath(event: PlayerDeathEvent) {
+        event.keepInventory = true
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
