@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.logging.Logger;
 
+@SuppressWarnings({"unused", "unchecked"})
 public final class ConstructionSiteImpl extends JavaPlugin implements ConstructionSite {
 
     private ServiceLoader<ConstructionSiteManager> managerProviders;
@@ -29,6 +30,7 @@ public final class ConstructionSiteImpl extends JavaPlugin implements Constructi
         if (managerProviders == null) {
             managerProviders = ServiceLoader.load(ConstructionSiteManager.class, ConstructionSiteManager.class.getClassLoader());
         }
+        PluginUtils.deleteWorlds();
         try {
             PluginUtils.unzip();
             managers.clear();

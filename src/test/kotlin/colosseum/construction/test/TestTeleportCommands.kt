@@ -42,7 +42,7 @@ internal class TestTeleportCommands {
         @JvmField
         var tempPluginDataDir: File? = null
     }
-    
+
     private var plugin: DummySite? = null
     private lateinit var player1: ConstructionSitePlayerMock
     private lateinit var player2: ConstructionSitePlayerMock
@@ -154,9 +154,9 @@ internal class TestTeleportCommands {
         player3.assertSaid("§cCannot use warps in lobby!")
         player3.assertNoMoreSaid()
 
-        Assertions.assertTrue(manager.canTeleportTo(player1, Location(worldMap, 0.0, 0.0, 0.0)))
-        Assertions.assertTrue(manager.canTeleportTo(player2, Location(worldMap, 0.0, 0.0, 0.0)))
-        Assertions.assertFalse(manager.canTeleportTo(player3, Location(worldMap, 0.0, 0.0, 0.0)))
+        Assertions.assertTrue(manager.check(player1, Location(worldMap, 0.0, 0.0, 0.0)))
+        Assertions.assertTrue(manager.check(player2, Location(worldMap, 0.0, 0.0, 0.0)))
+        Assertions.assertFalse(manager.check(player3, Location(worldMap, 0.0, 0.0, 0.0)))
         Assertions.assertTrue(manager.teleportPlayer(player1, Location(worldMap, 0.0, 0.0, 0.0)))
         Assertions.assertTrue(manager.teleportPlayer(player2, Location(worldMap, 0.0, 0.0, 0.0)))
         Assertions.assertFalse(manager.teleportPlayer(player3, Location(worldMap, 0.0, 0.0, 0.0)))
@@ -205,10 +205,10 @@ internal class TestTeleportCommands {
         Assertions.assertTrue(manager.teleportPlayer(player2, Location(world, 1.0, 2.0, 3.0)))
 
         command.runConstruction(player1, label, arrayOf())
-        player1.assertSaid("Teleported to 0,106,0")
+        player1.assertSaid("Teleported to §e0,106,0")
         player1.assertNoMoreSaid()
         command.runConstruction(player2, label, arrayOf())
-        player2.assertSaid("Teleported to 0,106,0")
+        player2.assertSaid("Teleported to §e0,106,0")
         player2.assertNoMoreSaid()
         player1.assertLocation(Location(world, 0.0, 106.0, 0.0), 1.0)
         player2.assertLocation(Location(world, 0.0, 106.0, 0.0), 1.0)
@@ -216,10 +216,10 @@ internal class TestTeleportCommands {
         Assertions.assertTrue(manager.teleportPlayer(player1, Location(worldMap, 1.0, 2.0, 3.0)))
         Assertions.assertTrue(manager.teleportPlayer(player2, Location(worldMap, 1.0, 2.0, 3.0)))
         command.runConstruction(player1, label, arrayOf())
-        player1.assertSaid("Teleported to 8,9,-10")
+        player1.assertSaid("Teleported to §e8,9,-10")
         player1.assertNoMoreSaid()
         command.runConstruction(player2, label, arrayOf())
-        player2.assertSaid("Teleported to 8,9,-10")
+        player2.assertSaid("Teleported to §e8,9,-10")
         player2.assertNoMoreSaid()
         player1.assertLocation(Location(worldMap, 8.0, 9.0, -10.0), 1.0)
         player2.assertLocation(Location(worldMap, 8.0, 9.0, -10.0), 1.0)

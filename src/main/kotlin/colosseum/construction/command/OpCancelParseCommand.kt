@@ -5,7 +5,7 @@ import colosseum.construction.manager.ParseManager
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class OpCancelParseCommand: AbstractOpCommand(
+class OpCancelParseCommand : AbstractOpCommand(
     listOf("cancelparse"),
     "Cancel running parse task.",
     "/cancelparse"
@@ -20,9 +20,9 @@ class OpCancelParseCommand: AbstractOpCommand(
 
     override fun runConstruction(caller: CommandSender, label: String, args: Array<String>): Boolean {
         val server = ConstructionSiteProvider.getSite().getServer()
-        server.dispatchCommand(server.getConsoleSender(), "mapparse")
+        server.dispatchCommand(server.consoleSender, "mapparse")
         ConstructionSiteProvider.getSite().getManager(ParseManager::class.java).cancel()
-        server.dispatchCommand(server.getConsoleSender(), "mapparse")
+        server.dispatchCommand(server.consoleSender, "mapparse")
         return true
     }
 }

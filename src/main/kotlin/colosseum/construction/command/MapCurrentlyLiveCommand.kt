@@ -7,7 +7,7 @@ import colosseum.utility.UtilPlayerBase
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
 
-class MapCurrentlyLiveCommand: AbstractMapAdminCommand(
+class MapCurrentlyLiveCommand : AbstractMapAdminCommand(
     listOf("mapislive", "mapsetlive"),
     "Get/Set map live status.",
     """
@@ -20,7 +20,11 @@ class MapCurrentlyLiveCommand: AbstractMapAdminCommand(
         if (label.equals("mapsetlive", ignoreCase = true)) {
             ConstructionSiteProvider.getScheduler().scheduleAsync {
                 data.update(FinalizedMapData(!data.isLive))
-                Command.broadcastCommandMessage(caller, "${data.mapName} is ${if (data.isLive) "now live" else "no longer live"}", true)
+                Command.broadcastCommandMessage(
+                    caller,
+                    "${data.mapName} is ${if (data.isLive) "now live" else "no longer live"}",
+                    true
+                )
             }
         } else {
             UtilPlayerBase.sendMessage(caller, "&e${data.mapName}&r is ${if (data.isLive) "&alive" else "&cnot live"}")

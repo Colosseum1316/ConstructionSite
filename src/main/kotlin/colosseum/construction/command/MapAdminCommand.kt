@@ -9,7 +9,7 @@ import com.google.common.collect.ImmutableSet
 import org.bukkit.command.Command
 import org.bukkit.entity.Player
 
-class MapAdminCommand: AbstractMapAdminCommand(
+class MapAdminCommand : AbstractMapAdminCommand(
     listOf("mapadmin"),
     "Set a player as an admin for map, or remove.",
     "/mapadmin <player>"
@@ -36,7 +36,11 @@ class MapAdminCommand: AbstractMapAdminCommand(
                     Command.broadcastCommandMessage(caller, "${target.name} is now admin in ${data.mapName}", true)
                     ConstructionSiteProvider.getSite().pluginLogger.info("World $path: ${target.name} is now admin in ${data.mapName}")
                 } else {
-                    Command.broadcastCommandMessage(caller, "${target.name} is no longer admin in ${data.mapName}", true)
+                    Command.broadcastCommandMessage(
+                        caller,
+                        "${target.name} is no longer admin in ${data.mapName}",
+                        true
+                    )
                     ConstructionSiteProvider.getSite().pluginLogger.info("World $path: ${target.name} is no longer admin in ${data.mapName}")
                 }
             }

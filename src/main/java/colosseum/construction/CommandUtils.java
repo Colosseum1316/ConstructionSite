@@ -10,6 +10,7 @@ import java.lang.reflect.Constructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class CommandUtils {
     private static final Constructor<PluginCommand> pluginCommandConstructor;
+
     static {
         try {
             pluginCommandConstructor = PluginCommand.class.getDeclaredConstructor(String.class, Plugin.class);

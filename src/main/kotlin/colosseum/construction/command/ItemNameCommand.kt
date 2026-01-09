@@ -3,7 +3,7 @@ package colosseum.construction.command
 import colosseum.utility.UtilPlayerBase
 import org.bukkit.entity.Player
 
-class ItemNameCommand: ItemCommand(
+class ItemNameCommand : ItemCommand(
     listOf("itemname"),
     "Set display name of an item.",
     "/itemname <Display name>"

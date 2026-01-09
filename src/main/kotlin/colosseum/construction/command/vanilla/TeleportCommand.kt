@@ -10,7 +10,8 @@ import org.bukkit.command.defaults.TeleportCommand
 import org.bukkit.entity.Player
 import java.lang.reflect.Method
 
-class TeleportCommand: AbstractTeleportCommand(
+@Suppress("deprecation", "RedundantSuppression")
+class TeleportCommand : AbstractTeleportCommand(
     listOf("tp", "teleport"),
     "Teleport.",
     """
@@ -21,8 +22,20 @@ class TeleportCommand: AbstractTeleportCommand(
 ) {
     companion object {
         private val vanilla: TeleportCommand = TeleportCommand()
-        private val getCoordinate: Method = vanilla.javaClass.getDeclaredMethod("getCoordinate", CommandSender::class.java, Double::class.java, String::class.java)
-        private val getCoordinateWithMinMax: Method = vanilla.javaClass.getDeclaredMethod("getCoordinate", CommandSender::class.java, Double::class.java, String::class.java, Int::class.java, Int::class.java)
+        private val getCoordinate: Method = vanilla.javaClass.getDeclaredMethod(
+            "getCoordinate",
+            CommandSender::class.java,
+            Double::class.java,
+            String::class.java
+        )
+        private val getCoordinateWithMinMax: Method = vanilla.javaClass.getDeclaredMethod(
+            "getCoordinate",
+            CommandSender::class.java,
+            Double::class.java,
+            String::class.java,
+            Int::class.java,
+            Int::class.java
+        )
 
         init {
             getCoordinate.isAccessible = true
@@ -48,6 +61,7 @@ class TeleportCommand: AbstractTeleportCommand(
                 val target = searchOnline(caller, args[0], true) ?: return true  // Player has already been informed
                 teleportSelf(caller, target)
             }
+
             2 -> {
                 // Already informed
                 val from = searchOnline(caller, args[0], true) ?: return true
@@ -74,9 +88,11 @@ class TeleportCommand: AbstractTeleportCommand(
                     }
                 }
             }
+
             3 -> {
                 val x: Double = getCoordinate.invoke(vanilla, caller, caller.location.x, args[0]) as Double
-                val y: Double = getCoordinateWithMinMax.invoke(vanilla, caller, caller.location.y, args[1], 0, 0) as Double
+                val y: Double =
+                    getCoordinateWithMinMax.invoke(vanilla, caller, caller.location.y, args[1], 0, 0) as Double
                 val z: Double = getCoordinate.invoke(vanilla, caller, caller.location.z, args[2]) as Double
                 val destination = caller.location.clone()
                 destination.x = x
@@ -88,6 +104,7 @@ class TeleportCommand: AbstractTeleportCommand(
                     sayTeleportFail(caller)
                 }
             }
+
             else -> {
                 return false
             }

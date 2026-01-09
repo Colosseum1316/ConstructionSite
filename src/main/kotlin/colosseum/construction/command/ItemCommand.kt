@@ -8,7 +8,7 @@ abstract class ItemCommand protected constructor(
     aliases: List<String>,
     description: String,
     usage: String
-): ConstructionSiteCommand(
+) : ConstructionSiteCommand(
     aliases, description, usage
 ) {
     override fun canRun(caller: Player): Boolean {

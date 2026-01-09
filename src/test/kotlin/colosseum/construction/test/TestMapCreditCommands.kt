@@ -40,7 +40,7 @@ internal class TestMapCreditCommands {
         @JvmField
         var tempPluginDataDir: File? = null
     }
-    
+
     private var plugin: DummySite? = null
     private lateinit var player1: ConstructionSitePlayerMock
     private lateinit var player2: ConstructionSitePlayerMock
@@ -140,9 +140,9 @@ internal class TestMapCreditCommands {
             player3.assertNoMoreSaid()
         }
 
-        Assertions.assertTrue(manager.canTeleportTo(player1, Location(worldMap, 0.0, 0.0, 0.0)))
-        Assertions.assertTrue(manager.canTeleportTo(player2, Location(worldMap, 0.0, 0.0, 0.0)))
-        Assertions.assertFalse(manager.canTeleportTo(player3, Location(worldMap, 0.0, 0.0, 0.0)))
+        Assertions.assertTrue(manager.check(player1, Location(worldMap, 0.0, 0.0, 0.0)))
+        Assertions.assertTrue(manager.check(player2, Location(worldMap, 0.0, 0.0, 0.0)))
+        Assertions.assertFalse(manager.check(player3, Location(worldMap, 0.0, 0.0, 0.0)))
         Assertions.assertTrue(manager.teleportPlayer(player1, Location(worldMap, 0.0, 0.0, 0.0)))
         Assertions.assertTrue(manager.teleportPlayer(player2, Location(worldMap, 0.0, 0.0, 0.0)))
         Assertions.assertFalse(manager.teleportPlayer(player3, Location(worldMap, 0.0, 0.0, 0.0)))

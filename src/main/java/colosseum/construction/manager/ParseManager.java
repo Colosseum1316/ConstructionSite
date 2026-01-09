@@ -1,10 +1,11 @@
 package colosseum.construction.manager;
 
+import colosseum.construction.Constants;
 import colosseum.construction.ConstructionSite;
 import colosseum.construction.ConstructionSiteProvider;
 import colosseum.construction.WorldUtils;
 import colosseum.construction.data.FinalizedMapData;
-import colosseum.construction.parser.MapParser;
+import colosseum.construction.parse.MapParser;
 import colosseum.utility.UtilZipper;
 import colosseum.utility.WorldMapConstants;
 import net.md_5.bungee.api.ChatColor;
@@ -136,7 +137,7 @@ public final class ParseManager extends ConstructionSiteManager {
                             FileUtils.deleteQuietly(file);
                         }
                     }
-                    File zip = WorldUtils.getParsedZipOutputRootPath().toPath().resolve(String.format("%s-%s-%s.zip", worldFolder.getName(), System.currentTimeMillis(), mapData.getMapName().get())).toFile();
+                    File zip = WorldUtils.getParsedZipOutputRootPath().toPath().resolve(String.format("%s-%s-%s.zip", worldFolder.getName(), System.currentTimeMillis(), mapData.getMapName().orElse(Constants.UNTITLED))).toFile();
                     UtilZipper.zip(worldFolder, zip);
                     ConstructionSiteProvider.getSite().getPluginLogger().info("Created " + zip.getAbsolutePath());
                     this.cancel();
@@ -161,7 +162,9 @@ public final class ParseManager extends ConstructionSiteManager {
         return running.get();
     }
 
-    /** 0.0 - 1.0 */
+    /**
+     * 0.0 - 1.0
+     */
     public double getProgress() {
         if (isRunning()) {
             return parser != null ? parser.getProgress() : 0.0;

@@ -8,7 +8,7 @@ abstract class AbstractMapCreditCommand protected constructor(
     aliases: List<String>,
     description: String,
     usage: String
-): AbstractMapAdminCommand(
+) : AbstractMapAdminCommand(
     aliases, description, usage
 ) {
 
@@ -18,7 +18,13 @@ abstract class AbstractMapCreditCommand protected constructor(
     }
 
     protected abstract fun determineContent(caller: Player, alias: String, args: Array<String>): String
-    protected abstract fun setField(caller: Player, alias: String, args: Array<String>, contentSupplier: Supplier<String>, mapDataSupplier: Supplier<MutableMapData>): Boolean
+    protected abstract fun setField(
+        caller: Player,
+        alias: String,
+        args: Array<String>,
+        contentSupplier: Supplier<String>,
+        mapDataSupplier: Supplier<MutableMapData>
+    ): Boolean
 
     final override fun runConstruction(caller: Player, label: String, args: Array<String>): Boolean {
         if (args.isEmpty()) {

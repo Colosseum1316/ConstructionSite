@@ -10,7 +10,7 @@ abstract class AbstractMapAdminCommand protected constructor(
     aliases: List<String>,
     description: String,
     usage: String
-): ConstructionSiteCommand(
+) : ConstructionSiteCommand(
     aliases, description, usage
 ) {
     protected fun getMapDataManager(): MapDataManager {

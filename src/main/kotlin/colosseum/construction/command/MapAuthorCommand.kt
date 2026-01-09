@@ -8,7 +8,7 @@ import colosseum.utility.UtilPlayerBase
 import org.bukkit.entity.Player
 import java.util.function.*
 
-class MapAuthorCommand: AbstractMapCreditCommand(
+class MapAuthorCommand : AbstractMapCreditCommand(
     listOf("mapauthor", "mapauthors"),
     "Set map author data.",
     "/mapauthor <Map author(s)>"

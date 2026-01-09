@@ -21,8 +21,10 @@ import java.util.*
 import java.util.concurrent.*
 import java.util.function.*
 
-class TreeEvents: ConstructionSiteEventListener() {
-    private val treeHistory: Cache<UUID, MutableList<Set<BlockData>>> = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).build()
+@Suppress("UnstableApiUsage")
+class TreeEvents : ConstructionSiteEventListener() {
+    private val treeHistory: Cache<UUID, MutableList<Set<BlockData>>> =
+        CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).build()
 
     @EventHandler(priority = EventPriority.MONITOR)
     fun onPlayerQuitEvent(event: PlayerQuitEvent) {
@@ -33,7 +35,9 @@ class TreeEvents: ConstructionSiteEventListener() {
     fun treeRemover(event: PlayerInteractEvent) {
         val player = event.player
         // Permission
-        if (!ConstructionSiteProvider.getSite().getManager(MapDataManager::class.java).get(player.world).allows(player)) {
+        if (!ConstructionSiteProvider.getSite().getManager(MapDataManager::class.java).get(player.world)
+                .allows(player)
+        ) {
             return
         }
         if (!isMaterial(player.itemInHand, Material.NETHER_STAR)) {

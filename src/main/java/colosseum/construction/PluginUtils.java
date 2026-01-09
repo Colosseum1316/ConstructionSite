@@ -25,10 +25,10 @@ import java.util.Queue;
 import java.util.ServiceLoader;
 import java.util.Set;
 
+@SuppressWarnings("unused")
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class PluginUtils {
 
-    @SuppressWarnings("ConstantConditions")
     private static void discoverManagers_TopologicalSort(
             Class<? extends ConstructionSiteManager> currentReference,
             Set<Class<? extends ConstructionSiteManager>> visited,
@@ -101,6 +101,14 @@ public final class PluginUtils {
         }
     }
 
+    public static void deleteWorlds() {
+        ConstructionSite site = ConstructionSiteProvider.getSite();
+        FileUtils.deleteQuietly(site.getWorldContainer().toPath().resolve(WorldMapConstants.WORLD).toFile());
+        FileUtils.deleteQuietly(site.getWorldContainer().toPath().resolve(WorldMapConstants.WORLD_LOBBY).toFile());
+        FileUtils.deleteQuietly(site.getWorldContainer().toPath().resolve("world_nether").toFile());
+        FileUtils.deleteQuietly(site.getWorldContainer().toPath().resolve("world_the_end").toFile());
+    }
+
     public static void unzip() {
         ConstructionSite site = ConstructionSiteProvider.getSite();
         File destination = site.getWorldContainer().toPath().resolve(WorldMapConstants.WORLD).toFile();
@@ -135,7 +143,7 @@ public final class PluginUtils {
 
     /**
      * @param dataFolder Plugin data folder
-     * @param filename Single filename
+     * @param filename   Single filename
      * @return File object
      */
     public static File loadYml(File dataFolder, String filename) {

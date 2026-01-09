@@ -49,6 +49,11 @@ public final class ConstructionSitePlayerMock extends PlayerMock {
     }
 
     @Override
+    public boolean isDead() {
+        return false;
+    }
+
+    @Override
     public Player.Spigot spigot() {
         return new Player.Spigot() {
             @Override

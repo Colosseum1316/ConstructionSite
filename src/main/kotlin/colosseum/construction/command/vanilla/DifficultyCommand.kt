@@ -12,14 +12,16 @@ import org.bukkit.util.StringUtil
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 
-class DifficultyCommand: AbstractMapAdminCommand(
+@Suppress("unchecked", "deprecation", "RedundantSuppression")
+class DifficultyCommand : AbstractMapAdminCommand(
     listOf("difficulty"),
     "Set map world difficulty",
     "/difficulty <new difficulty>"
 ), TabCompleter {
     companion object {
         private val vanilla: DifficultyCommand = DifficultyCommand()
-        private val method: Method = vanilla.javaClass.getDeclaredMethod("getDifficultyForString", CommandSender::class.java, String::class.java)
+        private val method: Method =
+            vanilla.javaClass.getDeclaredMethod("getDifficultyForString", CommandSender::class.java, String::class.java)
         private val field: Field = vanilla.javaClass.getDeclaredField("DIFFICULTY_NAMES")
 
         init {
@@ -53,7 +55,7 @@ class DifficultyCommand: AbstractMapAdminCommand(
             val difficulty = Difficulty.getByValue(v)
             setDifficulty(caller, caller.world, difficulty)
             return true
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             // no op
         }
 
@@ -64,6 +66,10 @@ class DifficultyCommand: AbstractMapAdminCommand(
 
     private fun setDifficulty(caller: Player, world: World, difficulty: Difficulty) {
         world.difficulty = difficulty
-        Command.broadcastCommandMessage(caller, "Set map ${getMapDataManager().get(world).mapName} world difficulty to $difficulty", true)
+        Command.broadcastCommandMessage(
+            caller,
+            "Set map ${getMapDataManager().get(world).mapName} world difficulty to $difficulty",
+            true
+        )
     }
 }

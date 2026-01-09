@@ -6,7 +6,7 @@ import colosseum.construction.event.TreeEvents
 import org.bukkit.event.HandlerList
 
 @ManagerDependency(MapDataManager::class, WorldManager::class, TeleportManager::class)
-class EventListenerManager: ConstructionSiteManager("Events") {
+class EventListenerManager : ConstructionSiteManager("Events") {
     private lateinit var interactionEvents: InteractionEvents
     private lateinit var treeEvents: TreeEvents
 
@@ -27,7 +27,7 @@ class EventListenerManager: ConstructionSiteManager("Events") {
     }
 
     private fun unregisterEvents() {
-        treeEvents?.let { HandlerList.unregisterAll(it) }
-        interactionEvents?.let { HandlerList.unregisterAll(it) }
+        treeEvents.let { HandlerList.unregisterAll(it) }
+        interactionEvents.let { HandlerList.unregisterAll(it) }
     }
 }

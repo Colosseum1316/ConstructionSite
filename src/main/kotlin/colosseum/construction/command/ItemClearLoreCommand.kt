@@ -3,7 +3,7 @@ package colosseum.construction.command
 import colosseum.utility.UtilPlayerBase
 import org.bukkit.entity.Player
 
-class ItemClearLoreCommand: ItemCommand(
+class ItemClearLoreCommand : ItemCommand(
     listOf("clearlore"),
     "Clear lore of an item.",
     "/clearlore"
