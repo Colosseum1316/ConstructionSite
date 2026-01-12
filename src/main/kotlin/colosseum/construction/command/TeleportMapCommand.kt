@@ -38,7 +38,7 @@ class TeleportMapCommand : AbstractTeleportCommand(
                 message.color = ChatColor.GRAY
                 val message0 = TextComponent(entry.key.toString())
                 message0.color = ChatColor.YELLOW
-                message0.clickEvent = ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/tpmap ${entry.key}")
+                message0.clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpmap ${entry.key}")
                 message0.hoverEvent = HoverEvent(
                     HoverEvent.Action.SHOW_TEXT,
                     arrayOf(TextComponent("Click to run the command!"))
@@ -47,7 +47,7 @@ class TeleportMapCommand : AbstractTeleportCommand(
                 caller.spigot().sendMessage(message)
             }
             if (available.isEmpty()) {
-                UtilPlayerBase.sendMessage(caller, "&cNo maps available!")
+                UtilPlayerBase.sendMessage(caller, "&cThere's no map!")
             }
             return true
         } else {
