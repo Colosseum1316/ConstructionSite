@@ -1,5 +1,6 @@
 package colosseum.construction.command
 
+import colosseum.construction.PermissionUtils
 import org.bukkit.entity.Player
 
 abstract class AbstractOpCommand protected constructor(
@@ -11,6 +12,6 @@ abstract class AbstractOpCommand protected constructor(
 ) {
 
     override fun canRun(caller: Player): Boolean {
-        return caller.isOp
+        return caller.isOp || caller.hasPermission(PermissionUtils.getPermissionString(this))
     }
 }

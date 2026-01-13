@@ -8,7 +8,7 @@ import colosseum.utility.UtilPlayerBase
 import org.bukkit.entity.Player
 import java.util.function.*
 
-class MapNameCommand: AbstractMapCreditCommand(
+class MapNameCommand : AbstractMapCreditCommand(
     listOf("mapname"),
     "Set map name.",
     "/mapname <Map name>"

@@ -10,6 +10,7 @@ import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@SuppressWarnings({"UnnecessaryCasting", "unchecked"})
 public final class ConstructionSiteWorldMock extends WorldMock {
     private Difficulty difficulty;
     private boolean isAutoSave;
@@ -27,7 +28,9 @@ public final class ConstructionSiteWorldMock extends WorldMock {
         this.map = map;
     }
 
-    /** getName is not used in actual plugin. MockBukkit relies on it. */
+    /**
+     * getName is not used in actual plugin. MockBukkit relies on it.
+     */
     @Override
     public String getName() {
         // Simulation.

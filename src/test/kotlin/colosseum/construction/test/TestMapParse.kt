@@ -4,7 +4,7 @@ import be.seeseemelk.mockbukkit.MockBukkit
 import colosseum.construction.Constants
 import colosseum.construction.ConstructionSiteProvider
 import colosseum.construction.manager.MapDataManager
-import colosseum.construction.parser.MapParser
+import colosseum.construction.parse.MapParser
 import colosseum.construction.test.dummies.ConstructionSiteServerMock
 import colosseum.construction.test.dummies.ConstructionSiteWorldMock
 import colosseum.construction.test.dummies.DummySite
@@ -57,7 +57,8 @@ internal class TestMapParse {
     @Test
     fun testInputs() {
         val destination = ResourceSession.path.resolve("Void").toFile()
-        val mapData = ConstructionSiteProvider.getSite().getManager(MapDataManager::class.java).getFinalized(destination)
+        val mapData =
+            ConstructionSiteProvider.getSite().getManager(MapDataManager::class.java).getFinalized(destination)
 
         Assertions.assertThrows(IllegalArgumentException::class.java) {
             MapParser(destination, mapData, Collections.emptyList(), 0, 0, -1)
@@ -68,7 +69,8 @@ internal class TestMapParse {
     @Timeout(value = 5, unit = TimeUnit.SECONDS)
     fun testCancellation() {
         val destination = ResourceSession.path.resolve("Void").toFile()
-        val mapData = ConstructionSiteProvider.getSite().getManager(MapDataManager::class.java).getFinalized(destination)
+        val mapData =
+            ConstructionSiteProvider.getSite().getManager(MapDataManager::class.java).getFinalized(destination)
         val parser = MapParser(destination, mapData, Collections.emptyList(), 0, 0, 1000)
         val v = AtomicBoolean(false)
         CompletableFuture.runAsync(parser).thenRun {
@@ -88,7 +90,8 @@ internal class TestMapParse {
     @Timeout(value = 120, unit = TimeUnit.SECONDS)
     fun testHerosValley() {
         val destination = ResourceSession.path.resolve("Heros_Valley").toFile()
-        val mapData = ConstructionSiteProvider.getSite().getManager(MapDataManager::class.java).getFinalized(destination)
+        val mapData =
+            ConstructionSiteProvider.getSite().getManager(MapDataManager::class.java).getFinalized(destination)
         val parser = MapParser(destination, mapData, Collections.emptyList(), 0, 0, 150)
         Assertions.assertEquals(mapData, parser.mapData)
         Assertions.assertEquals(destination, parser.parsableWorldFolder)
@@ -178,46 +181,57 @@ internal class TestMapParse {
                         Assertions.assertEquals("Heros Valley", value)
                         mapName = true
                     }
+
                     "MAP_AUTHOR" -> {
                         Assertions.assertEquals("Dutty", value)
                         mapAuthor = true
                     }
+
                     "MIN_X" -> {
                         Assertions.assertEquals(-65, value.toInt())
                         minX = true
                     }
+
                     "MIN_Y" -> {
                         Assertions.assertEquals(19, value.toInt())
                         minY = true
                     }
+
                     "MIN_Z" -> {
                         Assertions.assertEquals(-121, value.toInt())
                         minZ = true
                     }
+
                     "MAX_X" -> {
                         Assertions.assertEquals(67, value.toInt())
                         maxX = true
                     }
+
                     "MAX_Y" -> {
                         Assertions.assertEquals(76, value.toInt())
                         maxY = true
                     }
+
                     "MAX_Z" -> {
                         Assertions.assertEquals(123, value.toInt())
                         maxZ = true
                     }
+
                     "TEAM_NAME" -> {
                         tn = value
                         tn_f = true
                     }
+
                     "CUSTOM_NAME" -> {
                         dn = value
                         dn_f = true
                     }
+
                     "DATA_NAME" -> {
                         dataN = value
                         data_f = true
                     }
+
                     else -> Assertions.fail("Invalid key $key")
                 }
             }
@@ -392,7 +406,8 @@ internal class TestMapParse {
     @Timeout(value = 60, unit = TimeUnit.SECONDS)
     fun testCliffside() {
         val destination = ResourceSession.path.resolve("Cliffside").toFile()
-        val mapData = ConstructionSiteProvider.getSite().getManager(MapDataManager::class.java).getFinalized(destination)
+        val mapData =
+            ConstructionSiteProvider.getSite().getManager(MapDataManager::class.java).getFinalized(destination)
         val parser = MapParser(destination, mapData, listOf(Material.GLASS.id.toString()), 0, 0, 50)
         Assertions.assertEquals(mapData, parser.mapData)
         Assertions.assertEquals(destination, parser.parsableWorldFolder)
@@ -458,42 +473,52 @@ internal class TestMapParse {
                         Assertions.assertEquals("Cliffside", value)
                         mapName = true
                     }
+
                     "MAP_AUTHOR" -> {
                         Assertions.assertEquals("Pyxl", value)
                         mapAuthor = true
                     }
+
                     "MIN_X" -> {
                         Assertions.assertEquals(-39, value.toInt())
                         minX = true
                     }
+
                     "MIN_Y" -> {
                         Assertions.assertEquals(1, value.toInt())
                         minY = true
                     }
+
                     "MIN_Z" -> {
                         Assertions.assertEquals(-38, value.toInt())
                         minZ = true
                     }
+
                     "MAX_X" -> {
                         Assertions.assertEquals(37, value.toInt())
                         maxX = true
                     }
+
                     "MAX_Y" -> {
                         Assertions.assertEquals(47, value.toInt())
                         maxY = true
                     }
+
                     "MAX_Z" -> {
                         Assertions.assertEquals(39, value.toInt())
                         maxZ = true
                     }
+
                     "TEAM_NAME" -> {
                         tn = value
                         tn_f = true
                     }
+
                     "CUSTOM_NAME" -> {
                         dn = value
                         dn_f = true
                     }
+
                     else -> Assertions.fail("Invalid key $key")
                 }
             }

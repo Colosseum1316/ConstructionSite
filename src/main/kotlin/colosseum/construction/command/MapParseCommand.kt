@@ -11,7 +11,7 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class MapParseCommand: AbstractMapAdminCommand(
+class MapParseCommand : AbstractMapAdminCommand(
     listOf("mapparse"),
     "Parse map. Radius is 200 by default.",
     "/mapparse <radius> [optional arguments]"
@@ -30,7 +30,10 @@ class MapParseCommand: AbstractMapAdminCommand(
         parseManager.isRunning.also {
             r = it
             if (it) {
-                UtilPlayerBase.sendMessage(caller, String.format("&cA parse task is running. Current progress %.2f%%", parseManager.progress * 100.0))
+                UtilPlayerBase.sendMessage(
+                    caller,
+                    String.format("&cA parse task is running. Current progress %.2f%%", parseManager.progress * 100.0)
+                )
             }
         }
         return super.canRun(caller) && !r
@@ -40,7 +43,10 @@ class MapParseCommand: AbstractMapAdminCommand(
         val parseManager = getParseManager()
         parseManager.isRunning.also {
             if (it) {
-                UtilPlayerBase.sendMessage(sender, String.format("A parse task is running. Current progress %.2f%%", parseManager.progress * 100.0))
+                UtilPlayerBase.sendMessage(
+                    sender,
+                    String.format("A parse task is running. Current progress %.2f%%", parseManager.progress * 100.0)
+                )
             } else {
                 UtilPlayerBase.sendMessage(sender, "There's no parse task running.")
             }
@@ -64,7 +70,7 @@ class MapParseCommand: AbstractMapAdminCommand(
                     UtilPlayerBase.sendMessage(caller, "&cAre you sure you wanna build a map this large-scale?")
                     return true
                 }
-            } catch (ex: NumberFormatException) {
+            } catch (_: NumberFormatException) {
                 return false
             }
 

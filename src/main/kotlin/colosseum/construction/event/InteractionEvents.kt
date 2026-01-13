@@ -28,7 +28,9 @@ import org.bukkit.event.entity.EntityBreakDoorEvent
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.EntityPortalEvent
 import org.bukkit.event.entity.EntitySpawnEvent
+import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerBedEnterEvent
+import org.bukkit.event.player.PlayerChangedWorldEvent
 import org.bukkit.event.player.PlayerEditBookEvent
 import org.bukkit.event.player.PlayerFishEvent
 import org.bukkit.event.player.PlayerGameModeChangeEvent
@@ -36,19 +38,21 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerPortalEvent
+import org.bukkit.event.player.PlayerRespawnEvent
 import org.bukkit.event.player.PlayerShearEntityEvent
-import org.bukkit.event.player.PlayerTeleportEvent
 import org.bukkit.event.weather.LightningStrikeEvent
 import org.bukkit.event.weather.ThunderChangeEvent
 import org.bukkit.event.weather.WeatherChangeEvent
 
-class InteractionEvents: ConstructionSiteEventListener() {
+class InteractionEvents : ConstructionSiteEventListener() {
 
     private fun disableInteraction(player: Player, event: Cancellable) {
         if (WorldUtils.isLevelNamePreserved(WorldUtils.getWorldRelativePath(player.world))) {
             event.isCancelled = true
         }
-        if (!ConstructionSiteProvider.getSite().getManager(MapDataManager::class.java).get(player.world).allows(player)) {
+        if (!ConstructionSiteProvider.getSite().getManager(MapDataManager::class.java).get(player.world)
+                .allows(player)
+        ) {
             event.isCancelled = true
         }
     }
@@ -102,12 +106,24 @@ class InteractionEvents: ConstructionSiteEventListener() {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    fun onTeleport(event: PlayerTeleportEvent) {
-        if (WorldUtils.isLevelNamePreserved(WorldUtils.getWorldRelativePath(event.to.world))) {
+    @EventHandler(priority = EventPriority.MONITOR)
+    fun onPlayerWorldChange(event: PlayerChangedWorldEvent) {
+        if (WorldUtils.isLevelNamePreserved(WorldUtils.getWorldRelativePath(event.player.world))) {
             event.player.gameMode = GameMode.ADVENTURE
             event.player.isFlying = false
         }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    fun onPlayerRespawn(event: PlayerRespawnEvent) {
+        event.respawnLocation = ConstructionSiteProvider.getSite().getManager(TeleportManager::class.java).getSpawnLocation()
+        event.player.gameMode = GameMode.ADVENTURE
+        event.player.isFlying = false
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    fun onPlayerDeath(event: PlayerDeathEvent) {
+        event.keepInventory = true
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -162,7 +178,8 @@ class InteractionEvents: ConstructionSiteEventListener() {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onEntityDamage(event: EntityDamageEvent) {
-        event.isCancelled = event.entityType == EntityType.PLAYER && (event.cause != EntityDamageEvent.DamageCause.VOID && event.cause != EntityDamageEvent.DamageCause.CUSTOM && event.cause != EntityDamageEvent.DamageCause.SUICIDE)
+        event.isCancelled =
+            event.entityType == EntityType.PLAYER && (event.cause != EntityDamageEvent.DamageCause.VOID && event.cause != EntityDamageEvent.DamageCause.CUSTOM && event.cause != EntityDamageEvent.DamageCause.SUICIDE)
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -182,7 +199,8 @@ class InteractionEvents: ConstructionSiteEventListener() {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun disableIgnite(event: BlockIgniteEvent) {
-        event.isCancelled = event.cause == BlockIgniteEvent.IgniteCause.LAVA || event.cause == BlockIgniteEvent.IgniteCause.SPREAD
+        event.isCancelled =
+            event.cause == BlockIgniteEvent.IgniteCause.LAVA || event.cause == BlockIgniteEvent.IgniteCause.SPREAD
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

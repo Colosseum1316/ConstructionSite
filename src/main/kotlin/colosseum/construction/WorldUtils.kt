@@ -15,7 +15,10 @@ object WorldUtils {
      */
     @JvmStatic
     fun isLevelNamePreserved(name: String): Boolean {
-        return name.equals(WorldMapConstants.WORLD_LOBBY, ignoreCase = true) || name.equals(WorldMapConstants.WORLD, ignoreCase = true)
+        return name.equals(WorldMapConstants.WORLD_LOBBY, ignoreCase = true) || name.equals(
+            WorldMapConstants.WORLD,
+            ignoreCase = true
+        )
     }
 
     /**
@@ -80,7 +83,8 @@ object WorldUtils {
      */
     @JvmStatic
     fun getWorldRelativePath(worldDir: File): String {
-        return ConstructionSiteProvider.getSite().worldContainer.absoluteFile.toPath().relativize(worldDir.absoluteFile.toPath()).toString()
+        return ConstructionSiteProvider.getSite().worldContainer.absoluteFile.toPath()
+            .relativize(worldDir.absoluteFile.toPath()).toString()
     }
 
     @JvmStatic
@@ -125,7 +129,7 @@ object WorldUtils {
         }
         val path = getWorldRelativePath(world)
         if (!ConstructionSiteProvider.getSite().getServer().unloadWorld(world, save)) {
-            throw RuntimeException("Cannot unload world \"$path\"!")
+            throw Exception("Cannot unload world \"$path\"!")
         }
         ConstructionSiteProvider.getSite().pluginLogger.info("Unloaded world \"$path\". World ${(if (save) "" else "not ")}saved.")
     }

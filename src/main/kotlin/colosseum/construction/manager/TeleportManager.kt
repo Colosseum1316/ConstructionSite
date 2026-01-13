@@ -13,7 +13,7 @@ import java.util.logging.*
 
 @Suppress("MemberVisibilityCanBePrivate")
 @ManagerDependency(WorldManager::class, MapDataManager::class)
-class TeleportManager: ConstructionSiteManager("Teleport") {
+class TeleportManager : ConstructionSiteManager("Teleport") {
     private lateinit var serverSpawnLocation: Location
 
     private fun getMapDataManager(): MapDataManager {
@@ -59,19 +59,29 @@ class TeleportManager: ConstructionSiteManager("Teleport") {
     }
 
     fun teleportPlayer(player: Player, destination: Location): Boolean {
-        if (!canTeleportTo(player, destination)) {
+        if (!check(player, destination)) {
+            return false
+        }
+        if (player.isDead) {
+            ConstructionSiteProvider.getSite().pluginLogger.warning("Cannot teleport ${player.name}. Why are they dead?")
             return false
         }
         return player.teleport(destination).also { v ->
             if (v) {
-                ConstructionSiteProvider.getSite().pluginLogger.info("Teleported ${player.name} to ${WorldUtils.getWorldRelativePath(destination.world)} ${locToStrClean(destination)}")
+                ConstructionSiteProvider.getSite().pluginLogger.info(
+                    "Teleported ${player.name} to ${
+                        WorldUtils.getWorldRelativePath(
+                            destination.world
+                        )
+                    } ${locToStrClean(destination)}"
+                )
             } else {
-                ConstructionSiteProvider.getSite().pluginLogger.warning("Internal failure whilst teleporting ${player.name}!!!")
+                ConstructionSiteProvider.getSite().pluginLogger.warning("Internal failure whilst teleporting ${player.name}!")
             }
         }
     }
 
-    fun canTeleportTo(player: Player, destination: Location): Boolean {
+    fun check(player: Player, destination: Location): Boolean {
         if (player.world == destination.world) {
             return true
         }
@@ -80,5 +90,9 @@ class TeleportManager: ConstructionSiteManager("Teleport") {
             WORLD_LOBBY, WORLD -> true
             else -> getMapDataManager().get(destination.world).allows(player)
         }
+    }
+
+    fun getSpawnLocation(): Location {
+        return serverSpawnLocation.clone()
     }
 }

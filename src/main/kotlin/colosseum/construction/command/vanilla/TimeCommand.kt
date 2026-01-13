@@ -4,7 +4,7 @@ import colosseum.construction.command.AbstractMapAdminCommand
 import colosseum.utility.UtilPlayerBase
 import org.bukkit.entity.Player
 
-class TimeCommand: AbstractMapAdminCommand(
+class TimeCommand : AbstractMapAdminCommand(
     listOf("time"),
     "Set map world time",
     "/time <absolute tick>"
@@ -21,7 +21,7 @@ class TimeCommand: AbstractMapAdminCommand(
             }
             caller.world.time = t
             UtilPlayerBase.sendMessage(caller, "Set map world time to $t")
-        } catch (e: NumberFormatException) {
+        } catch (_: NumberFormatException) {
             return false
         }
         return true

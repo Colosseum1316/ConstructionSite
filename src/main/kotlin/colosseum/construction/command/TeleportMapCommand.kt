@@ -11,7 +11,7 @@ import org.bukkit.GameMode
 import org.bukkit.entity.Player
 import java.util.*
 
-class TeleportMapCommand: AbstractTeleportCommand(
+class TeleportMapCommand : AbstractTeleportCommand(
     listOf("tpmap"),
     "Teleport to a map by world uuid.",
     "/tpmap <world uuid>"
@@ -38,15 +38,16 @@ class TeleportMapCommand: AbstractTeleportCommand(
                 message.color = ChatColor.GRAY
                 val message0 = TextComponent(entry.key.toString())
                 message0.color = ChatColor.YELLOW
-                message0.clickEvent = ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/tpmap ${entry.key}")
-                message0.hoverEvent = HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                message0.clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpmap ${entry.key}")
+                message0.hoverEvent = HoverEvent(
+                    HoverEvent.Action.SHOW_TEXT,
                     arrayOf(TextComponent("Click to run the command!"))
                 )
                 message.addExtra(message0)
                 caller.spigot().sendMessage(message)
             }
             if (available.isEmpty()) {
-                UtilPlayerBase.sendMessage(caller, "&cNo maps available!")
+                UtilPlayerBase.sendMessage(caller, "&cThere's no map!")
             }
             return true
         } else {
@@ -67,7 +68,7 @@ class TeleportMapCommand: AbstractTeleportCommand(
                     sayTeleportFail(caller)
                 }
                 return true
-            } catch (e: IllegalArgumentException) {
+            } catch (_: IllegalArgumentException) {
                 UtilPlayerBase.sendMessage(caller, "&cInvalid UUID!")
                 return false
             }

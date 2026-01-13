@@ -15,7 +15,7 @@ import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.entity.Player
 import org.bukkit.util.Vector
 
-class TeleportWarpCommand: AbstractTeleportCommand(
+class TeleportWarpCommand : AbstractTeleportCommand(
     listOf("warp"),
     "Get/Set warp points in map.",
     """
@@ -80,7 +80,13 @@ class TeleportWarpCommand: AbstractTeleportCommand(
             }
             if (getTeleportManager().teleportPlayer(caller, location.toLocation(caller.world))) {
                 UtilPlayerBase.sendMessage(caller, "Teleported to warp point &e$key")
-                site.pluginLogger.info("World $path: ${caller.name} teleported to warp point $key (${vecToStrClean(location)})")
+                site.pluginLogger.info(
+                    "World $path: ${caller.name} teleported to warp point $key (${
+                        vecToStrClean(
+                            location
+                        )
+                    })"
+                )
             } else {
                 sayTeleportFail(caller)
             }
@@ -107,7 +113,13 @@ class TeleportWarpCommand: AbstractTeleportCommand(
                 ConstructionSiteProvider.getScheduler().scheduleAsync {
                     (data as MutableMapData).update(FinalizedMapData(ImmutableMap.copyOf(warps)))
                     UtilPlayerBase.sendMessage(caller, "Created warp point &e$key")
-                    site.pluginLogger.info("World $path: ${caller.name} created warp point $key at ${locToStrClean(caller.location)}")
+                    site.pluginLogger.info(
+                        "World $path: ${caller.name} created warp point $key at ${
+                            locToStrClean(
+                                caller.location
+                            )
+                        }"
+                    )
                 }
                 return true
             }
@@ -121,7 +133,13 @@ class TeleportWarpCommand: AbstractTeleportCommand(
                 ConstructionSiteProvider.getScheduler().scheduleAsync {
                     UtilPlayerBase.sendMessage(caller, "Deleting warp point &e$key")
                     (data as MutableMapData).update(FinalizedMapData(ImmutableMap.copyOf(warps)))
-                    site.pluginLogger.info("World $path: ${caller.name} deleted warp point $key (${vecToStrClean(location)})")
+                    site.pluginLogger.info(
+                        "World $path: ${caller.name} deleted warp point $key (${
+                            vecToStrClean(
+                                location
+                            )
+                        })"
+                    )
                 }
                 return true
             }

@@ -5,13 +5,13 @@
     <groupId>colosseum.minecraft</groupId>
     <name>ConstructionSite</name>
     <artifactId>ConstructionSite</artifactId>
-    <version>0.1.2</version>
+    <version>0.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <kotlin.version>2.1.20</kotlin.version>
+        <kotlin.version>2.1.21</kotlin.version>
         <kotlin.compiler.incremental>false</kotlin.compiler.incremental>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spigot.version>1.8.8-R0.1-SNAPSHOT</spigot.version>

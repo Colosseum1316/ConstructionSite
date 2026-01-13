@@ -3,7 +3,7 @@ package colosseum.construction.manager
 import colosseum.construction.Constants.ConfigKeys.PARSE__MAXIMUM_RADIUS
 import colosseum.construction.ConstructionSiteProvider
 
-class ConfigManager: ConstructionSiteManager("Config") {
+class ConfigManager : ConstructionSiteManager("Config") {
     override fun register() {
         create()
 

@@ -13,7 +13,7 @@ import java.util.concurrent.*
 import java.util.function.Function
 
 @ManagerDependency(WorldManager::class)
-class MapDataManager: ConstructionSiteManager("MapData") {
+class MapDataManager : ConstructionSiteManager("MapData") {
     private val mapData: ConcurrentMap<String, MapData> = Maps.newConcurrentMap()
 
     companion object {

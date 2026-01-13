@@ -4,7 +4,7 @@ import colosseum.utility.UtilPlayerBase
 import colosseum.utility.UtilWorld.locToStrClean
 import org.bukkit.entity.Player
 
-class TeleportSpawnCommand: AbstractTeleportCommand(
+class TeleportSpawnCommand : AbstractTeleportCommand(
     listOf("spawn"),
     "Teleport to world spawn point.",
     "/spawn"
@@ -13,7 +13,7 @@ class TeleportSpawnCommand: AbstractTeleportCommand(
         val world = caller.world
         val location = world.spawnLocation
         if (getTeleportManager().teleportPlayer(caller, location)) {
-            UtilPlayerBase.sendMessage(caller, "Teleported to ${locToStrClean(location)}")
+            UtilPlayerBase.sendMessage(caller, "Teleported to &e${locToStrClean(location)}")
         } else {
             sayTeleportFail(caller)
         }

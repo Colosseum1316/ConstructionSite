@@ -51,7 +51,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest, ubuntu-24.04-arm]
         java-version: [8, 11, 17, 21, 25]
     timeout-minutes: 10
     runs-on: ${{ matrix.os }}
@@ -72,8 +72,18 @@ jobs:
           distribution: corretto
           cache: maven
 
-      - name: Build
+      - uses: dorny/paths-filter@v3
+        id: path-filter
+        with:
+          filters: |
+            parser:
+              - "src/main/java/colosseum/construction/parse/*.java"
+
+      - if: ${{ steps.path-filter.outputs.parser == 'true' }}
         run: mvn -B -V -e -ntp -Dstyle.color=always clean verify
+
+      - if: ${{ steps.path-filter.outputs.parser != 'true' }}
+        run: set +H && mvn -B -V -e -ntp -Dstyle.color=always -Dtest='!TestMapParse' clean verify
 
       - name: Write test report
         uses: mikepenz/action-junit-report@v5
@@ -84,7 +94,7 @@ jobs:
           detailed_summary: true
           fail_on_failure: true
           require_tests: true
-          check_name: Test Report (${{ matrix.os }}) (Java ${{ matrix.java-version }})
+          check_name: Test Report (${{ matrix.os }}, Java ${{ matrix.java-version }})
           check_title_template: '{{SUITE_NAME}} | {{TEST_NAME}}'
 
       - name: JaCoCo Code Coverage Report

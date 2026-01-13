@@ -19,7 +19,7 @@ import org.bukkit.generator.ChunkGenerator
 import org.bukkit.util.StringUtil
 import java.util.*
 
-class NewMapCommand: AbstractOpCommand(
+class NewMapCommand : AbstractOpCommand(
     listOf("newmap"),
     """
         Create a new map.
@@ -34,7 +34,7 @@ class NewMapCommand: AbstractOpCommand(
         private val VOID_NETHER = "-n"
         private val VOID_END = "-e"
 
-        class VoidGenerator: ChunkGenerator() {
+        class VoidGenerator : ChunkGenerator() {
             override fun generateChunkData(
                 world: World,
                 random: Random,
@@ -73,7 +73,8 @@ class NewMapCommand: AbstractOpCommand(
         }
 
         val worldFolderName = "${caller.name}-${System.nanoTime()}"
-        var worldCreator = WorldUtils.getWorldCreator(WorldUtils.getWorldRelativePath(WorldUtils.getSingleWorldRootPath(worldFolderName)))
+        var worldCreator =
+            WorldUtils.getWorldCreator(WorldUtils.getWorldRelativePath(WorldUtils.getSingleWorldRootPath(worldFolderName)))
         worldCreator.type(WorldType.FLAT)
         worldCreator.generateStructures(false)
 
@@ -102,7 +103,8 @@ class NewMapCommand: AbstractOpCommand(
         }
 
         ConstructionSiteProvider.getScheduler().schedule {
-            val world = WorldUtils.createOrLoadWorld(worldCreator) ?: throw RuntimeException("Could not create world ${worldCreator.name()}")
+            val world = WorldUtils.createOrLoadWorld(worldCreator)
+                ?: throw RuntimeException("Could not create world ${worldCreator.name()}")
             world.difficulty = Difficulty.EASY
             world.setSpawnLocation(0, 106, 0)
             world.setGameRuleValue("mobGriefing", "false")
@@ -119,7 +121,11 @@ class NewMapCommand: AbstractOpCommand(
                     getTeleportManager().teleportPlayer(caller, world.spawnLocation)
                     caller.gameMode = GameMode.CREATIVE
                     caller.isFlying = true
-                    Command.broadcastCommandMessage(caller, "Create new ${if (generateVoidWorld) "void " else ""}world: ${worldCreator.name()}", true)
+                    Command.broadcastCommandMessage(
+                        caller,
+                        "Create new ${if (generateVoidWorld) "void " else ""}world: ${worldCreator.name()}",
+                        true
+                    )
                 }
             }
         }
