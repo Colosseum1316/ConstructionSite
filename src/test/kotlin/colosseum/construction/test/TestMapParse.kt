@@ -9,7 +9,7 @@ import colosseum.construction.test.dummies.ConstructionSiteServerMock
 import colosseum.construction.test.dummies.ConstructionSiteWorldMock
 import colosseum.construction.test.dummies.DummySite
 import colosseum.construction.test.dummies.DummySite3
-import colosseum.utility.WorldMapConstants
+import colosseum.utility.MapConstants
 import org.bukkit.Material
 import org.bukkit.util.Vector
 import org.junit.jupiter.api.AfterAll
@@ -42,9 +42,9 @@ internal class TestMapParse {
     fun setup() {
         tearDown()
         plugin = DummySite3(tempWorldContainer, tempPluginDataDir)
-        world = ConstructionSiteWorldMock(WorldMapConstants.WORLD)
+        world = ConstructionSiteWorldMock(MapConstants.WORLD)
         (MockBukkit.getMock() as ConstructionSiteServerMock).addWorld(world)
-        Assertions.assertEquals(world, MockBukkit.getMock().getWorld(WorldMapConstants.WORLD))
+        Assertions.assertEquals(world, MockBukkit.getMock().getWorld(MapConstants.WORLD))
         plugin!!.load()
         plugin!!.enable()
     }
@@ -103,7 +103,7 @@ internal class TestMapParse {
         }.get(120, TimeUnit.SECONDS))
 
         Assertions.assertDoesNotThrow {
-            val dat = Files.readAllLines(destination.toPath().resolve(WorldMapConstants.WORLDCONFIG_DAT))
+            val dat = Files.readAllLines(destination.toPath().resolve(MapConstants.WORLDCONFIG_DAT))
             var mapName = false
             var mapAuthor = false
             var minX = false
@@ -419,7 +419,7 @@ internal class TestMapParse {
         }.get(60, TimeUnit.SECONDS))
 
         Assertions.assertDoesNotThrow {
-            val dat = Files.readAllLines(destination.toPath().resolve(WorldMapConstants.WORLDCONFIG_DAT))
+            val dat = Files.readAllLines(destination.toPath().resolve(MapConstants.WORLDCONFIG_DAT))
             var mapName = false
             var mapAuthor = false
             var minX = false

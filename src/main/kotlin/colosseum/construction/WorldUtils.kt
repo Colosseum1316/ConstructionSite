@@ -2,7 +2,7 @@ package colosseum.construction
 
 import colosseum.construction.WorldUtils.getWorldFolder
 import colosseum.construction.WorldUtils.getWorldRelativePath
-import colosseum.utility.WorldMapConstants
+import colosseum.utility.MapConstants
 import org.bukkit.World
 import org.bukkit.WorldCreator
 import java.io.File
@@ -15,8 +15,8 @@ object WorldUtils {
      */
     @JvmStatic
     fun isLevelNamePreserved(name: String): Boolean {
-        return name.equals(WorldMapConstants.WORLD_LOBBY, ignoreCase = true) || name.equals(
-            WorldMapConstants.WORLD,
+        return name.equals(MapConstants.WORLD_LOBBY, ignoreCase = true) || name.equals(
+            MapConstants.WORLD,
             ignoreCase = true
         )
     }
@@ -50,17 +50,17 @@ object WorldUtils {
      */
     @JvmStatic
     fun getOnParseRootPath(): File {
-        return ConstructionSiteProvider.getSite().worldContainer.resolve(WorldMapConstants.PARSE).absoluteFile
+        return ConstructionSiteProvider.getSite().worldContainer.resolve(MapConstants.PARSE).absoluteFile
     }
 
     @JvmStatic
     fun getParsedZipOutputRootPath(): File {
-        return ConstructionSiteProvider.getSite().pluginDataFolder.resolve(WorldMapConstants.PARSED).absoluteFile
+        return ConstructionSiteProvider.getSite().pluginDataFolder.resolve(MapConstants.PARSED).absoluteFile
     }
 
     @JvmStatic
     fun getMapsRootPath(): File {
-        return ConstructionSiteProvider.getSite().worldContainer.resolve(WorldMapConstants.MAP).absoluteFile
+        return ConstructionSiteProvider.getSite().worldContainer.resolve(MapConstants.MAP).absoluteFile
     }
 
     /**
@@ -136,6 +136,6 @@ object WorldUtils {
 
     @JvmStatic
     fun mapDatFile(worldFolder: File): File {
-        return worldFolder.resolve(WorldMapConstants.MAP_DAT)
+        return worldFolder.resolve(MapConstants.MAP_DAT)
     }
 }

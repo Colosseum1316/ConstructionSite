@@ -6,7 +6,7 @@ import colosseum.construction.ConstructionSiteProvider;
 import colosseum.construction.data.FinalizedMapData;
 import colosseum.utility.TeamName;
 import colosseum.utility.UtilWorld;
-import colosseum.utility.WorldMapConstants;
+import colosseum.utility.MapConstants;
 import lombok.NonNull;
 import nl.rutgerkok.hammer.ChunkAccess;
 import nl.rutgerkok.hammer.anvil.AnvilChunk;
@@ -267,10 +267,10 @@ public final class MapParser implements Runnable {
                 chunkAccess.saveChunk(c.getValue());
             }
 
-            try (FileWriter writer = new FileWriter(parsableWorldFolder.toPath().resolve(WorldMapConstants.WORLDCONFIG_DAT).toFile());
+            try (FileWriter writer = new FileWriter(parsableWorldFolder.toPath().resolve(MapConstants.WORLDCONFIG_DAT).toFile());
                  BufferedWriter buffer = new BufferedWriter(writer)
             ) {
-                site.getPluginLogger().info("Parsing " + parsableWorldPathString + ": Writing " + WorldMapConstants.WORLDCONFIG_DAT);
+                site.getPluginLogger().info("Parsing " + parsableWorldPathString + ": Writing " + MapConstants.WORLDCONFIG_DAT);
 
                 buffer.write("MAP_NAME:" + mapData.getMapName().orElse(Constants.UNTITLED));
                 buffer.write("\nMAP_AUTHOR:" + mapData.getMapCreator().orElse(Constants.NULL));
@@ -301,7 +301,7 @@ public final class MapParser implements Runnable {
                     buffer.write("\n\nCUSTOM_NAME:" + stringArrayListEntry.getKey());
                     buffer.write("\nCUSTOM_LOCS:" + locationsToString(stringArrayListEntry.getValue()));
                 }
-                site.getPluginLogger().info("Parsing " + parsableWorldPathString + ": Successfully created " + WorldMapConstants.WORLDCONFIG_DAT);
+                site.getPluginLogger().info("Parsing " + parsableWorldPathString + ": Successfully created " + MapConstants.WORLDCONFIG_DAT);
             }
             status.set(Status.SUCCESS);
         }

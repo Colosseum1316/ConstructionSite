@@ -13,7 +13,7 @@ import colosseum.construction.test.dummies.ConstructionSiteServerMock
 import colosseum.construction.test.dummies.ConstructionSiteWorldMock
 import colosseum.construction.test.dummies.DummySite
 import colosseum.construction.test.dummies.DummySite3
-import colosseum.utility.WorldMapConstants
+import colosseum.utility.MapConstants
 import org.bukkit.Location
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions
@@ -49,13 +49,13 @@ internal class TestMapCurrentlyLiveCommand {
 
         plugin = DummySite3(tempWorldContainer, tempPluginDataDir)
 
-        world = ConstructionSiteWorldMock(WorldMapConstants.WORLD)
-        worldLobby = ConstructionSiteWorldMock(WorldMapConstants.WORLD_LOBBY)
+        world = ConstructionSiteWorldMock(MapConstants.WORLD)
+        worldLobby = ConstructionSiteWorldMock(MapConstants.WORLD_LOBBY)
         worldMap = ConstructionSiteWorldMock("test_map", true)
         (MockBukkit.getMock() as ConstructionSiteServerMock).addWorld(world)
         (MockBukkit.getMock() as ConstructionSiteServerMock).addWorld(worldLobby)
-        Assertions.assertEquals(worldLobby, MockBukkit.getMock().getWorld(WorldMapConstants.WORLD_LOBBY))
-        Assertions.assertEquals(world, MockBukkit.getMock().getWorld(WorldMapConstants.WORLD))
+        Assertions.assertEquals(worldLobby, MockBukkit.getMock().getWorld(MapConstants.WORLD_LOBBY))
+        Assertions.assertEquals(world, MockBukkit.getMock().getWorld(MapConstants.WORLD))
 
         player1 = ConstructionSitePlayerMock("test1", UUID.fromString(uuid1))
         player1.isOp = true
