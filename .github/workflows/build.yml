@@ -72,7 +72,7 @@ jobs:
           distribution: corretto
           cache: maven
 
-      - uses: dorny/paths-filter@v3
+      - uses: dorny/paths-filter@v3.0.2
         id: path-filter
         with:
           filters: |
@@ -86,7 +86,7 @@ jobs:
         run: set +H && mvn -B -V -e -ntp -Dstyle.color=always -Dtest='!TestMapParse' clean verify
 
       - name: Write test report
-        uses: mikepenz/action-junit-report@v5
+        uses: mikepenz/action-junit-report@v5.6.2
         if: ${{ success() || failure() }}
         with:
           report_paths: ./target/surefire-reports/TEST-*.xml
