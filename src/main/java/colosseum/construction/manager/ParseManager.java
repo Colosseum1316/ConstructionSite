@@ -7,7 +7,7 @@ import colosseum.construction.WorldUtils;
 import colosseum.construction.data.FinalizedMapData;
 import colosseum.construction.parse.MapParser;
 import colosseum.utility.UtilZipper;
-import colosseum.utility.WorldMapConstants;
+import colosseum.utility.MapConstants;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -72,7 +72,7 @@ public final class ParseManager extends ConstructionSiteManager {
 
                 final File originalWorldFolder = WorldUtils.getWorldFolder(originalWorld);
                 final String originalWorldRelativePath = WorldUtils.getWorldRelativePath(originalWorldFolder);
-                final File destination = WorldUtils.getOnParseRootPath().toPath().resolve(WorldMapConstants.PARSE_PREFIX + originalWorldFolder.getName()).toFile();
+                final File destination = WorldUtils.getOnParseRootPath().toPath().resolve(MapConstants.PARSE_PREFIX + originalWorldFolder.getName()).toFile();
 
                 ConstructionSiteProvider.getScheduler().scheduleAsync(() -> {
                     try {
@@ -87,10 +87,10 @@ public final class ParseManager extends ConstructionSiteManager {
                         site.getPluginLogger().info("Deleting unneeded files in " + destination.getAbsolutePath());
                         for (File file : Objects.requireNonNull(destination.listFiles())) {
                             String filename = file.getName();
-                            if (!filename.equalsIgnoreCase(WorldMapConstants.LEVEL_DAT)
-                                    && !filename.equalsIgnoreCase(WorldMapConstants.REGION)
-                                    && !filename.equalsIgnoreCase(WorldMapConstants.WORLDCONFIG_DAT)
-                                    && !filename.equalsIgnoreCase(WorldMapConstants.MAP_DAT)) {
+                            if (!filename.equalsIgnoreCase(MapConstants.LEVEL_DAT)
+                                    && !filename.equalsIgnoreCase(MapConstants.REGION)
+                                    && !filename.equalsIgnoreCase(MapConstants.WORLDCONFIG_DAT)
+                                    && !filename.equalsIgnoreCase(MapConstants.MAP_DAT)) {
                                 FileUtils.deleteQuietly(file);
                             }
                         }
@@ -113,11 +113,6 @@ public final class ParseManager extends ConstructionSiteManager {
 
     private void query() {
         if (parser != null) {
-            for (Player player : ConstructionSiteProvider.getSite().getServer().getOnlinePlayers()) {
-                TextComponent message = new TextComponent(String.format("A map parse task running. (%.2f%%)", getProgress() * 100.0));
-                message.setColor(ChatColor.RED);
-                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, message);
-            }
             if (parser.isRunning()) {
                 return;
             }
@@ -131,9 +126,9 @@ public final class ParseManager extends ConstructionSiteManager {
                     }
                     for (File file : Objects.requireNonNull(worldFolder.listFiles())) {
                         String filename = file.getName();
-                        if (!filename.equalsIgnoreCase(WorldMapConstants.LEVEL_DAT)
-                                && !filename.equalsIgnoreCase(WorldMapConstants.REGION)
-                                && !filename.equalsIgnoreCase(WorldMapConstants.WORLDCONFIG_DAT)) {
+                        if (!filename.equalsIgnoreCase(MapConstants.LEVEL_DAT)
+                                && !filename.equalsIgnoreCase(MapConstants.REGION)
+                                && !filename.equalsIgnoreCase(MapConstants.WORLDCONFIG_DAT)) {
                             FileUtils.deleteQuietly(file);
                         }
                     }
@@ -145,12 +140,6 @@ public final class ParseManager extends ConstructionSiteManager {
                     failAndCleanup(worldFolder, e);
                 }
             });
-        } else {
-            for (Player player : ConstructionSiteProvider.getSite().getServer().getOnlinePlayers()) {
-                TextComponent message = new TextComponent("No parse task running.");
-                message.setColor(ChatColor.GRAY);
-                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, message);
-            }
         }
     }
 

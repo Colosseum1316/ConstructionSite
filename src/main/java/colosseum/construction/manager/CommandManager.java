@@ -37,7 +37,7 @@ public final class CommandManager extends ConstructionSiteManager {
                     command.setTabCompleter((TabCompleter) c);
                 }
                 command.setPermission(String.format("%s;%s", PermissionUtils.getPermissionString(c), PermissionUtils.getAsteriskPermissionString()));
-                ConstructionSiteProvider.getSite().getServer().getCommandMap().register(FALLBACK_PREFIX, command);
+                CommandUtils.getCommandMap().register(FALLBACK_PREFIX, command);
                 ConstructionSiteProvider.getSite().getPluginLogger().info("Registering command " + command.getName());
             }
         } catch (Exception e) {

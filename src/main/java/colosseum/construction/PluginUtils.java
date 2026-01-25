@@ -4,7 +4,7 @@ import colosseum.construction.manager.ConstructionSiteManager;
 import colosseum.construction.manager.ManagerDependency;
 import colosseum.flashlight.FlashlightString;
 import colosseum.utility.UtilZipper;
-import colosseum.utility.WorldMapConstants;
+import colosseum.utility.MapConstants;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 import lombok.AccessLevel;
@@ -103,15 +103,15 @@ public final class PluginUtils {
 
     public static void deleteWorlds() {
         ConstructionSite site = ConstructionSiteProvider.getSite();
-        FileUtils.deleteQuietly(site.getWorldContainer().toPath().resolve(WorldMapConstants.WORLD).toFile());
-        FileUtils.deleteQuietly(site.getWorldContainer().toPath().resolve(WorldMapConstants.WORLD_LOBBY).toFile());
+        FileUtils.deleteQuietly(site.getWorldContainer().toPath().resolve(MapConstants.WORLD).toFile());
+        FileUtils.deleteQuietly(site.getWorldContainer().toPath().resolve(MapConstants.WORLD_LOBBY).toFile());
         FileUtils.deleteQuietly(site.getWorldContainer().toPath().resolve("world_nether").toFile());
         FileUtils.deleteQuietly(site.getWorldContainer().toPath().resolve("world_the_end").toFile());
     }
 
     public static void unzip() {
         ConstructionSite site = ConstructionSiteProvider.getSite();
-        File destination = site.getWorldContainer().toPath().resolve(WorldMapConstants.WORLD).toFile();
+        File destination = site.getWorldContainer().toPath().resolve(MapConstants.WORLD).toFile();
         if (destination.exists() && !destination.isDirectory()) {
             try {
                 FileUtils.delete(destination);

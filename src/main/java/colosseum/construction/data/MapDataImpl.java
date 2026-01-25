@@ -5,7 +5,7 @@ import colosseum.construction.ConstructionSite;
 import colosseum.construction.ConstructionSiteProvider;
 import colosseum.construction.WorldUtils;
 import colosseum.utility.UtilWorld;
-import colosseum.utility.WorldMapConstants;
+import colosseum.utility.MapConstants;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
@@ -64,7 +64,7 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
         if (this.datFile.exists()) {
             read();
         } else {
-            ConstructionSiteProvider.getSite().getPluginLogger().warning(String.format("There's no \"%s\" in \"%s\"! Creating a dummy one. Please set map data accordingly.", WorldMapConstants.MAP_DAT, worldFolder.getAbsolutePath()));
+            ConstructionSiteProvider.getSite().getPluginLogger().warning(String.format("There's no \"%s\" in \"%s\"! Creating a dummy one. Please set map data accordingly.", MapConstants.MAP_DAT, worldFolder.getAbsolutePath()));
             update(new FinalizedMapData("MapName", "MapCreator", ImmutableMap.of(), ImmutableSet.of(), true));
             write();
         }
