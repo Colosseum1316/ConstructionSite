@@ -113,11 +113,6 @@ public final class ParseManager extends ConstructionSiteManager {
 
     private void query() {
         if (parser != null) {
-            for (Player player : ConstructionSiteProvider.getSite().getServer().getOnlinePlayers()) {
-                TextComponent message = new TextComponent(String.format("A map parse task running. (%.2f%%)", getProgress() * 100.0));
-                message.setColor(ChatColor.RED);
-                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, message);
-            }
             if (parser.isRunning()) {
                 return;
             }
@@ -145,12 +140,6 @@ public final class ParseManager extends ConstructionSiteManager {
                     failAndCleanup(worldFolder, e);
                 }
             });
-        } else {
-            for (Player player : ConstructionSiteProvider.getSite().getServer().getOnlinePlayers()) {
-                TextComponent message = new TextComponent("No parse task running.");
-                message.setColor(ChatColor.GRAY);
-                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, message);
-            }
         }
     }
 
