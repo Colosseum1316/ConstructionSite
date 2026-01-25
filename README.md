@@ -4,9 +4,6 @@ ConstructionSite is a Spigot plugin. Inspired by [CENSORED] MapParser plugin.
 
 ConstructionSite parses a Minecraft world of certain patterns under certain rules and produces a special config file for [CENSORED] minigame server to use.
 
-ConstructionSite relies on [ColosseumSpigot](https://github.com/Colosseum1316/Colosseum), which is dedicated to Minecraft 1.8.8. 
-Any other Spigot 1.8.8 fork probably won't support this plugin properly, beware.
-
 ## Layout
 
 The plugin reads 2 directories: `map` and `parse`.
@@ -36,10 +33,6 @@ Drop the plugin jar into `plugins` directory, then start server.
 To use the plugin, join game and run `/help ConstructionSite` for help.
 
 ## FAQs
-
-### Why's the plugin failing to load?
-
-Probably you're not using [ColosseumSpigot](https://github.com/Colosseum1316/Colosseum).
 
 ### Why's there no document on commands?
 
