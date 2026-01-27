@@ -1,3 +1,3 @@
-name: ${project.name}
+name: ${name}
 main: colosseum.construction.ConstructionSiteImpl
-version: ${project.version}
+version: ${version}
