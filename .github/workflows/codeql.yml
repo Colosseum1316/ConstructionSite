@@ -1,0 +1,81 @@
+name: "CodeQL Advanced"
+
+on:
+  push:
+    branches:
+      - "master"
+    paths:
+      - "src/main/java/**/*.java"
+      - "src/main/kotlin/**/*.kt"
+      - "src/test/java/**/*.java"
+      - "src/test/kotlin/**/*.kt"
+      - "!.gitignore"
+      - "!README.md"
+      - "!README"
+      - "!LICENSE"
+      - "!COPYING"
+  pull_request:
+    branches:
+      - "master"
+    paths:
+      - "src/main/java/**/*.java"
+      - "src/main/kotlin/**/*.kt"
+      - "src/test/java/**/*.java"
+      - "src/test/kotlin/**/*.kt"
+      - "!.gitignore"
+      - "!README.md"
+      - "!README"
+      - "!LICENSE"
+      - "!COPYING"
+  schedule:
+    - cron: "0 0 * * 0"
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    runs-on: ${{ (matrix.language == 'swift' && 'macos-latest') || 'ubuntu-latest' }}
+    permissions:
+      security-events: write
+      packages: read
+      actions: read
+      contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: actions
+            build-mode: none
+          - language: java-kotlin
+            build-mode: manual
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        if: ${{ matrix.language == 'java-kotlin' }}
+        uses: actions/setup-java@v5
+        with:
+          java-version: 17
+          distribution: corretto
+          cache: gradle
+
+      - name: Setup Gradle
+        if: ${{ matrix.language == 'java-kotlin' }}
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+
+      - name: Run Gradle
+        if: ${{ matrix.build-mode == 'manual' && matrix.language == 'java-kotlin' }}
+        shell: bash
+        run: ./gradlew clean build
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:${{matrix.language}}"

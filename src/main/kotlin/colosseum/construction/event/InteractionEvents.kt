@@ -101,7 +101,7 @@ class InteractionEvents : ConstructionSiteEventListener() {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onPlayerMove(event: PlayerMoveEvent) {
-        if (event.to.y <= 0) {
+        if (event.to.y < -5) {
             event.to = event.player.world.spawnLocation
         }
     }
