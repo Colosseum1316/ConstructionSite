@@ -4,7 +4,13 @@ ConstructionSite is a Spigot plugin. Inspired by [CENSORED] MapParser plugin.
 
 ConstructionSite parses a Minecraft world of certain patterns under certain rules and produces a special config file for [CENSORED] minigame server to use.
 
-## Layout
+## Plugin
+
+### Compilation
+
+JDK 17+ is required to run Gradle. But the source is compatible with JDK 8.
+
+### Directories
 
 The plugin reads 2 directories: `map` and `parse`.
 
@@ -16,16 +22,16 @@ The 2 directories are in server's working directory, which is usually same as wh
 
 Upon every successful parse, parsed world save is zipped and stored in `plugins/ConstructionSite/parsed`.
 
-## Config
+### Config
 
-### config.yml
+#### config.yml
 
 ```yaml
 parse:
   maximum_radius: 1000
 ```
 
-## Usage
+### Usage
 
 Drop the plugin jar into `plugins` directory, then start server.
 <u>**You're advised to use the plugin in a dedicated Spigot instance instead of mixing with existing stuff.**</u>
