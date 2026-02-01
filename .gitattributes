@@ -1,3 +1,0 @@
-gradlew text eol=lf linguist-generated
-gradlew.bat text eol=crlf linguist-generated
-gradle/wrapper/** linguist-generated

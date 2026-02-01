@@ -56,13 +56,9 @@ jobs:
         if: ${{ matrix.language == 'java-kotlin' }}
         uses: actions/setup-java@v5
         with:
-          java-version: 17
+          java-version: 8
           distribution: corretto
-          cache: gradle
-
-      - name: Setup Gradle
-        if: ${{ matrix.language == 'java-kotlin' }}
-        uses: gradle/actions/setup-gradle@v5
+          cache: maven
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4
@@ -70,10 +66,10 @@ jobs:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
 
-      - name: Run Gradle
+      - name: Run Maven
         if: ${{ matrix.build-mode == 'manual' && matrix.language == 'java-kotlin' }}
         shell: bash
-        run: ./gradlew clean build
+        run: mvn -B -V -e -ntp -Dstyle.color=always clean verify
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4
