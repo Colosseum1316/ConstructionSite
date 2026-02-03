@@ -1,8 +1,12 @@
 package colosseum.construction.test;
 
+import colosseum.construction.PermissionUtils;
 import colosseum.construction.PluginUtils;
+import colosseum.construction.command.AbstractOpCommand;
 import colosseum.construction.command.ConstructionSiteCommand;
 import colosseum.construction.manager.ConstructionSiteManager;
+import colosseum.construction.test.dummies.DummySite;
+import colosseum.construction.test.dummies.DummySite1;
 import colosseum.construction.test.dummies.manager.DummyManager1;
 import colosseum.construction.test.dummies.manager.DummyManager2;
 import colosseum.construction.test.dummies.manager.DummyManager3;
@@ -11,15 +15,37 @@ import colosseum.construction.test.dummies.manager.DummyManager5;
 import colosseum.construction.test.dummies.manager.DummyManager6;
 import colosseum.construction.test.dummies.manager.DummyManager7;
 import colosseum.construction.test.dummies.manager.DummyManager8;
+import org.bukkit.permissions.PermissionDefault;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.stream.StreamSupport;
 
 class TestServiceDiscovery {
+    private DummySite plugin;
+
+    @TempDir
+    static File tempPluginDataDir;
+
+    @BeforeAll
+    void setup() {
+        tearDown();
+        plugin = new DummySite1(tempPluginDataDir);
+        plugin.enable();
+    }
+
+    @AfterAll
+    void tearDown() {
+        Utils.tearDown(plugin);
+    }
+
     @Test
     void testServiceLoader() {
         ServiceLoader<ConstructionSiteCommand> providers = ServiceLoader.load(ConstructionSiteCommand.class, ConstructionSiteCommand.class.getClassLoader());
@@ -27,7 +53,10 @@ class TestServiceDiscovery {
         for (Object provider : providers) {
             Class<? extends ConstructionSiteCommand> providerClass = provider.getClass().asSubclass(ConstructionSiteCommand.class);
             Assertions.assertDoesNotThrow(() -> {
-                providerClass.getDeclaredConstructor().newInstance();
+                ConstructionSiteCommand c = providerClass.getDeclaredConstructor().newInstance();
+                Assertions.assertEquals(PermissionUtils.getPermissionString(c), PermissionUtils.getPermission(c).getName());
+                Assertions.assertEquals("colosseum.construction." + c.getAliases().get(0), PermissionUtils.getPermissionString(c));
+                Assertions.assertEquals(c instanceof AbstractOpCommand ? PermissionDefault.OP : PermissionDefault.TRUE, PermissionUtils.getPermission(c).getDefault());
             });
         }
 

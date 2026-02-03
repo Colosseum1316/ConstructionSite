@@ -20,7 +20,6 @@ import org.bukkit.Location
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -96,14 +95,13 @@ internal class TestMapCreditCommands {
         Utils.tearDown(plugin)
     }
 
-    @Order(1)
     @Test
-    fun testPermission() {
-        val manager: TeleportManager =
+    fun test() {
+        val teleportManager: TeleportManager =
             ConstructionSiteProvider.getSite().getManager(TeleportManager::class.java)
-        Assertions.assertTrue(manager.teleportToServerSpawn(player1))
-        Assertions.assertTrue(manager.teleportToServerSpawn(player2))
-        Assertions.assertTrue(manager.teleportToServerSpawn(player3))
+        Assertions.assertTrue(teleportManager.teleportToServerSpawn(player1))
+        Assertions.assertTrue(teleportManager.teleportToServerSpawn(player2))
+        Assertions.assertTrue(teleportManager.teleportToServerSpawn(player3))
 
         val commands: Array<AbstractMapCreditCommand> = arrayOf(
             MapAuthorCommand(),
@@ -123,9 +121,9 @@ internal class TestMapCreditCommands {
             player3.assertNoMoreSaid()
         }
 
-        Assertions.assertTrue(manager.teleportPlayer(player1, Location(worldLobby, 0.0, 0.0, 0.0)))
-        Assertions.assertTrue(manager.teleportPlayer(player2, Location(worldLobby, 0.0, 0.0, 0.0)))
-        Assertions.assertTrue(manager.teleportPlayer(player3, Location(worldLobby, 0.0, 0.0, 0.0)))
+        Assertions.assertTrue(teleportManager.teleportPlayer(player1, Location(worldLobby, 0.0, 0.0, 0.0)))
+        Assertions.assertTrue(teleportManager.teleportPlayer(player2, Location(worldLobby, 0.0, 0.0, 0.0)))
+        Assertions.assertTrue(teleportManager.teleportPlayer(player3, Location(worldLobby, 0.0, 0.0, 0.0)))
 
         for (command in commands) {
             Assertions.assertFalse(command.canRun(MockBukkit.getMock().consoleSender))
@@ -140,12 +138,12 @@ internal class TestMapCreditCommands {
             player3.assertNoMoreSaid()
         }
 
-        Assertions.assertTrue(manager.check(player1, Location(worldMap, 0.0, 0.0, 0.0)))
-        Assertions.assertTrue(manager.check(player2, Location(worldMap, 0.0, 0.0, 0.0)))
-        Assertions.assertFalse(manager.check(player3, Location(worldMap, 0.0, 0.0, 0.0)))
-        Assertions.assertTrue(manager.teleportPlayer(player1, Location(worldMap, 0.0, 0.0, 0.0)))
-        Assertions.assertTrue(manager.teleportPlayer(player2, Location(worldMap, 0.0, 0.0, 0.0)))
-        Assertions.assertFalse(manager.teleportPlayer(player3, Location(worldMap, 0.0, 0.0, 0.0)))
+        Assertions.assertTrue(teleportManager.check(player1, Location(worldMap, 0.0, 0.0, 0.0)))
+        Assertions.assertTrue(teleportManager.check(player2, Location(worldMap, 0.0, 0.0, 0.0)))
+        Assertions.assertFalse(teleportManager.check(player3, Location(worldMap, 0.0, 0.0, 0.0)))
+        Assertions.assertTrue(teleportManager.teleportPlayer(player1, Location(worldMap, 0.0, 0.0, 0.0)))
+        Assertions.assertTrue(teleportManager.teleportPlayer(player2, Location(worldMap, 0.0, 0.0, 0.0)))
+        Assertions.assertFalse(teleportManager.teleportPlayer(player3, Location(worldMap, 0.0, 0.0, 0.0)))
 
         for (command in commands) {
             Assertions.assertFalse(command.canRun(MockBukkit.getMock().consoleSender))
@@ -157,15 +155,11 @@ internal class TestMapCreditCommands {
             player1.assertNoMoreSaid()
             player2.assertNoMoreSaid()
         }
-    }
 
-    @Order(2)
-    @Test
-    fun testMapAuthorCommand() {
-        val command: AbstractMapCreditCommand = MapAuthorCommand()
-        val label: String = command.aliases[0]
-        val teleportManager: TeleportManager =
-            ConstructionSiteProvider.getSite().getManager(TeleportManager::class.java)
+        // test mapauthor cmd
+
+        var command: AbstractMapCreditCommand = MapAuthorCommand()
+        var label: String = command.aliases[0]
         val mapDataManager: MapDataManager =
             ConstructionSiteProvider.getSite().getManager(MapDataManager::class.java)
         Assertions.assertTrue(teleportManager.teleportPlayer(player1, Location(worldMap, 0.0, 0.0, 0.0)))
@@ -207,17 +201,11 @@ internal class TestMapCreditCommands {
         Assertions.assertTrue((mapDataManager.get(worldMap) as MutableMapData).write())
         data = Utils.readMapData(worldMap, WorldUtils.getWorldFolder(worldMap))
         Assertions.assertEquals("This is player 2", data.getMapCreator())
-    }
 
-    @Order(3)
-    @Test
-    fun testMapNameCommand() {
-        val command: AbstractMapCreditCommand = MapNameCommand()
-        val label: String = command.aliases.get(0)
-        val teleportManager: TeleportManager =
-            ConstructionSiteProvider.getSite().getManager(TeleportManager::class.java)
-        val mapDataManager: MapDataManager =
-            ConstructionSiteProvider.getSite().getManager(MapDataManager::class.java)
+        // test mapname cmd
+
+        command = MapNameCommand()
+        label = command.aliases[0]
         Assertions.assertTrue(teleportManager.teleportPlayer(player1, Location(worldMap, 0.0, 0.0, 0.0)))
         Assertions.assertTrue(teleportManager.teleportPlayer(player2, Location(worldMap, 0.0, 0.0, 0.0)))
         player1.assertLocation(Location(worldMap, 0.0, 0.0, 0.0), 1.0)
@@ -234,7 +222,7 @@ internal class TestMapCreditCommands {
         player2.assertNoMoreSaid()
         Assertions.assertEquals("Map v1", mapDataManager.get(worldMap).mapName)
         Assertions.assertTrue((mapDataManager.get(worldMap) as MutableMapData).write())
-        var data: MapData = Utils.readMapData(worldMap, WorldUtils.getWorldFolder(worldMap))
+        data = Utils.readMapData(worldMap, WorldUtils.getWorldFolder(worldMap))
         Assertions.assertEquals("Map v1", data.mapName)
 
         Assertions.assertTrue(command.runConstruction(player2, label, arrayOf("Map", "v2")))

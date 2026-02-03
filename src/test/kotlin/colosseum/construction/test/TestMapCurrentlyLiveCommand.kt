@@ -18,7 +18,6 @@ import org.bukkit.Location
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -85,34 +84,26 @@ internal class TestMapCurrentlyLiveCommand {
         Utils.tearDown(plugin)
     }
 
-    @Order(1)
-    @Test
-    fun testPermission() {
-        val command = MapCurrentlyLiveCommand()
-        val manager: TeleportManager =
-            ConstructionSiteProvider.getSite().getManager(TeleportManager::class.java)
-        Assertions.assertTrue(manager.teleportToServerSpawn(player1))
-        Assertions.assertFalse(command.canRun(MockBukkit.getMock().consoleSender))
-        Assertions.assertFalse(command.canRun(player1))
-        player1.assertSaid("§cYou are in \"world\"!")
-        player1.assertNoMoreSaid()
-        Assertions.assertTrue(manager.teleportPlayer(player1, Location(worldLobby, 0.0, 0.0, 0.0)))
-        Assertions.assertFalse(command.canRun(MockBukkit.getMock().consoleSender))
-        Assertions.assertFalse(command.canRun(player1))
-        player1.assertSaid("§cYou are in \"world_lobby\"!")
-        player1.assertNoMoreSaid()
-        Assertions.assertTrue(manager.teleportPlayer(player1, Location(worldMap, 0.0, 0.0, 0.0)))
-        Assertions.assertFalse(command.canRun(MockBukkit.getMock().consoleSender))
-        Assertions.assertTrue(command.canRun(player1))
-        player1.assertNoMoreSaid()
-    }
-
-    @Order(2)
     @Test
     fun test() {
         val command = MapCurrentlyLiveCommand()
         val teleportManager: TeleportManager =
             ConstructionSiteProvider.getSite().getManager(TeleportManager::class.java)
+        Assertions.assertTrue(teleportManager.teleportToServerSpawn(player1))
+        Assertions.assertFalse(command.canRun(MockBukkit.getMock().consoleSender))
+        Assertions.assertFalse(command.canRun(player1))
+        player1.assertSaid("§cYou are in \"world\"!")
+        player1.assertNoMoreSaid()
+        Assertions.assertTrue(teleportManager.teleportPlayer(player1, Location(worldLobby, 0.0, 0.0, 0.0)))
+        Assertions.assertFalse(command.canRun(MockBukkit.getMock().consoleSender))
+        Assertions.assertFalse(command.canRun(player1))
+        player1.assertSaid("§cYou are in \"world_lobby\"!")
+        player1.assertNoMoreSaid()
+        Assertions.assertTrue(teleportManager.teleportPlayer(player1, Location(worldMap, 0.0, 0.0, 0.0)))
+        Assertions.assertFalse(command.canRun(MockBukkit.getMock().consoleSender))
+        Assertions.assertTrue(command.canRun(player1))
+        player1.assertNoMoreSaid()
+
         val mapDataManager: MapDataManager =
             ConstructionSiteProvider.getSite().getManager(MapDataManager::class.java)
         val labelIsLive: String = command.aliases[0]

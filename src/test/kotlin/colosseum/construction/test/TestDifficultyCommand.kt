@@ -92,10 +92,10 @@ internal class TestDifficultyCommand {
         Utils.tearDown(plugin)
     }
 
-    @Order(1)
     @Test
-    fun testPermission() {
+    fun test() {
         val command = DifficultyCommand()
+        val label = command.aliases[0]
         val manager: TeleportManager = ConstructionSiteProvider.getSite().getManager(TeleportManager::class.java)
 
         Assertions.assertTrue(manager.teleportToServerSpawn(player1))
@@ -133,13 +133,9 @@ internal class TestDifficultyCommand {
         Assertions.assertTrue(command.canRun(player1))
         player1.assertNoMoreSaid()
         player1.isOp = false
-    }
 
-    @Order(2)
-    @Test
-    fun testNumericDifficulties() {
-        val command = DifficultyCommand()
-        val label = command.aliases[0]
+        // numerics
+
         Assertions.assertFalse(command.runConstruction(player2, label, arrayOf()))
         Assertions.assertFalse(command.runConstruction(player2, label, arrayOf("1", "1")))
         Assertions.assertFalse(command.runConstruction(player2, label, arrayOf("9")))
@@ -180,13 +176,8 @@ internal class TestDifficultyCommand {
         Assertions.assertNotEquals(Difficulty.HARD, world.difficulty)
         Assertions.assertNotEquals(Difficulty.HARD, worldLobby.difficulty)
         Assertions.assertEquals(Difficulty.HARD, worldMap.difficulty)
-    }
 
-    @Order(3)
-    @Test
-    fun testDifficultiesByName() {
-        val command = DifficultyCommand()
-        val label = command.aliases[0]
+        // name
 
         world.difficulty = Difficulty.NORMAL
         worldMap.difficulty = Difficulty.NORMAL
@@ -223,13 +214,8 @@ internal class TestDifficultyCommand {
         Assertions.assertNotEquals(Difficulty.HARD, world.difficulty)
         Assertions.assertNotEquals(Difficulty.HARD, worldLobby.difficulty)
         Assertions.assertEquals(Difficulty.HARD, worldMap.difficulty)
-    }
 
-    @Order(4)
-    @Test
-    fun testDifficultiesByPrefix() {
-        val command = DifficultyCommand()
-        val label = command.aliases[0]
+        // prefix
 
         world.difficulty = Difficulty.NORMAL
         worldMap.difficulty = Difficulty.NORMAL

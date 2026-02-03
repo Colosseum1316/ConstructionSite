@@ -15,7 +15,6 @@ import org.bukkit.Location
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -88,10 +87,10 @@ internal class TestMapDeleteCommand {
         Utils.tearDown(plugin)
     }
 
-    @Order(1)
     @Test
-    fun testPermission() {
+    fun test() {
         val command = MapDeleteCommand()
+        val label = command.aliases[0]
         val teleportManager: TeleportManager =
             ConstructionSiteProvider.getSite().getManager(TeleportManager::class.java)
 
@@ -122,15 +121,7 @@ internal class TestMapDeleteCommand {
         Assertions.assertTrue(command.canRun(player2))
         player1.assertNoMoreSaid()
         player2.assertNoMoreSaid()
-    }
 
-    @Order(2)
-    @Test
-    fun test() {
-        val command = MapDeleteCommand()
-        val label: String = command.aliases[0]
-        val teleportManager: TeleportManager =
-            ConstructionSiteProvider.getSite().getManager(TeleportManager::class.java)
         Assertions.assertTrue(teleportManager.teleportPlayer(player1, Location(worldMap, 0.0, 0.0, 0.0)))
         Assertions.assertTrue(teleportManager.teleportPlayer(player2, Location(worldMap, 0.0, 0.0, 0.0)))
         val uid: UUID = worldMap.uid

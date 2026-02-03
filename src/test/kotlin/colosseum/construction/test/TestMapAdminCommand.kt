@@ -18,7 +18,6 @@ import org.bukkit.Location
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -89,14 +88,14 @@ internal class TestMapAdminCommand {
         Utils.tearDown(plugin)
     }
 
-    @Order(1)
     @Test
-    fun testPermission() {
+    fun test() {
         val command = MapAdminCommand()
-        val manager: TeleportManager =
+        val label = command.aliases[0]
+        val teleportManager: TeleportManager =
             ConstructionSiteProvider.getSite().getManager(TeleportManager::class.java)
-        Assertions.assertTrue(manager.teleportToServerSpawn(player1))
-        Assertions.assertTrue(manager.teleportToServerSpawn(player2))
+        Assertions.assertTrue(teleportManager.teleportToServerSpawn(player1))
+        Assertions.assertTrue(teleportManager.teleportToServerSpawn(player2))
         Assertions.assertFalse(command.canRun(MockBukkit.getMock().consoleSender))
         Assertions.assertFalse(command.canRun(player1))
         Assertions.assertFalse(command.canRun(player2))
@@ -104,8 +103,8 @@ internal class TestMapAdminCommand {
         player1.assertNoMoreSaid()
         player2.assertSaid("§cYou are in \"world\"!")
         player2.assertNoMoreSaid()
-        Assertions.assertTrue(manager.teleportPlayer(player1, Location(worldLobby, 0.0, 0.0, 0.0)))
-        Assertions.assertTrue(manager.teleportPlayer(player2, Location(worldLobby, 0.0, 0.0, 0.0)))
+        Assertions.assertTrue(teleportManager.teleportPlayer(player1, Location(worldLobby, 0.0, 0.0, 0.0)))
+        Assertions.assertTrue(teleportManager.teleportPlayer(player2, Location(worldLobby, 0.0, 0.0, 0.0)))
         Assertions.assertFalse(command.canRun(MockBukkit.getMock().consoleSender))
         Assertions.assertFalse(command.canRun(player1))
         Assertions.assertFalse(command.canRun(player2))
@@ -113,23 +112,15 @@ internal class TestMapAdminCommand {
         player1.assertNoMoreSaid()
         player2.assertSaid("§cYou are in \"world_lobby\"!")
         player2.assertNoMoreSaid()
-        Assertions.assertTrue(manager.teleportPlayer(player1, Location(worldMap, 0.0, 0.0, 0.0)))
-        Assertions.assertFalse(manager.teleportPlayer(player2, Location(worldMap, 0.0, 0.0, 0.0)))
+        Assertions.assertTrue(teleportManager.teleportPlayer(player1, Location(worldMap, 0.0, 0.0, 0.0)))
+        Assertions.assertFalse(teleportManager.teleportPlayer(player2, Location(worldMap, 0.0, 0.0, 0.0)))
         Assertions.assertFalse(command.canRun(MockBukkit.getMock().consoleSender))
         Assertions.assertTrue(command.canRun(player1))
         Assertions.assertFalse(command.canRun(player2))
         player1.assertNoMoreSaid()
         player2.assertSaid("§cYou are in \"world_lobby\"!")
         player2.assertNoMoreSaid()
-    }
 
-    @Order(2)
-    @Test
-    fun test() {
-        val command = MapAdminCommand()
-        val label: String = command.aliases[0]
-        val teleportManager: TeleportManager =
-            ConstructionSiteProvider.getSite().getManager(TeleportManager::class.java)
         val mapDataManager: MapDataManager =
             ConstructionSiteProvider.getSite().getManager(MapDataManager::class.java)
 

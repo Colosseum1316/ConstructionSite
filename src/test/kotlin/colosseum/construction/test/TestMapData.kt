@@ -21,7 +21,6 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -115,7 +114,6 @@ internal class TestMapData {
         assertion.assertion(data, mapName, mapCreator, warps, adminList, currentlyLive)
     }
 
-    @Order(1)
     @Test
     fun testRead() {
         var data: MapData = testRead0(
@@ -181,7 +179,6 @@ internal class TestMapData {
         Assertions.assertTrue(data.allows(player3))
     }
 
-    @Order(2)
     @Test
     fun testWrite() {
         testWrite0(

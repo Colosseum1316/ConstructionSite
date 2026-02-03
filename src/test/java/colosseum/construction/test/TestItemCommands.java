@@ -13,7 +13,6 @@ import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -40,9 +39,8 @@ class TestItemCommands {
         Utils.tearDown(plugin);
     }
 
-    @Order(1)
     @Test
-    void testPermission() {
+    void test() {
         ItemCommand[] commands = new ItemCommand[]{
                 new ItemAddLoreCommand(),
                 new ItemClearLoreCommand(),
@@ -67,11 +65,9 @@ class TestItemCommands {
             player.assertSaid("§cHold an item in your hand!");
             player.assertNoMoreSaid();
         }
-    }
 
-    @Order(2)
-    @Test
-    void testAddAndClearLore() {
+        // Test adding and clearing item lore.
+
         player.assertNoMoreSaid();
 
         ItemCommand commandAddLore = new ItemAddLoreCommand();
@@ -102,16 +98,14 @@ class TestItemCommands {
 
         item = player.getItemInHand();
         Assertions.assertEquals(0, item.getItemMeta().getLore().size());
-    }
 
-    @Order(3)
-    @Test
-    void testItemName() {
+        // Testing against item name
+
         player.assertNoMoreSaid();
 
         ItemCommand command = new ItemNameCommand();
-        String label = command.getAliases().get(0);
-        ItemStack item = new ItemStack(Material.GLASS);
+        label = command.getAliases().get(0);
+        item = new ItemStack(Material.GLASS);
         player.setItemInHand(new ItemStack(Material.AIR));
         player.setItemInHand(item);
 
