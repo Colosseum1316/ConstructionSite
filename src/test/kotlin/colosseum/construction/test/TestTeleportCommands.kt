@@ -22,7 +22,6 @@ import org.bukkit.Location
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -100,9 +99,8 @@ internal class TestTeleportCommands {
         Utils.tearDown(plugin)
     }
 
-    @Order(1)
     @Test
-    fun testPermission() {
+    fun test() {
         val commands: Array<AbstractTeleportCommand> = arrayOf(
             TeleportCommand(),
             TeleportSpawnCommand(),
@@ -117,12 +115,12 @@ internal class TestTeleportCommands {
         }
 
         val warpCommand: AbstractTeleportCommand = TeleportWarpCommand()
-        val manager: TeleportManager =
-            ConstructionSiteProvider.getSite().getManager<TeleportManager>(TeleportManager::class.java)
+        val teleportManager: TeleportManager =
+            ConstructionSiteProvider.getSite().getManager(TeleportManager::class.java)
 
-        Assertions.assertTrue(manager.teleportToServerSpawn(player1))
-        Assertions.assertTrue(manager.teleportToServerSpawn(player2))
-        Assertions.assertTrue(manager.teleportToServerSpawn(player3))
+        Assertions.assertTrue(teleportManager.teleportToServerSpawn(player1))
+        Assertions.assertTrue(teleportManager.teleportToServerSpawn(player2))
+        Assertions.assertTrue(teleportManager.teleportToServerSpawn(player3))
         Assertions.assertFalse(warpCommand.canRun(MockBukkit.getMock().consoleSender))
         Assertions.assertFalse(warpCommand.canRun(player1))
         Assertions.assertFalse(warpCommand.canRun(player2))
@@ -140,9 +138,9 @@ internal class TestTeleportCommands {
         Assertions.assertFalse(player2.isFlying)
         Assertions.assertFalse(player3.isFlying)
 
-        Assertions.assertTrue(manager.teleportPlayer(player1, Location(worldLobby, 0.0, 0.0, 0.0)))
-        Assertions.assertTrue(manager.teleportPlayer(player2, Location(worldLobby, 0.0, 0.0, 0.0)))
-        Assertions.assertTrue(manager.teleportPlayer(player3, Location(worldLobby, 0.0, 0.0, 0.0)))
+        Assertions.assertTrue(teleportManager.teleportPlayer(player1, Location(worldLobby, 0.0, 0.0, 0.0)))
+        Assertions.assertTrue(teleportManager.teleportPlayer(player2, Location(worldLobby, 0.0, 0.0, 0.0)))
+        Assertions.assertTrue(teleportManager.teleportPlayer(player3, Location(worldLobby, 0.0, 0.0, 0.0)))
         Assertions.assertFalse(warpCommand.canRun(MockBukkit.getMock().consoleSender))
         Assertions.assertFalse(warpCommand.canRun(player1))
         Assertions.assertFalse(warpCommand.canRun(player2))
@@ -154,12 +152,12 @@ internal class TestTeleportCommands {
         player3.assertSaid("§cCannot use warps in lobby!")
         player3.assertNoMoreSaid()
 
-        Assertions.assertTrue(manager.check(player1, Location(worldMap, 0.0, 0.0, 0.0)))
-        Assertions.assertTrue(manager.check(player2, Location(worldMap, 0.0, 0.0, 0.0)))
-        Assertions.assertFalse(manager.check(player3, Location(worldMap, 0.0, 0.0, 0.0)))
-        Assertions.assertTrue(manager.teleportPlayer(player1, Location(worldMap, 0.0, 0.0, 0.0)))
-        Assertions.assertTrue(manager.teleportPlayer(player2, Location(worldMap, 0.0, 0.0, 0.0)))
-        Assertions.assertFalse(manager.teleportPlayer(player3, Location(worldMap, 0.0, 0.0, 0.0)))
+        Assertions.assertTrue(teleportManager.check(player1, Location(worldMap, 0.0, 0.0, 0.0)))
+        Assertions.assertTrue(teleportManager.check(player2, Location(worldMap, 0.0, 0.0, 0.0)))
+        Assertions.assertFalse(teleportManager.check(player3, Location(worldMap, 0.0, 0.0, 0.0)))
+        Assertions.assertTrue(teleportManager.teleportPlayer(player1, Location(worldMap, 0.0, 0.0, 0.0)))
+        Assertions.assertTrue(teleportManager.teleportPlayer(player2, Location(worldMap, 0.0, 0.0, 0.0)))
+        Assertions.assertFalse(teleportManager.teleportPlayer(player3, Location(worldMap, 0.0, 0.0, 0.0)))
         Assertions.assertFalse(warpCommand.canRun(MockBukkit.getMock().consoleSender))
         Assertions.assertTrue(warpCommand.canRun(player1))
         Assertions.assertTrue(warpCommand.canRun(player2))
@@ -168,17 +166,13 @@ internal class TestTeleportCommands {
         player3.assertNoMoreSaid()
         player1.assertNoMoreSaid()
         player2.assertNoMoreSaid()
-    }
 
-    @Order(2)
-    @Test
-    fun testHubCommand() {
-        val command: AbstractTeleportCommand = TeleportHubCommand()
-        val label: String = command.aliases[0]
-        val manager: TeleportManager =
-            ConstructionSiteProvider.getSite().getManager(TeleportManager::class.java)
-        Assertions.assertTrue(manager.teleportPlayer(player1, Location(worldMap, 0.0, 0.0, 0.0)))
-        Assertions.assertTrue(manager.teleportPlayer(player2, Location(worldMap, 0.0, 0.0, 0.0)))
+        // Test hub cmd
+
+        var command: AbstractTeleportCommand = TeleportHubCommand()
+        var label: String = command.aliases[0]
+        Assertions.assertTrue(teleportManager.teleportPlayer(player1, Location(worldMap, 0.0, 0.0, 0.0)))
+        Assertions.assertTrue(teleportManager.teleportPlayer(player2, Location(worldMap, 0.0, 0.0, 0.0)))
         player1.assertLocation(Location(worldMap, 0.0, 0.0, 0.0), 1.0)
         player2.assertLocation(Location(worldMap, 0.0, 0.0, 0.0), 1.0)
         player1.assertNoMoreSaid()
@@ -190,19 +184,15 @@ internal class TestTeleportCommands {
         player2.assertNoMoreSaid()
         player1.assertLocation(Location(world, 0.0, 106.0, 0.0), 1.0)
         player2.assertLocation(Location(world, 0.0, 106.0, 0.0), 1.0)
-    }
 
-    @Order(3)
-    @Test
-    fun testSpawnCommand() {
-        val command: AbstractTeleportCommand = TeleportSpawnCommand()
-        val label: String = command.aliases[0]
-        val manager: TeleportManager =
-            ConstructionSiteProvider.getSite().getManager(TeleportManager::class.java)
-        Assertions.assertTrue(manager.teleportToServerSpawn(player1))
-        Assertions.assertTrue(manager.teleportToServerSpawn(player2))
-        Assertions.assertTrue(manager.teleportPlayer(player1, Location(world, 1.0, 2.0, 3.0)))
-        Assertions.assertTrue(manager.teleportPlayer(player2, Location(world, 1.0, 2.0, 3.0)))
+        // test spawn cmd
+
+        command = TeleportSpawnCommand()
+        label = command.aliases[0]
+        Assertions.assertTrue(teleportManager.teleportToServerSpawn(player1))
+        Assertions.assertTrue(teleportManager.teleportToServerSpawn(player2))
+        Assertions.assertTrue(teleportManager.teleportPlayer(player1, Location(world, 1.0, 2.0, 3.0)))
+        Assertions.assertTrue(teleportManager.teleportPlayer(player2, Location(world, 1.0, 2.0, 3.0)))
 
         command.runConstruction(player1, label, arrayOf())
         player1.assertSaid("Teleported to §e0,106,0")
@@ -213,8 +203,8 @@ internal class TestTeleportCommands {
         player1.assertLocation(Location(world, 0.0, 106.0, 0.0), 1.0)
         player2.assertLocation(Location(world, 0.0, 106.0, 0.0), 1.0)
 
-        Assertions.assertTrue(manager.teleportPlayer(player1, Location(worldMap, 1.0, 2.0, 3.0)))
-        Assertions.assertTrue(manager.teleportPlayer(player2, Location(worldMap, 1.0, 2.0, 3.0)))
+        Assertions.assertTrue(teleportManager.teleportPlayer(player1, Location(worldMap, 1.0, 2.0, 3.0)))
+        Assertions.assertTrue(teleportManager.teleportPlayer(player2, Location(worldMap, 1.0, 2.0, 3.0)))
         command.runConstruction(player1, label, arrayOf())
         player1.assertSaid("Teleported to §e8,9,-10")
         player1.assertNoMoreSaid()
@@ -223,21 +213,17 @@ internal class TestTeleportCommands {
         player2.assertNoMoreSaid()
         player1.assertLocation(Location(worldMap, 8.0, 9.0, -10.0), 1.0)
         player2.assertLocation(Location(worldMap, 8.0, 9.0, -10.0), 1.0)
-    }
 
-    @Order(4)
-    @Test
-    fun testTeleportMapCommand() {
-        val command: AbstractTeleportCommand = TeleportMapCommand()
-        val label: String = command.aliases[0]
-        val manager: TeleportManager =
-            ConstructionSiteProvider.getSite().getManager(TeleportManager::class.java)
-        Assertions.assertTrue(manager.teleportToServerSpawn(player1))
-        Assertions.assertTrue(manager.teleportToServerSpawn(player2))
-        Assertions.assertTrue(manager.teleportToServerSpawn(player3))
-        Assertions.assertTrue(manager.teleportPlayer(player1, Location(world, 1.0, 2.0, 3.0)))
-        Assertions.assertTrue(manager.teleportPlayer(player2, Location(world, 1.0, 2.0, 3.0)))
-        Assertions.assertTrue(manager.teleportPlayer(player3, Location(world, 1.0, 2.0, 3.0)))
+        // test tpmap cmd
+
+        command = TeleportMapCommand()
+        label = command.aliases[0]
+        Assertions.assertTrue(teleportManager.teleportToServerSpawn(player1))
+        Assertions.assertTrue(teleportManager.teleportToServerSpawn(player2))
+        Assertions.assertTrue(teleportManager.teleportToServerSpawn(player3))
+        Assertions.assertTrue(teleportManager.teleportPlayer(player1, Location(world, 1.0, 2.0, 3.0)))
+        Assertions.assertTrue(teleportManager.teleportPlayer(player2, Location(world, 1.0, 2.0, 3.0)))
+        Assertions.assertTrue(teleportManager.teleportPlayer(player3, Location(world, 1.0, 2.0, 3.0)))
 
         Assertions.assertFalse(command.runConstruction(player1, label, arrayOf("invalid")))
         player1.assertSaid("§cInvalid UUID!")
@@ -296,15 +282,11 @@ internal class TestTeleportCommands {
         Assertions.assertTrue(player2.isFlying)
         player1.assertLocation(Location(worldMap, 8.0, 9.0, -10.0), 1.0)
         player2.assertLocation(Location(worldMap, 8.0, 9.0, -10.0), 1.0)
-    }
 
-    @Order(5)
-    @Test
-    fun testWarpCommand() {
-        val command: AbstractTeleportCommand = TeleportWarpCommand()
-        val label: String = command.aliases[0]
-        val teleportManager: TeleportManager =
-            ConstructionSiteProvider.getSite().getManager(TeleportManager::class.java)
+        // test warp cmd
+
+        command = TeleportWarpCommand()
+        label = command.aliases[0]
         val mapDataManager: MapDataManager =
             ConstructionSiteProvider.getSite().getManager(MapDataManager::class.java)
 
@@ -409,15 +391,11 @@ internal class TestTeleportCommands {
         Assertions.assertTrue(command.runConstruction(player1, label, arrayOf("list")))
         player1.assertSaid("§cNo warp point yet! Add some!")
         player1.assertNoMoreSaid()
-    }
 
-    @Order(6)
-    @Test
-    fun testTeleportCommand() {
-        val command: AbstractTeleportCommand = TeleportCommand()
-        val label: String = command.aliases[0]
-        val teleportManager: TeleportManager =
-            ConstructionSiteProvider.getSite().getManager(TeleportManager::class.java)
+        // test tp cmd
+
+        command = TeleportCommand()
+        label = command.aliases[0]
 
         Assertions.assertTrue(teleportManager.teleportPlayer(player1, Location(world, 5.0, 6.0, 7.0)))
         Assertions.assertTrue(teleportManager.teleportPlayer(player2, Location(worldMap, 8.0, 9.0, 10.0)))

@@ -83,7 +83,7 @@ jobs:
         run: mvn -B -V -e -ntp -Dstyle.color=always clean verify
 
       - if: ${{ steps.path-filter.outputs.parser != 'true' }}
-        run: set +H && mvn -B -V -e -ntp -Dstyle.color=always -Dtest='!TestMapParse' clean verify
+        run: set +H && mvn -B -V -e -ntp -Dstyle.color=always -Dtest='!TestMapParseByColosseum' clean verify
 
       - name: Write test report
         uses: mikepenz/action-junit-report@v5.6.2

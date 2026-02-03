@@ -5,7 +5,7 @@ import colosseum.construction.command.vanilla.DifficultyCommand
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
-class TestTabCompleter {
+internal class TestTabCompleter {
 
     @Test
     fun testNewMapCommand() {

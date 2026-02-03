@@ -15,7 +15,6 @@ import org.bukkit.Location
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -81,10 +80,10 @@ internal class TestMapInfoCommand {
         Utils.tearDown(plugin)
     }
 
-    @Order(1)
     @Test
-    fun testPermission() {
+    fun test() {
         val command = MapInfoCommand()
+        val label = command.aliases[0]
         val manager: TeleportManager =
             ConstructionSiteProvider.getSite().getManager(TeleportManager::class.java)
         Assertions.assertTrue(manager.teleportToServerSpawn(player1))
@@ -101,15 +100,7 @@ internal class TestMapInfoCommand {
         Assertions.assertFalse(command.canRun(MockBukkit.getMock().consoleSender))
         Assertions.assertTrue(command.canRun(player1))
         player1.assertNoMoreSaid()
-    }
 
-    @Order(2)
-    @Test
-    fun test() {
-        val command = MapInfoCommand()
-        val label = command.aliases[0]
-        val manager: TeleportManager =
-            ConstructionSiteProvider.getSite().getManager(TeleportManager::class.java)
         Assertions.assertTrue(manager.teleportPlayer(player1, Location(worldMap, 0.0, 0.0, 0.0)))
         Assertions.assertTrue(command.runConstruction(player1, label, arrayOf()))
         player1.assertSaid("Map name: §eMAPINFO 123456789MAPINFO")

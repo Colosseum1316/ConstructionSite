@@ -15,7 +15,6 @@ import org.bukkit.Location
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -96,10 +95,10 @@ internal class TestTimeCommand {
         Utils.tearDown(plugin)
     }
 
-    @Order(1)
     @Test
-    fun testPermission() {
+    fun test() {
         val command = TimeCommand()
+        val label = command.aliases[0]
         val manager: TeleportManager =
             ConstructionSiteProvider.getSite().getManager(TeleportManager::class.java)
 
@@ -140,15 +139,9 @@ internal class TestTimeCommand {
         Assertions.assertTrue(command.canRun(player2))
         player1.assertNoMoreSaid()
         player2.assertNoMoreSaid()
-    }
 
-    @Order(2)
-    @Test
-    fun testTimeCommand() {
-        val command = TimeCommand()
-        val label = command.aliases[0]
-        val manager: TeleportManager =
-            ConstructionSiteProvider.getSite().getManager(TeleportManager::class.java)
+        // Test against inputs.
+
         Assertions.assertTrue(manager.check(player1, Location(worldMap, 0.0, 0.0, 0.0)))
         Assertions.assertTrue(manager.check(player2, Location(worldMap, 0.0, 0.0, 0.0)))
         Assertions.assertTrue(manager.teleportPlayer(player1, Location(worldMap, 0.0, 0.0, 0.0)))

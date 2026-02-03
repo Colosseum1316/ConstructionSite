@@ -10,6 +10,7 @@ import colosseum.construction.test.dummies.ConstructionSiteWorldMock
 import colosseum.construction.test.dummies.DummySite
 import colosseum.construction.test.dummies.DummySite3
 import colosseum.utility.MapConstants
+import org.apache.commons.io.FileUtils
 import org.bukkit.Material
 import org.bukkit.util.Vector
 import org.junit.jupiter.api.AfterAll
@@ -24,7 +25,7 @@ import java.util.*
 import java.util.concurrent.*
 import java.util.concurrent.atomic.*
 
-internal class TestMapParse {
+internal class TestMapParseByColosseum {
     companion object {
         @TempDir
         @JvmField
@@ -40,7 +41,7 @@ internal class TestMapParse {
 
     @BeforeAll
     fun setup() {
-        tearDown()
+        Utils.tearDown(plugin)
         plugin = DummySite3(tempWorldContainer, tempPluginDataDir)
         world = ConstructionSiteWorldMock(MapConstants.WORLD)
         (MockBukkit.getMock() as ConstructionSiteServerMock).addWorld(world)
@@ -52,6 +53,9 @@ internal class TestMapParse {
     @AfterAll
     fun tearDown() {
         Utils.tearDown(plugin)
+        FileUtils.deleteQuietly(ResourceSession.path.resolve("Void").toFile())
+        FileUtils.deleteQuietly(ResourceSession.path.resolve("Cliffside").toFile())
+        FileUtils.deleteQuietly(ResourceSession.path.resolve("Heros_Valley").toFile())
     }
 
     @Test
@@ -632,6 +636,94 @@ internal class TestMapParse {
                     assertHas(x, y, 0)
                 }
             }
+        }
+    }
+
+    @Test
+    @Timeout(value = 2, unit = TimeUnit.SECONDS)
+    fun testVoid() {
+        val destination = ResourceSession.path.resolve("Void").toFile()
+        val mapData =
+            ConstructionSiteProvider.getSite().getManager(MapDataManager::class.java).getFinalized(destination)
+        val parser = MapParser(destination, mapData, listOf(), 0, 0, 10)
+        Assertions.assertEquals(mapData, parser.mapData)
+        Assertions.assertEquals(destination, parser.parsableWorldFolder)
+        Assertions.assertTrue(CompletableFuture.supplyAsync {
+            parser.run()
+            Assertions.assertFalse(parser.isFail)
+            Assertions.assertFalse(parser.isCancelled)
+            return@supplyAsync parser.isSuccess
+        }.get(2, TimeUnit.SECONDS))
+
+        Assertions.assertDoesNotThrow {
+            val dat = Files.readAllLines(destination.toPath().resolve(MapConstants.WORLDCONFIG_DAT))
+            var mapName = false
+            var mapAuthor = false
+            var minX = false
+            var minY = false
+            var minZ = false
+            var maxX = false
+            var maxY = false
+            var maxZ = false
+            for (line in dat) {
+                val tokens = line.split(":")
+                if (tokens.size != 2) {
+                    continue
+                }
+                val key = tokens[0]
+                val value = tokens[1]
+                when (key) {
+                    "MAP_NAME" -> {
+                        Assertions.assertEquals("Void", value)
+                        mapName = true
+                    }
+
+                    "MAP_AUTHOR" -> {
+                        Assertions.assertEquals("Void", value)
+                        mapAuthor = true
+                    }
+
+                    "MIN_X" -> {
+                        Assertions.assertEquals(-256, value.toInt())
+                        minX = true
+                    }
+
+                    "MIN_Y" -> {
+                        Assertions.assertEquals(0, value.toInt())
+                        minY = true
+                    }
+
+                    "MIN_Z" -> {
+                        Assertions.assertEquals(-256, value.toInt())
+                        minZ = true
+                    }
+
+                    "MAX_X" -> {
+                        Assertions.assertEquals(256, value.toInt())
+                        maxX = true
+                    }
+
+                    "MAX_Y" -> {
+                        Assertions.assertEquals(256, value.toInt())
+                        maxY = true
+                    }
+
+                    "MAX_Z" -> {
+                        Assertions.assertEquals(256, value.toInt())
+                        maxZ = true
+                    }
+
+                    else -> Assertions.fail("Invalid key $key")
+                }
+            }
+            Assertions.assertTrue(minX)
+            Assertions.assertTrue(minY)
+            Assertions.assertTrue(minZ)
+            Assertions.assertTrue(maxX)
+            Assertions.assertTrue(maxY)
+            Assertions.assertTrue(maxZ)
+            Assertions.assertTrue(mapName)
+            Assertions.assertTrue(mapAuthor)
         }
     }
 }

@@ -8,7 +8,6 @@ import colosseum.construction.test.dummies.DummySite1;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -35,9 +34,8 @@ class TestFlySpeedCommand {
         Utils.tearDown(plugin);
     }
 
-    @Order(1)
     @Test
-    void testPermission() {
+    void test() {
         FlySpeedCommand command = new FlySpeedCommand();
         Assertions.assertFalse(command.canRun(MockBukkit.getMock().getConsoleSender()));
         Assertions.assertFalse(command.canRun(player));
@@ -52,13 +50,10 @@ class TestFlySpeedCommand {
         Assertions.assertTrue(command.canRun(player));
 
         player.setOp(true);
-    }
 
-    @Order(2)
-    @Test
-    void testInvalidInputs() {
-        FlySpeedCommand command = new FlySpeedCommand();
-        String label = command.getAliases().get(0);
+        // Test against inputs.
+
+        final String label = command.getAliases().get(0);
 
         Assertions.assertFalse(command.runConstruction(player, label, new String[]{}));
         Assertions.assertFalse(command.runConstruction(player, label, new String[]{"a", "b"}));
@@ -71,13 +66,6 @@ class TestFlySpeedCommand {
 
         Assertions.assertFalse(command.runConstruction(player, label, new String[]{"0.99"}));
         Assertions.assertFalse(command.runConstruction(player, label, new String[]{"-10"}));
-    }
-
-    @Order(3)
-    @Test
-    void testValidInputs() {
-        FlySpeedCommand command = new FlySpeedCommand();
-        String label = command.getAliases().get(0);
 
         Assertions.assertTrue(command.runConstruction(player, label, new String[]{"1.0"}));
         Assertions.assertEquals(0.1f, player.getFlySpeed());
