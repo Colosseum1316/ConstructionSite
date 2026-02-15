@@ -54,13 +54,13 @@ public final class CommandManager extends ConstructionSiteManager {
 
     @Override
     public void unregister() {
+        ConstructionSiteProvider.getSite().getServer().getPluginManager().removePermission(PermissionUtils.getAsteriskPermission());
         if (commandProviders == null) {
             return;
         }
         for (ConstructionSiteCommand c : commandProviders) {
             ConstructionSiteProvider.getSite().getServer().getPluginManager().removePermission(PermissionUtils.getPermission(c));
         }
-        ConstructionSiteProvider.getSite().getServer().getPluginManager().removePermission(PermissionUtils.getAsteriskPermission());
         commandProviders = null;
     }
 }
