@@ -25,7 +25,7 @@ public final class ConstructionSiteImpl extends JavaPlugin implements Constructi
 
     @Override
     public void onLoad() {
-        getLogger().info(String.format("Plugin version: %s (%s)", getDescription().getVersion(), getVersion()));
+        getPluginLogger().info(String.format("Plugin version: %s (%s)", getDescription().getVersion(), getVersion()));
         Validate.isTrue(BaseUtils.initDir(getPluginDataFolder()), "Cannot initialize plugin data folder");
         ConstructionSiteProvider.setSite(this);
         if (managerProviders == null) {
