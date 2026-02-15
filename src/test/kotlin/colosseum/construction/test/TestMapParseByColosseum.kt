@@ -55,7 +55,7 @@ internal class TestMapParseByColosseum {
         Utils.tearDown(plugin)
         FileUtils.deleteQuietly(ResourceSession.path.resolve("Void").toFile())
         FileUtils.deleteQuietly(ResourceSession.path.resolve("Cliffside").toFile())
-        FileUtils.deleteQuietly(ResourceSession.path.resolve("Heros_Valley").toFile())
+        FileUtils.deleteQuietly(ResourceSession.path.resolve("HerosValley").toFile())
     }
 
     @Test
@@ -93,7 +93,7 @@ internal class TestMapParseByColosseum {
     @Test
     @Timeout(value = 120, unit = TimeUnit.SECONDS)
     fun testHerosValley() {
-        val destination = ResourceSession.path.resolve("Heros_Valley").toFile()
+        val destination = ResourceSession.path.resolve("HerosValley").toFile()
         val mapData =
             ConstructionSiteProvider.getSite().getManager(MapDataManager::class.java).getFinalized(destination)
         val parser = MapParser(destination, mapData, Collections.emptyList(), 0, 0, 150)
