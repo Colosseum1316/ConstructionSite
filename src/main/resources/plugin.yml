@@ -1,5 +1,5 @@
 name: ${project.name}
 main: colosseum.construction.ConstructionSiteImpl
-version: ${project.version}
+version: ${ColosseumConstructionSite.buildVersion}
 description: 1316 MapParser
 website: https://github.com/Colosseum1316/ConstructionSite
