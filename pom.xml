@@ -212,6 +212,20 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>templating-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <id>filter-src</id>
+                        <goals>
+                            <goal>filter-sources</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <version>${kotlin.version}</version>
@@ -225,6 +239,7 @@
                             <sourceDirs>
                                 <sourceDir>src/main/kotlin</sourceDir>
                                 <sourceDir>src/main/java</sourceDir>
+                                <sourceDir>src/main/java-templates</sourceDir>
                             </sourceDirs>
                         </configuration>
                     </execution>
@@ -360,6 +375,7 @@
                                         <sourcefiles encoding="${project.build.sourceEncoding}">
                                             <fileset dir="src/main/kotlin"/>
                                             <fileset dir="src/main/java"/>
+                                            <fileset dir="src/main/java-templates"/>
                                         </sourcefiles>
                                     </structure>
 

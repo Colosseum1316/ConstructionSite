@@ -2,9 +2,9 @@ package colosseum.construction.manager
 
 import colosseum.construction.ConstructionSiteProvider
 import colosseum.construction.WorldUtils
-import colosseum.utility.UtilWorld.locToStrClean
 import colosseum.utility.MapConstants.WORLD
 import colosseum.utility.MapConstants.WORLD_LOBBY
+import colosseum.utility.UtilWorld.locToStrClean
 import org.bukkit.Difficulty
 import org.bukkit.GameMode
 import org.bukkit.Location

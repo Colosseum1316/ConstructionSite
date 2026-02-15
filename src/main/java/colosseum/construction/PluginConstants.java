@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class Constants {
+public final class PluginConstants {
     public static final String LOCATIONS_DELIMITER = ";";
 
     public static final String UNTITLED = "Untitled";

@@ -1,7 +1,7 @@
 package colosseum.construction.command
 
-import colosseum.construction.Constants
 import colosseum.construction.ConstructionSiteProvider
+import colosseum.construction.PluginConstants
 import colosseum.construction.WorldUtils
 import colosseum.construction.manager.ParseManager
 import colosseum.construction.manager.TeleportManager
@@ -66,7 +66,7 @@ class MapParseCommand : AbstractMapAdminCommand(
                     UtilPlayerBase.sendMessage(caller, "&cRadius must be no less than 10")
                     return true
                 }
-                if (radius > ConstructionSiteProvider.getSite().config.getInt(Constants.ConfigKeys.PARSE__MAXIMUM_RADIUS)) {
+                if (radius > ConstructionSiteProvider.getSite().config.getInt(PluginConstants.ConfigKeys.PARSE__MAXIMUM_RADIUS)) {
                     UtilPlayerBase.sendMessage(caller, "&cAre you sure you wanna build a map this large-scale?")
                     return true
                 }
