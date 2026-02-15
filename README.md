@@ -8,7 +8,8 @@ ConstructionSite parses a Minecraft world of certain patterns under certain rule
 
 ### Compilation
 
-JDK 8
+- JDK 8
+- Maven 3
 
 ### Directories
 
