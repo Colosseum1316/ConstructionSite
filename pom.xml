@@ -203,7 +203,7 @@
                             <goal>describe</goal>
                         </goals>
                         <configuration>
-                            <format>${project.version}+%s</format>
+                            <format>%s</format>
                             <descriptionProperty>ColosseumConstructionSite.buildVersion</descriptionProperty>
                             <failHash>local</failHash>
                             <hashLength>9</hashLength>

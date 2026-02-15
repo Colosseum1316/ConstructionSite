@@ -9,6 +9,10 @@ import java.util.logging.Logger;
 
 @SuppressWarnings("unused")
 public interface ConstructionSite {
+    default String getVersion() {
+        return "dummy";
+    }
+
     Logger getPluginLogger();
 
     File getPluginDataFolder();
