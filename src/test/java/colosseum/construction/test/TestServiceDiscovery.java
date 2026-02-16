@@ -49,7 +49,7 @@ class TestServiceDiscovery {
     @Test
     void testServiceLoader() {
         ServiceLoader<ConstructionSiteCommand> providers = ServiceLoader.load(ConstructionSiteCommand.class, ConstructionSiteCommand.class.getClassLoader());
-        Assertions.assertEquals(20, StreamSupport.stream(providers.spliterator(), false).count());
+        Assertions.assertEquals(21, StreamSupport.stream(providers.spliterator(), false).count());
         for (Object provider : providers) {
             Class<? extends ConstructionSiteCommand> providerClass = provider.getClass().asSubclass(ConstructionSiteCommand.class);
             Assertions.assertDoesNotThrow(() -> {

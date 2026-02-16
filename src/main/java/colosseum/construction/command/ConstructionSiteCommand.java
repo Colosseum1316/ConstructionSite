@@ -46,10 +46,12 @@ public abstract class ConstructionSiteCommand implements CommandExecutor {
         this.usage = usage;
     }
 
+    /** Additional check on availability */
     public boolean canRun(CommandSender console) {
         return false;
     }
 
+    /** Additional check on availability */
     public boolean canRun(Player caller) {
         return ConstructionSiteProvider.isLive();
     }

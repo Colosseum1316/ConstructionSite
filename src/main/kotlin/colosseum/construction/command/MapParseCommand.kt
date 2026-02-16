@@ -11,6 +11,9 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
+/**
+ * @see OpCancelParseCommand
+ */
 class MapParseCommand : AbstractMapAdminCommand(
     listOf("mapparse"),
     "Parse map. Radius is 200 by default.",

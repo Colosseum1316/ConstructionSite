@@ -1,17 +1,16 @@
 package colosseum.construction.command
 
 import colosseum.construction.ConstructionSiteProvider
-import colosseum.construction.manager.ParseManager
+import colosseum.utility.UtilPlayerBase
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-/**
- * @see MapParseCommand
- */
-class OpCancelParseCommand : AbstractOpCommand(
-    listOf("cancelparse"),
-    "Cancel running parse task.",
-    "/cancelparse"
+class VersionCommand : AbstractOpCommand(
+    listOf("csversion", "csver"),
+    "Get plugin version",
+    """
+        /csversion
+    """.trimIndent()
 ) {
     override fun canRun(console: CommandSender): Boolean {
         return ConstructionSiteProvider.isLive()
@@ -22,10 +21,8 @@ class OpCancelParseCommand : AbstractOpCommand(
     }
 
     override fun runConstruction(caller: CommandSender, label: String, args: Array<String>): Boolean {
-        val server = ConstructionSiteProvider.getSite().getServer()
-        server.dispatchCommand(server.consoleSender, "mapparse")
-        ConstructionSiteProvider.getSite().getManager(ParseManager::class.java).cancel()
-        server.dispatchCommand(server.consoleSender, "mapparse")
+        UtilPlayerBase.sendMessage(caller, "Plugin version: ${ConstructionSiteProvider.getPlugin().description.version}")
+        UtilPlayerBase.sendMessage(caller, "Build version: ${ConstructionSiteProvider.getSite().version}")
         return true
     }
 }
