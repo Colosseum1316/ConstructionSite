@@ -1,7 +1,7 @@
 package colosseum.construction.manager
 
-import colosseum.construction.Constants.ConfigKeys.PARSE__MAXIMUM_RADIUS
 import colosseum.construction.ConstructionSiteProvider
+import colosseum.construction.PluginConstants.ConfigKeys.PARSE__MAXIMUM_RADIUS
 
 class ConfigManager : ConstructionSiteManager("Config") {
     override fun register() {

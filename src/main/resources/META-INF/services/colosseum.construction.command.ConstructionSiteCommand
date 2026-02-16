@@ -18,3 +18,4 @@ colosseum.construction.command.TeleportHubCommand
 colosseum.construction.command.TeleportMapCommand
 colosseum.construction.command.TeleportSpawnCommand
 colosseum.construction.command.TeleportWarpCommand
+colosseum.construction.command.VersionCommand

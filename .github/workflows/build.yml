@@ -5,6 +5,7 @@ on:
       - "master"
     paths:
       - "src/main/java/**/*.java"
+      - "src/main/java-templates/**/*.java"
       - "src/main/kotlin/**/*.kt"
       - "src/main/resources/config.yml"
       - "src/main/resources/Lobby.zip"
@@ -24,6 +25,7 @@ on:
       - "master"
     paths:
       - "src/main/java/**/*.java"
+      - "src/main/java-templates/**/*.java"
       - "src/main/kotlin/**/*.kt"
       - "src/main/resources/config.yml"
       - "src/main/resources/Lobby.zip"

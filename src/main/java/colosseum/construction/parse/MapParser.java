@@ -1,12 +1,12 @@
 package colosseum.construction.parse;
 
-import colosseum.construction.Constants;
 import colosseum.construction.ConstructionSite;
 import colosseum.construction.ConstructionSiteProvider;
+import colosseum.construction.PluginConstants;
 import colosseum.construction.data.FinalizedMapData;
+import colosseum.utility.MapConstants;
 import colosseum.utility.TeamName;
 import colosseum.utility.UtilWorld;
-import colosseum.utility.MapConstants;
 import lombok.NonNull;
 import nl.rutgerkok.hammer.ChunkAccess;
 import nl.rutgerkok.hammer.anvil.AnvilChunk;
@@ -260,7 +260,7 @@ public final class MapParser implements Runnable {
                 cornerB = new Location(256.0, 0.0, 256.0);
             }
 
-            world.getOfflineWorld().getLevelTag().setString(AnvilFormat.LevelTag.LEVEL_NAME, String.format("%s - %s", mapData.getMapName().orElse(Constants.UNTITLED), mapData.getMapCreator().orElse(Constants.NULL)));
+            world.getOfflineWorld().getLevelTag().setString(AnvilFormat.LevelTag.LEVEL_NAME, String.format("%s - %s", mapData.getMapName().orElse(PluginConstants.UNTITLED), mapData.getMapCreator().orElse(PluginConstants.NULL)));
             world.getOfflineWorld().saveLevelTag();
 
             for (Map.Entry<Pair<Integer, Integer>, AnvilChunk> c : world.getVisitedChunks().entrySet()) {
@@ -272,8 +272,8 @@ public final class MapParser implements Runnable {
             ) {
                 site.getPluginLogger().info("Parsing " + parsableWorldPathString + ": Writing " + MapConstants.WORLDCONFIG_DAT);
 
-                buffer.write("MAP_NAME:" + mapData.getMapName().orElse(Constants.UNTITLED));
-                buffer.write("\nMAP_AUTHOR:" + mapData.getMapCreator().orElse(Constants.NULL));
+                buffer.write("MAP_NAME:" + mapData.getMapName().orElse(PluginConstants.UNTITLED));
+                buffer.write("\nMAP_AUTHOR:" + mapData.getMapCreator().orElse(PluginConstants.NULL));
                 buffer.write("\n\nMIN_X:" + Math.min(cornerA.getBlockX(), cornerB.getBlockX()));
                 buffer.write("\nMAX_X:" + Math.max(cornerA.getBlockX(), cornerB.getBlockX()));
                 buffer.write("\nMIN_Z:" + Math.min(cornerA.getBlockZ(), cornerB.getBlockZ()));
@@ -308,6 +308,6 @@ public final class MapParser implements Runnable {
     }
 
     private String locationsToString(List<Location> locs) {
-        return String.join(Constants.LOCATIONS_DELIMITER, locs.stream().map(loc -> String.format("%d,%d,%d", (int) loc.getX(), (int) loc.getY(), (int) loc.getZ())).toArray(String[]::new));
+        return String.join(PluginConstants.LOCATIONS_DELIMITER, locs.stream().map(loc -> String.format("%d,%d,%d", (int) loc.getX(), (int) loc.getY(), (int) loc.getZ())).toArray(String[]::new));
     }
 }

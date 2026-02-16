@@ -25,6 +25,7 @@ public final class ConstructionSiteImpl extends JavaPlugin implements Constructi
 
     @Override
     public void onLoad() {
+        getPluginLogger().info(String.format("Plugin version: %s (%s)", getDescription().getVersion(), getVersion()));
         Validate.isTrue(BaseUtils.initDir(getPluginDataFolder()), "Cannot initialize plugin data folder");
         ConstructionSiteProvider.setSite(this);
         if (managerProviders == null) {
@@ -75,5 +76,10 @@ public final class ConstructionSiteImpl extends JavaPlugin implements Constructi
     @Override
     public File getWorldContainer() {
         return this.getServer().getWorldContainer();
+    }
+
+    @Override
+    public String getVersion() {
+        return RevConstants.BUILD_VERSION;
     }
 }

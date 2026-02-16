@@ -1,20 +1,16 @@
 package colosseum.construction.manager;
 
-import colosseum.construction.Constants;
 import colosseum.construction.ConstructionSite;
 import colosseum.construction.ConstructionSiteProvider;
+import colosseum.construction.PluginConstants;
 import colosseum.construction.WorldUtils;
 import colosseum.construction.data.FinalizedMapData;
 import colosseum.construction.parse.MapParser;
-import colosseum.utility.UtilZipper;
 import colosseum.utility.MapConstants;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
+import colosseum.utility.UtilZipper;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
@@ -132,7 +128,7 @@ public final class ParseManager extends ConstructionSiteManager {
                             FileUtils.deleteQuietly(file);
                         }
                     }
-                    File zip = WorldUtils.getParsedZipOutputRootPath().toPath().resolve(String.format("%s-%s-%s.zip", worldFolder.getName(), System.currentTimeMillis(), mapData.getMapName().orElse(Constants.UNTITLED))).toFile();
+                    File zip = WorldUtils.getParsedZipOutputRootPath().toPath().resolve(String.format("%s-%s-%s.zip", worldFolder.getName(), System.currentTimeMillis(), mapData.getMapName().orElse(PluginConstants.UNTITLED))).toFile();
                     UtilZipper.zip(worldFolder, zip);
                     ConstructionSiteProvider.getSite().getPluginLogger().info("Created " + zip.getAbsolutePath());
                     this.cancel();

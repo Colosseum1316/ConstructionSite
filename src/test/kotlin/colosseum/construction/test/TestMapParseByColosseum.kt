@@ -1,8 +1,8 @@
 package colosseum.construction.test
 
 import be.seeseemelk.mockbukkit.MockBukkit
-import colosseum.construction.Constants
 import colosseum.construction.ConstructionSiteProvider
+import colosseum.construction.PluginConstants
 import colosseum.construction.manager.MapDataManager
 import colosseum.construction.parse.MapParser
 import colosseum.construction.test.dummies.ConstructionSiteServerMock
@@ -143,7 +143,7 @@ internal class TestMapParseByColosseum {
 
                 if (tn_f) {
                     Assertions.assertEquals("TEAM_SPAWNS", key)
-                    val entries = value.split(Constants.LOCATIONS_DELIMITER)
+                    val entries = value.split(PluginConstants.LOCATIONS_DELIMITER)
                     Assertions.assertTrue(entries.isNotEmpty())
                     for (e in entries) {
                         val xyz = e.split(",").map { it.toInt() }
@@ -156,7 +156,7 @@ internal class TestMapParseByColosseum {
 
                 if (dn_f) {
                     Assertions.assertEquals("CUSTOM_LOCS", key)
-                    val entries = value.split(Constants.LOCATIONS_DELIMITER)
+                    val entries = value.split(PluginConstants.LOCATIONS_DELIMITER)
                     Assertions.assertTrue(entries.isNotEmpty())
                     for (e in entries) {
                         val xyz = e.split(",").map { it.toInt() }
@@ -169,7 +169,7 @@ internal class TestMapParseByColosseum {
 
                 if (data_f) {
                     Assertions.assertEquals("DATA_LOCS", key)
-                    val entries = value.split(Constants.LOCATIONS_DELIMITER)
+                    val entries = value.split(PluginConstants.LOCATIONS_DELIMITER)
                     Assertions.assertTrue(entries.isNotEmpty())
                     for (e in entries) {
                         val xyz = e.split(",").map { it.toInt() }
@@ -450,7 +450,7 @@ internal class TestMapParseByColosseum {
                 }
                 if (tn_f) {
                     Assertions.assertEquals("TEAM_SPAWNS", key)
-                    val entries = value.split(Constants.LOCATIONS_DELIMITER)
+                    val entries = value.split(PluginConstants.LOCATIONS_DELIMITER)
                     Assertions.assertTrue(entries.isNotEmpty())
                     for (e in entries) {
                         val xyz = e.split(",").map { it.toInt() }
@@ -462,7 +462,7 @@ internal class TestMapParseByColosseum {
                 }
                 if (dn_f) {
                     Assertions.assertEquals("CUSTOM_LOCS", key)
-                    val entries = value.split(Constants.LOCATIONS_DELIMITER)
+                    val entries = value.split(PluginConstants.LOCATIONS_DELIMITER)
                     Assertions.assertTrue(entries.isNotEmpty())
                     for (e in entries) {
                         val xyz = e.split(",").map { it.toInt() }

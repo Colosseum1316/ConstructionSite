@@ -5,7 +5,7 @@
     <groupId>colosseum.minecraft</groupId>
     <name>ConstructionSite</name>
     <artifactId>ConstructionSite</artifactId>
-    <version>0.2.1-SNAPSHOT</version>
+    <version>0.2.1</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -203,11 +203,25 @@
                             <goal>describe</goal>
                         </goals>
                         <configuration>
-                            <format>${project.version}+%s</format>
+                            <format>%s</format>
                             <descriptionProperty>ColosseumConstructionSite.buildVersion</descriptionProperty>
                             <failHash>local</failHash>
                             <hashLength>9</hashLength>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>templating-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <id>filter-src</id>
+                        <goals>
+                            <goal>filter-sources</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -225,6 +239,7 @@
                             <sourceDirs>
                                 <sourceDir>src/main/kotlin</sourceDir>
                                 <sourceDir>src/main/java</sourceDir>
+                                <sourceDir>src/main/java-templates</sourceDir>
                             </sourceDirs>
                         </configuration>
                     </execution>
@@ -360,6 +375,7 @@
                                         <sourcefiles encoding="${project.build.sourceEncoding}">
                                             <fileset dir="src/main/kotlin"/>
                                             <fileset dir="src/main/java"/>
+                                            <fileset dir="src/main/java-templates"/>
                                         </sourcefiles>
                                     </structure>
 

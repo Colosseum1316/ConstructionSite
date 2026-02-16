@@ -1,11 +1,11 @@
 package colosseum.construction.data;
 
-import colosseum.construction.Constants;
 import colosseum.construction.ConstructionSite;
 import colosseum.construction.ConstructionSiteProvider;
+import colosseum.construction.PluginConstants;
 import colosseum.construction.WorldUtils;
-import colosseum.utility.UtilWorld;
 import colosseum.utility.MapConstants;
+import colosseum.utility.UtilWorld;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
@@ -90,7 +90,7 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
                             break;
                         }
                         case "warps": {
-                            for (String w : tokens.get(1).split(Constants.LOCATIONS_DELIMITER)) {
+                            for (String w : tokens.get(1).split(PluginConstants.LOCATIONS_DELIMITER)) {
                                 String[] entry = w.split("@");
                                 Validate.isTrue(entry.length >= 2, "Malformed map data file!");
                                 String[] xyz = entry[1].replaceAll("[()]", "").split(",");
@@ -181,6 +181,6 @@ public class MapDataImpl extends AbstractMapData implements MutableMapData {
     }
 
     private static String warpsToString(ImmutableMap<String, Vector> warps) {
-        return warps.entrySet().stream().map(entry -> entry.getKey() + "@" + UtilWorld.vecToStrClean(entry.getValue())).collect(Collectors.joining(Constants.LOCATIONS_DELIMITER));
+        return warps.entrySet().stream().map(entry -> entry.getKey() + "@" + UtilWorld.vecToStrClean(entry.getValue())).collect(Collectors.joining(PluginConstants.LOCATIONS_DELIMITER));
     }
 }
